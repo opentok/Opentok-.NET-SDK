@@ -4,7 +4,8 @@ This is a .NET implementation of the OpenTok API. See complete documentation at 
 ## Usage
 
 ### Configuration
-In your web.config file, set the following properties. 
+
+Include the OpenTok.cs file in your .NET project, then set the following properties in your web.config file.
 
 ```xml
 <configuration>
