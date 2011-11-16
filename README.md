@@ -38,3 +38,24 @@ string sessionId = opentok.CreateSession(Request.ServerVariables["REMOTE_ADDR"],
 ```
 
 ### Generating Tokens
+
+To generate a session token:
+
+```csharp
+string token = opentok.GenerateToken(sessionId);
+```
+
+By default, the token has the "publlisher" permission. To generate a token with a different set of permissions:
+
+```csharp
+Dictionary<string, object> tokenOptions = new Dictionary<string, object>();
+tokenOptions.Add(TokenPropertyConstants.ROLE, RoleConstants.MODERATOR);
+string token = opentok.GenerateToken(sessionId, tokenOptions);
+```
+
+You can also pass in additional token options like "connection_data" and "expire_time":
+
+```csharp
+tokenOptions.Add(TokenPropertyConstants.EXPIRE_TIME, new DateTime(2011, 11, 17)); // A token that expires on 2011-11-17
+tokenOptions.Add(TokenPropertyConstants.CONNECTION_DATA, "I am connection metadata passed down to all clients");
+```
