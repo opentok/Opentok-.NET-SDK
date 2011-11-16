@@ -21,5 +21,18 @@ Explicitly set your OpenTok API key and secret. Additionally, the "opentok_secre
 
 ### Generating Sessions
 
+To generate an OpenTok session:
+```c#
+OpenTokSDK opentok = new OpenTokSDK();
+string sessionId = opentok.CreateSession(Request.ServerVariables["REMOTE_ADDR"]);
+```
+
+To generate an OpenTok P2P session:
+```c#
+OpenTokSDK opentok = new OpenTokSDK();
+Dictionary<string, object> options = new Dictionary<string, object>();
+options.Add(SessionPropertyConstants.P2P_PREFERENCE, "enabled");
+string sessionId = opentok.CreateSession(Request.ServerVariables["REMOTE_ADDR"], options);
+```
 
 ### Generating Tokens
