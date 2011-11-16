@@ -1,71 +1,83 @@
-    ///Author: Robert Phan
-    ///Date Submitted: 11/17/2010 9:34 Central
-    ///OpenTok Community Member Name - trebor
-    ///
-    ///
-    ///web.config
-    ///<configuration>
-    ///	<appSettings>
-    ///    <add key="opentok_server_staging" value="https://staging.tokbox.com/hl"/>
-    ///    <add key="opentok_server_production" value="https://api.opentok.com/hl"/>
-    ///    <add key="opentok_token_sentinel" value="T1=="/>
-    ///    <add key="opentok_sdk_version" value="tbdotnet"/>
-    ///    <add key="opentok_key" value="***API key***"/>
-    ///    <add key="opentok_secret" value="***API secret***"/>
-    ///	</appSettings>
-    ///
-    ///
-    ///code-behind
-    ///OpenTokSDK_NET openTok = new OpenTokSDK_NET();
-    ///string ipAdd = Request.ServerVariables["REMOTE_ADDR"];
-    ///string session_id = openTok.CreateSession(ipAdd);
-    ///string token = openTok.GenerateToken(session_id, null, null);
-    ///
-    ///
-    ///ASP.NET MVC2
-    ///public ActionResult Index()
-    ///{
-    ///	OpenTokSDK_NET openTok = new OpenTokSDK_NET();
-    ///	string ipAdd = Request.ServerVariables["REMOTE_ADDR"];
-    ///	string sessionId = openTok.CreateSession(ipAdd);
-    ///	string token = openTok.GenerateToken(sessionId, null, null);
-    ///
-    ///	ViewData["opentok_session"] = session_id;
-    ///	ViewData["opentok_token"] = token;
-    ///}
-    
-    public class OpenTokSDK_NET
+///
+/// OpenTok .NET Library
+/// Last Updated November 16, 2011
+/// https://github.com/opentok/Opentok-.NET-SDK
+///
+
+using System;
+using System.Collections.Generic;
+using System.Xml;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Text;
+using System.Net;
+using System.Web;
+using System.Security.Cryptography;
+using System.IO;
+
+namespace OpenTok
+{
+    public class OpenTokSDK
     {
         public string CreateSession(string location)
         {
+            Dictionary<string, object> options = new Dictionary<string, object>();
+            
+            return CreateSession(location, options);
+        }
+
+        public string CreateSession(string location, Dictionary<string, object> options)
+        {
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
+            options.Add("location", location);
+            options.Add("partner_id", appSettings["opentok_key"]);
 
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            dict.Add("location", location);
-            dict.Add("partner_id", appSettings["opentok_key"]);
-
-            XmlDocument xmlDoc = CreateSessionId(string.Format("{0}/session/create", appSettings["opentok_server_staging"]), dict);
+            XmlDocument xmlDoc = CreateSessionId(string.Format("{0}/session/create", appSettings["opentok_server"]), options);
 
             string session_id = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
 
             return session_id;
         }
 
-        public string GenerateToken(string sessionId, string[] permissions, DateTime? expireTime)
+        public string GenerateToken(string sessionId)
+        {
+            Dictionary<string, object> options = new Dictionary<string, object>();
+
+            return GenerateToken(sessionId, options);
+        }
+
+        public string GenerateToken(string sessionId, Dictionary<string, object> options)
         {
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
 
-            long createTime = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-            int nonce = RandomNumber(0, 999999);
+            options.Add("session_id", sessionId);
+            options.Add("createTime", (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000);
+            options.Add("nonce", RandomNumber(0, 999999));
+            if (!options.ContainsKey(TokenPropertyConstants.ROLE))
+            {
+                options.Add(TokenPropertyConstants.ROLE, "publisher");
+            }
+            // Convert expire time to Unix Timestamp
+            if (options.ContainsKey(TokenPropertyConstants.EXPIRE_TIME)) {
+                DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0);
+                DateTime expireTime = (DateTime) options[TokenPropertyConstants.EXPIRE_TIME];
+                TimeSpan diff = expireTime - origin;
+                options[TokenPropertyConstants.EXPIRE_TIME] = Math.Floor(diff.TotalSeconds);
+            }
 
-            string dataString = string.Format("session_id={0}&create_time={1}&permissions={2}&nonce={3}", sessionId, createTime, permissions, nonce);
+            string dataString = string.Empty;
+            foreach (KeyValuePair<string, object> pair in options)
+            {
+                dataString += pair.Key + "=" + HttpUtility.UrlEncode(pair.Value.ToString()) + "&";
+            }
+
             string sig = SignString(dataString, appSettings["opentok_secret"].Trim());
             string token = string.Format("{0}{1}", appSettings["opentok_token_sentinel"], EncodeTo64(string.Format("partner_id={0}&sdk_version={1}&sig={2}:{3}", appSettings["opentok_key"], appSettings["opentok_sdk_version"], sig, dataString)));
-            
+
             return token;
         }
 
-        static public string EncodeTo64(string data)
+        static private string EncodeTo64(string data)
         {
             byte[] encData_byte = new byte[data.Length];
             encData_byte = Encoding.UTF8.GetBytes(data);
@@ -77,10 +89,10 @@
         private int RandomNumber(int min, int max)
         {
             Random random = new Random();
-            return random.Next(min, max); 
+            return random.Next(min, max);
         }
 
-        protected string SignString(string message, string key)
+        private string SignString(string message, string key)
         {
             ASCIIEncoding encoding = new ASCIIEncoding();
 
@@ -96,9 +108,9 @@
             string result = ByteToString(hashmessage).ToLower();
 
             return result;
-	    }
+        }
 
-        public static string ByteToString(byte[] buff)
+        private static string ByteToString(byte[] buff)
         {
             string sbinary = "";
 
@@ -110,15 +122,15 @@
             return (sbinary);
         }
 
-        protected XmlDocument CreateSessionId(string uri, Dictionary<string, string> dict)
+        private XmlDocument CreateSessionId(string uri, Dictionary<string, object> dict)
         {
             XmlDocument xmlDoc = new XmlDocument();
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
 
             string postData = string.Empty;
-            foreach (KeyValuePair<string, string> pair in dict)
+            foreach (KeyValuePair<string, object> pair in dict)
             {
-                postData += pair.Key + "=" + HttpUtility.UrlEncode(pair.Value) + "&";
+                postData += pair.Key + "=" + HttpUtility.UrlEncode(pair.Value.ToString()) + "&";
             }
             postData = postData.Substring(0, postData.Length - 1);
             byte[] postBytes = Encoding.UTF8.GetBytes(postData);
@@ -150,3 +162,27 @@
             return xmlDoc;
         }
     }
+
+    public class SessionPropertyConstants
+    {
+        public const string ECHOSUPRESSION_ENABLED = "echoSuppression.enabled";
+        public const string MULTIPLEXER_NUMOUTPUTSTREAMS = "multiplexer.numOutputStreams";
+        public const string MULTIPLEXER_SWITCHTYPE = "multiplexer.switchType";
+        public const string MULTIPLEXER_SWITCHTIMEOUT = "multiplexer.switchTimeout";
+        public const string P2P_PREFERENCE = "p2p.preference";
+    }
+
+    public class TokenPropertyConstants
+    {
+        public const string ROLE = "role";
+        public const string EXPIRE_TIME = "expire_time";
+        public const string CONNECTION_DATA = "connection_data";
+    }
+
+    public class RoleConstants
+    {
+        public const string SUBSCRIBER = "subscriber";
+        public const string PUBLISHER = "publisher";
+        public const string MODERATOR = "moderator";    
+    }
+}
