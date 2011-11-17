@@ -18,7 +18,7 @@ Include the OpenTok.cs file in your .NET project, then set the following propert
  </appSettings>
 ```
 
-Explicitly set your OpenTok API key and secret. Additionally, the "opentok_secret" value should be set according to whether you are working in staging or production. For information on the differences between the environments, vis it [here](http://www.tokbox.com/opentok/api/tools/js/documentation/overview/production.html).
+Explicitly set your OpenTok API key and secret. Additionally, the "opentok_secret" value should be set according to whether you are working in staging or production. For information on the differences between the environments, visit [here](http://www.tokbox.com/opentok/api/tools/js/documentation/overview/production.html).
 
 ### Generating Sessions
 
