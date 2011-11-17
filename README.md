@@ -46,7 +46,7 @@ To generate a session token:
 string token = opentok.GenerateToken(sessionId);
 ```
 
-By default, the token has the "publlisher" permission. To generate a token with a different set of permissions:
+By default, the token has the "publisher" permission. To generate a token with a different set of permissions:
 
 ```csharp
 Dictionary<string, object> tokenOptions = new Dictionary<string, object>();
