@@ -60,3 +60,6 @@ You can also pass in additional token options like "connection_data" and "expire
 tokenOptions.Add(TokenPropertyConstants.EXPIRE_TIME, new DateTime(2011, 11, 17)); // A token that expires on 2011-11-17
 tokenOptions.Add(TokenPropertyConstants.CONNECTION_DATA, "I am connection metadata passed down to all clients");
 ```
+## Contributions
+
+Thanks to Robert Phan for the original source code contribution.
