@@ -51,7 +51,7 @@ namespace OpenTok
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
 
             options.Add("session_id", sessionId);
-            options.Add("createTime", (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000);
+            options.Add("create_time", (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000);
             options.Add("nonce", RandomNumber(0, 999999));
             if (!options.ContainsKey(TokenPropertyConstants.ROLE))
             {
@@ -70,6 +70,7 @@ namespace OpenTok
             {
                 dataString += pair.Key + "=" + HttpUtility.UrlEncode(pair.Value.ToString()) + "&";
             }
+            dataString = dataString.TrimEnd('&');
 
             string sig = SignString(dataString, appSettings["opentok_secret"].Trim());
             string token = string.Format("{0}{1}", appSettings["opentok_token_sentinel"], EncodeTo64(string.Format("partner_id={0}&sdk_version={1}&sig={2}:{3}", appSettings["opentok_key"], appSettings["opentok_sdk_version"], sig, dataString)));
