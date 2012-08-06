@@ -51,7 +51,7 @@ namespace OpenTok
             NameValueCollection appSettings = ConfigurationManager.AppSettings;
 
             options.Add("session_id", sessionId);
-            options.Add("create_time", (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000);
+            options.Add("create_time", Convert.ToInt32(DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000));
             options.Add("nonce", RandomNumber(0, 999999));
             if (!options.ContainsKey(TokenPropertyConstants.ROLE))
             {
