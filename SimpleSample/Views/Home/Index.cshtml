@@ -1,0 +1,26 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>OpenTok Hello World</title>
+    <script src="https://static.opentok.com/webrtc/v2.2/js/opentok.min.js"></script>
+    <script type="text/javascript">
+        var apiKey = '@ViewBag.apiKey';
+        var sessionId = '@ViewBag.sessionId';
+        var token = '@ViewBag.token';
+
+        if (!apiKey || !sessionId || !token) {
+            window.alert('SessionId and token could not be generated for the session.' + 
+                'You\'ll still be able to use video but not to connect participants');
+        }
+    </script>
+    <script src="/Scripts/helloworld.js"></script>
+</head>
+<body>
+    <h2>Hello, World!</h2>
+
+    <div id="publisher"></div>
+
+    <div id="subscribers"></div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+﻿@{
+    Layout = "~/Views/Home/_AppLayout.cshtml";
+}
+
+
+<div class="container bump-me">
+        <div class="body-content">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Past Recordings</h3>
+                </div>
+                <div class="panel-body">
+                    @{
+                        if (ViewBag.Archives != null && ViewBag.Archives.Count > 0)
+                        {
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>Created</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach(var item in ViewBag.Archives)
+                                {
+                                    <tr data-item-id="archive.Id">
+                                        <td>
+                                            @if(item.Status.ToString() == "AVAILABLE" && item.Url != null) {
+                                            <a href="@item.Url"> @item.Name </a>
+                                            }
+                                        </td>
+                                        
+                                        <td>@OpenTokSDK.Util.OpenTokUtils.UnixTimeStampToDateTime(item.CreatedAt/1000).ToString() </td>
+                                        <td>@item.Duration seconds</td>
+                                        <td>@item.Status.ToString().ToLower()</td>                                        
+                                        <form method="post" action="/Archive/Delete/@item.Id">
+                                            @if (item.Status.ToString() == "AVAILABLE") 
+                                            { 
+                                                <td><input class="btn btn-danger btn-xs" type="submit" value="Delete"> </td>
+                                            }
+                                            else
+                                            {
+                                                <td>&nbsp; </td>
+                                            }                                           
+                                        </form>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <p>
+                                There are no archives currently. Try making one in the <a href="/Home/HostView">host view</a>.
+                            </p>
+                        }
+                    }
+                </div>
+                <div class="panel-footer">
+                    @if(ViewBag.ShowPrevious != null) 
+                    {
+                        <a href="@ViewBag.ShowPrevious" class="pull-left">&larr; Newer</a>
+                    }
+                    &nbsp;
+                    @if(ViewBag.ShowNext != null) 
+                    {
+                        <a href="@ViewBag.ShowNext" class="pull-right">Older &rarr;</a>
+                    }
+                </div>                
+            </div>
+        </div>
+    </div>
+
