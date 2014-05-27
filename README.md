@@ -9,7 +9,7 @@ and work with OpenTok 2.0 [archives](http://tokbox.com/#archiving).
 
 Download the .NET SDK:
 
-<https://github.com/opentok/Opentok-DotNet/archive/master.zip>
+<https://github.com/opentok/Opentok-.NET-SDK/archive/master.zip>
 
 ## Prerequisites
 
@@ -25,16 +25,20 @@ Download the .NET SDK:
 2. Visual Studio will load the four projects that are part of this solution. 
     * Sdk contains the actual OpenTok .NET SDK
     * SimpleSample contains a very sample app to show the most basic functionality the OpenTok platform offers
-    * Sample contains a sample app showing off the new archiving features of the OpenTok platform added for version 2.2.
+    * ArchivingSample contains a sample app showing off the OpenTok 2.0 archiving feature.
 
-3. In order to run one of the apps, see the respectives README.md files in their corresponding directory.    
-    * [SimpleSample documentation](SimpleSample/README.md)
-    * [ArchivingSample documentation](Sample/README.md)
+3. In order to run one of the sample apps, see the README.md the samples subdirectory.
+    * [SimpleSample documentation](sample/SimpleSample/README.md)
+    * [ArchivingSample documentation](sample/ArchivingSample/README.md)
 
 # Documentation
 
-Reference documentation is available at <http://www.tokbox.com//opentok/libraries/server/dot-net/reference/index.html> and in the
+Reference documentation is available at <http://www.tokbox.com/opentok/libraries/server/dot-net/reference/index.html> and in the
 docs directory of the SDK.
+
+# Sample apps
+
+See the sample subdirectory of the SDK.
 
 # Creating Sessions
 Use the `CreateSession()` method of the OpenTok object to create a session and a session ID.
