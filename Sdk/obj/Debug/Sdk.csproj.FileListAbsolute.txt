@@ -1,0 +1,6 @@
+C:\Users\stan\Documents\GitHub\Opentok-.NET-SDK\Sdk\bin\Debug\Sdk.dll
+C:\Users\stan\Documents\GitHub\Opentok-.NET-SDK\Sdk\bin\Debug\Sdk.pdb
+C:\Users\stan\Documents\GitHub\Opentok-.NET-SDK\Sdk\bin\Debug\Newtonsoft.Json.dll
+C:\Users\stan\Documents\GitHub\Opentok-.NET-SDK\Sdk\obj\Debug\Sdk.csprojResolveAssemblyReference.cache
+C:\Users\stan\Documents\GitHub\Opentok-.NET-SDK\Sdk\obj\Debug\Sdk.dll
+C:\Users\stan\Documents\GitHub\Opentok-.NET-SDK\Sdk\obj\Debug\Sdk.pdb
