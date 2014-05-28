@@ -7,12 +7,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{51EC5729-1B40-4458-A832-8213E8739C56}</ProjectGuid>
+    <ProjectGuid>{32D98612-19D3-465E-BCF6-167AD35A1CFF}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sample</RootNamespace>
-    <AssemblyName>Sample</AssemblyName>
+    <RootNamespace>SimpleSample</RootNamespace>
+    <AssemblyName>SimpleSample</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -128,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\ArchiveController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -136,17 +135,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\archiving-off.png" />
-    <Content Include="Content\Images\archiving-on-idle.png" />
-    <Content Include="Content\Images\archiving-on-message.png" />
-    <Content Include="Content\sample.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\jquery-2.1.1.min.js" />
+    <Content Include="Scripts\helloworld.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -155,9 +147,11 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
+    <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -166,14 +160,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-    <Content Include="Views\Archive\List.cshtml" />
-    <Content Include="Views\Home\HostView.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\ParticipantView.cshtml" />
-    <Content Include="Views\Home\_AppLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sdk\Sdk.csproj">
+    <ProjectReference Include="..\..\Sdk\Sdk.csproj">
       <Project>{363c2c6c-74b8-4667-8d03-2ebb52fd9d1c}</Project>
       <Name>Sdk</Name>
     </ProjectReference>
@@ -194,9 +183,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>6750</DevelopmentServerPort>
+          <DevelopmentServerPort>3760</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:6750/</IISUrl>
+          <IISUrl>http://localhost:3760/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
