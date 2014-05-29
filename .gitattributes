@@ -1,6 +1,23 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# These files are text and should be normalized (convert crlf =&gt; lf)
+*.cs      text diff=csharp
+*.xaml    text
+*.csproj  text
+*.sln     text
+*.tt      text
+*.ps1     text
+*.cmd     text
+*.msbuild text
+*.md      text
+
+# Images should be treated as binary
+# (binary is a macro for -text -diff)
+*.png     binary
+*.jpeg    binary
+*.sdf     binary
+
 # Custom for Visual Studio
 *.cs     diff=csharp
 *.sln    merge=union
