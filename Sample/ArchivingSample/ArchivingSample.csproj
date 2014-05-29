@@ -146,12 +146,6 @@
     <Content Include="Views\Home\_AppLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Sdk\Sdk.csproj">
-      <Project>{363c2c6c-74b8-4667-8d03-2ebb52fd9d1c}</Project>
-      <Name>Sdk</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
