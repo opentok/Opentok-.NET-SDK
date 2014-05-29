@@ -7,7 +7,7 @@
     <ProjectGuid>{8A4E545A-4A4D-419F-A5B2-567586436764}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenTokTest</RootNamespace>
+    <RootNamespace>OpenTokSDKTest</RootNamespace>
     <AssemblyName>OpenTokTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -8,7 +8,7 @@ using Xunit;
 
 using OpenTokSDK;
 
-namespace OpenTokTest
+namespace OpenTokSDKTest
 {
     public class OpenTokTest
     {
