@@ -12,10 +12,10 @@ using System.Web;
 
 using Newtonsoft.Json;
 
-using OpenTok.Constants;
-using OpenTok.Exception;
+using OpenTokSDK.Constants;
+using OpenTokSDK.Exception;
 
-namespace OpenTok.Util
+namespace OpenTokSDK.Util
 {
     /**
      * For internal use.

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 using System.Web;
 
-using OpenTok.Util;
-using OpenTok.Exception;
+using OpenTokSDK.Util;
+using OpenTokSDK.Exception;
 
-namespace OpenTok
+namespace OpenTokSDK
 {
     /**
      * Defines values for the mediaMode parameter of the CreateSession() method of the

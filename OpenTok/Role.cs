@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenTok
+namespace OpenTokSDK
 {
     /**
     * Defines values for the role parameter of the GenerateToken method of the OpenTok class.

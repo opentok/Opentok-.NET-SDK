@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenTok
+namespace OpenTokSDK
 {
     /**
      * A class for accessing an array of Archive objects.

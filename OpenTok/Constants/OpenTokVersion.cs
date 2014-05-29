@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenTok.Constants
+namespace OpenTokSDK.Constants
 {
     /**
      * For internal use.

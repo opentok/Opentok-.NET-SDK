@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenTok
+namespace OpenTokSDK
 {
     /**
      * Defines values returned by the Status property of an Archive object. See the ListArchives()

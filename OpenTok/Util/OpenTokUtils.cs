@@ -9,7 +9,7 @@ using System.Net;
 
 using Newtonsoft.Json;
 
-namespace OpenTok.Util
+namespace OpenTokSDK.Util
 {
     public class OpenTokUtils
     {

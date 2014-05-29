@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenTok.Exception
+namespace OpenTokSDK.Exception
 {
     /**
      * Defines exceptions in the OpenTok SDK.
