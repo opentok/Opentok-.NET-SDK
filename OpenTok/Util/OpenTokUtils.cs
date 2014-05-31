@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 using System.Security.Cryptography;
 using System.Net;
@@ -50,7 +49,7 @@ namespace OpenTokSDK.Util
             HMACSHA1 hmac = new HMACSHA1(keyBytes);
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
             byte[] hashedValue = hmac.ComputeHash(inputBytes);
-            return String.Join("", hashedValue.Select(a => a.ToString("x2")));
+            return System.Text.Encoding.UTF8.GetString(hashedValue);
 
         }
 
