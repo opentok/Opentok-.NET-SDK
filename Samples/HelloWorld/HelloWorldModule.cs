@@ -7,7 +7,7 @@ using Nancy;
 
 namespace HelloWorld
 {
-    class HelloWorldModule : NancyModule
+    public class HelloWorldModule : NancyModule
     {
         public HelloWorldModule()
         {
