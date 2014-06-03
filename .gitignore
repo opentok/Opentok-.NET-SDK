@@ -213,3 +213,7 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+## Samples
+Samples/HelloWorld/App.config
+Samples/Archiving/App.config
