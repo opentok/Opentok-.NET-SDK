@@ -7,7 +7,7 @@ using Nancy;
 
 namespace HelloWorld
 {
-    class Bootstrapper : DefaultNancyBootstrapper
+    public class Bootstrapper : DefaultNancyBootstrapper
     {
         protected override void ConfigureApplicationContainer(Nancy.TinyIoc.TinyIoCContainer container)
         {

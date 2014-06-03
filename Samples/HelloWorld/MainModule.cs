@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Dynamic;
 
 using Nancy;
 using OpenTokSDK;
@@ -17,13 +18,11 @@ namespace HelloWorld
 
             Get["/"] = _ =>
                 {
-                    var token = opentokService.Session.GenerateToken();
-                    var locals = new Dictionary<string, string>
-                    {
-                        { "Token", token },
-                        { "ApiKey", opentokService.OpenTok.ApiKey.ToString() },
-                        { "SessionId", opentokService.Session.Id }
-                    };
+                    dynamic locals = new ExpandoObject();
+
+                    locals.Token = opentokService.Session.GenerateToken();
+                    locals.ApiKey = opentokService.OpenTok.ApiKey.ToString();
+                    locals.SessionId = opentokService.Session.Id;
 
                     return View["index", locals];
                 };
