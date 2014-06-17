@@ -117,14 +117,14 @@ namespace OpenTokSDK
          * <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">
          * OT.initSession()</a> method (to initialize an OpenTok session).
          */
-        public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.ROUTED)
+        public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED)
         {
 
             if (!OpenTokUtils.TestIpAddress(location))
             {
                 throw new OpenTokArgumentException(string.Format("Location {0} is not a valid IP address", location));
             }
-            string preference = (mediaMode == MediaMode.RELAY) ? "enabled" : "disabled";
+            string preference = (mediaMode == MediaMode.RELAYED) ? "enabled" : "disabled";
 
             var headers = new Dictionary<string, string> { { "Content-type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
