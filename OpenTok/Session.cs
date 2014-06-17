@@ -25,7 +25,7 @@ namespace OpenTokSDK
          * cannot send and receive each others' streams, due to firewalls on the clients' networks,
          * their streams will be relayed using the OpenTok TURN Server.
          */
-        RELAY
+        RELAYED
     }
 
     /**

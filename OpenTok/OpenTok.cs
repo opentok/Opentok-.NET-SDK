@@ -78,8 +78,14 @@ namespace OpenTokSDK
          * the OpenTok servers will be based on the first client connecting to the session.
          *
          * @param mediaMode determine whether the session will transmit streams using the
-         * OpenTok Media Router (MediaMode.ROUTED) or not (MediaMode.RELAYED). By default, sessions
-         * use the OpenTok Media Router.
+         * OpenTok Media Router (<code>MediaMode.ROUTED</code>) or not
+         * (<code>MediaMode.RELAYED</code>). By default, the setting is
+         * <code>MediaMode.RELAYED</code>.
+         * <p>
+         * With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the
+         * session will attempt to transmit streams directly between clients. If clients cannot
+         * connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
+         * streams.
          * <p>
          * The <a href="http://tokbox.com/#multiparty" target="_top"> OpenTok Media Router</a>
          * provides the following benefits:
@@ -101,11 +107,6 @@ namespace OpenTokSDK
          * </ul>
          *
          * <p>
-         * With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the
-         * session will attempt to transmit streams directly between clients. If clients cannot
-         * connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
-         * streams.
-         * <p>
          * You will be billed for streamed minutes if you use the OpenTok Media Router or if the
          * session uses the OpenTok TURN server to relay streams. For information on pricing, see
          * the <a href="http://www.tokbox.com/pricing" target="_top">OpenTok pricing page</a>.
@@ -117,14 +118,14 @@ namespace OpenTokSDK
          * <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">
          * OT.initSession()</a> method (to initialize an OpenTok session).
          */
-        public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.ROUTED)
+        public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED)
         {
 
             if (!OpenTokUtils.TestIpAddress(location))
             {
                 throw new OpenTokArgumentException(string.Format("Location {0} is not a valid IP address", location));
             }
-            string preference = (mediaMode == MediaMode.RELAY) ? "enabled" : "disabled";
+            string preference = (mediaMode == MediaMode.RELAYED) ? "enabled" : "disabled";
 
             var headers = new Dictionary<string, string> { { "Content-type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
