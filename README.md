@@ -43,7 +43,8 @@ See the sample subdirectory of the SDK.
 # Creating Sessions
 Use the `CreateSession()` method of the OpenTok object to create a session and a session ID.
 
-The following code creates a session that uses the OpenTok Media Router:
+The following code creates a session that attempts to stream media directly between clients.
+If clients cannot connect, the session uses the OpenTok TURN server:
 
 <pre>
 namespace Example
@@ -68,7 +69,7 @@ namespace Example
 }
 </pre>
 
-The following code creates a peer-to-peer session:
+The following code creates a session that uses the OpenTok Media Router:
 
 <pre>
 namespace Example
@@ -84,7 +85,7 @@ namespace Example
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
 
             // Create a session that uses the OpenTok Media Router    
-            Session session = opentok.CreateSession(mediaMode: MediaMode.RELAY);
+            Session session = opentok.CreateSession(mediaMode: MediaMode.ROUTED);
            
             // The ID of the session we just created
             Console.Out.WriteLine("SessionId: {0}", session.Id);
