@@ -259,6 +259,12 @@ of API changes:
   `CreateSession(string location = "", MediaMode mediaMode = MediaMode.ROUTED)`.
   The `mediaMode` parameter replaces the `p2p.preference` setting in the
   previous version. The method returns a Session Object.
+  
+  The default setting for the `CreateSession()` method is to create a session with the media mode set
+  to relayed. In previous versions of the SDK, the default setting was to use the OpenTok Media Router
+  (media mode set to routed). In a relayed session, clients will attempt to send streams directly
+  between each other (peer-to-peer); if clients cannot connect due to firewall restrictions, the
+  session uses the OpenTok TURN server to relay audio-video streams.
 
 * GenerateToken -- In the previous version, there were two methods:
   `OpenTokSDK.GenerateToken(string sessionId)` and
