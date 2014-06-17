@@ -18,9 +18,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">OpenTok .NET SDK
-   &#160;<span id="projectnumber">2.2</span>
    </div>
-   <div id="projectbrief">OpenTok .NET SDK</div>
   </td>
  </tr>
  </tbody>
@@ -87,7 +85,7 @@ Properties</h2></td></tr>
 <tr class="separator:a4358f8c5742cbdd09da0e5e29d0adade"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf8bce164576adcb0c6eefe5d4e9fb3d"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#abf8bce164576adcb0c6eefe5d4e9fb3d">ApiSecret</a><code> [get, set]</code></td></tr>
 <tr class="separator:abf8bce164576adcb0c6eefe5d4e9fb3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2f44ebe63e7de4cedc98686ea0e2fb0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_util_1_1_http_client.html">HttpClient</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#af2f44ebe63e7de4cedc98686ea0e2fb0">Client</a><code> [get, set]</code></td></tr>
+<tr class="memitem:af2f44ebe63e7de4cedc98686ea0e2fb0"><td class="memItemLeft" align="right" valign="top">HttpClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#af2f44ebe63e7de4cedc98686ea0e2fb0">Client</a><code> [get, set]</code></td></tr>
 <tr class="separator:af2f44ebe63e7de4cedc98686ea0e2fb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -193,10 +191,11 @@ Properties</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">location</td><td>(String) An IP address that the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> servers will use to situate the session in its global network. If you do not set a location hint, the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> servers will be based on the first client connecting to the session.</td></tr>
-    <tr><td class="paramname">mediaMode</td><td>determine whether the session will transmit streams using the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router (MediaMode.ROUTED) or not (MediaMode.RELAYED). By default, sessions use the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router. </td></tr>
+    <tr><td class="paramname">mediaMode</td><td>determine whether the session will transmit streams using the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router (<code>MediaMode.ROUTED</code>) or not (<code>MediaMode.RELAYED</code>). By default, the setting is <code>MediaMode.RELAYED</code>. </td></tr>
   </table>
   </dd>
 </dl>
+<p>With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the session will attempt to transmit streams directly between clients. If clients cannot connect due to firewall restrictions, the session uses the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> TURN server to relay streams. </p>
 <p>The <a href="http://tokbox.com/#multiparty" target="_top">OpenTok Media Router</a> provides the following benefits:</p>
 <ul>
 <li>
@@ -206,7 +205,6 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
 <li>
 The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router supports the <a href="http://tokbox.com/#archiving" target="_top">archiving and playback</a> feature, which lets you record, save, and retrieve <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> sessions. </li>
 </ul>
-<p>With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the session will attempt to transmit streams directly between clients. If clients cannot connect due to firewall restrictions, the session uses the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> TURN server to relay streams. </p>
 <p>You will be billed for streamed minutes if you use the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router or if the session uses the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> TURN server to relay streams. For information on pricing, see the <a href="http://www.tokbox.com/pricing" target="_top">OpenTok pricing page</a>.</p>
 <dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="class_open_tok_s_d_k_1_1_session.html">Session</a> object representing the new session. The <code>Id</code> property of the <a class="el" href="class_open_tok_s_d_k_1_1_session.html">Session</a> is the session ID, which uniquely identifies the session. You will use this session ID in the client SDKs to identify the session. For example, when using the OpenTok.js library, use the session ID when calling the <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a> method (to initialize an <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> session). </dd></dl>
 
@@ -487,7 +485,7 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_open_tok_s_d_k_1_1_util_1_1_http_client.html">HttpClient</a> OpenTokSDK.OpenTok.Client</td>
+          <td class="memname">HttpClient OpenTokSDK.OpenTok.Client</td>
         </tr>
       </table>
   </td>
@@ -506,7 +504,7 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 21 2014 11:32:27 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 16 2014 23:44:33 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

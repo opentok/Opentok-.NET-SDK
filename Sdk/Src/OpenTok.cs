@@ -79,8 +79,14 @@ namespace OpenTokSDK
          * the OpenTok servers will be based on the first client connecting to the session.
          *
          * @param mediaMode determine whether the session will transmit streams using the
-         * OpenTok Media Router (MediaMode.ROUTED) or not (MediaMode.RELAYED). By default, sessions
-         * use the OpenTok Media Router.
+         * OpenTok Media Router (<code>MediaMode.ROUTED</code>) or not
+         * (<code>MediaMode.RELAYED</code>). By default, the setting is
+         * <code>MediaMode.RELAYED</code>.
+         * <p>
+         * With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the
+         * session will attempt to transmit streams directly between clients. If clients cannot
+         * connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
+         * streams.
          * <p>
          * The <a href="http://tokbox.com/#multiparty" target="_top"> OpenTok Media Router</a>
          * provides the following benefits:
@@ -101,11 +107,6 @@ namespace OpenTokSDK
          *     feature, which lets you record, save, and retrieve OpenTok sessions.</li>
          * </ul>
          *
-         * <p>
-         * With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the
-         * session will attempt to transmit streams directly between clients. If clients cannot
-         * connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
-         * streams.
          * <p>
          * You will be billed for streamed minutes if you use the OpenTok Media Router or if the
          * session uses the OpenTok TURN server to relay streams. For information on pricing, see
