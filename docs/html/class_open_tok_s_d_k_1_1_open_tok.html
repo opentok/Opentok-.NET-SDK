@@ -62,8 +62,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9cb80e60097009ad08501f1dfa2064ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebf3be7c4b27258f2633e94c2b0d747c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#aebf3be7c4b27258f2633e94c2b0d747c">OpenTok</a> (int apiKey, string apiSecret, string apiUrl)</td></tr>
 <tr class="separator:aebf3be7c4b27258f2633e94c2b0d747c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6eeddc55a5a27aaac1fcc3e92c36a396"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_session.html">Session</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a6eeddc55a5a27aaac1fcc3e92c36a396">CreateSession</a> (string location=&quot;&quot;, <a class="el" href="namespace_open_tok_s_d_k.html#aa5c49b934f60d018d88d1be49d114d9d">MediaMode</a> mediaMode=MediaMode.ROUTED)</td></tr>
-<tr class="separator:a6eeddc55a5a27aaac1fcc3e92c36a396"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab98270ce3bf621f475ee6c35aac6be84"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_session.html">Session</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#ab98270ce3bf621f475ee6c35aac6be84">CreateSession</a> (string location=&quot;&quot;, <a class="el" href="namespace_open_tok_s_d_k.html#aa5c49b934f60d018d88d1be49d114d9d">MediaMode</a> mediaMode=MediaMode.RELAYED)</td></tr>
+<tr class="separator:ab98270ce3bf621f475ee6c35aac6be84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f55acbac2b94d4a4185ac28bfdc3584"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a8f55acbac2b94d4a4185ac28bfdc3584">GenerateToken</a> (string sessionId, <a class="el" href="namespace_open_tok_s_d_k.html#ab956e9ddc2edd999eba898d5d80fcfb7">Role</a> role=Role.PUBLISHER, double expireTime=0, string data=null)</td></tr>
 <tr class="separator:a8f55acbac2b94d4a4185ac28bfdc3584"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a477f1a0eb5ed92519a07d152790e99e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_archive.html">Archive</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a477f1a0eb5ed92519a07d152790e99e0">StartArchive</a> (string sessionId, string name=&quot;&quot;)</td></tr>
@@ -160,7 +160,7 @@ Properties</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a6eeddc55a5a27aaac1fcc3e92c36a396"></a>
+<a class="anchor" id="ab98270ce3bf621f475ee6c35aac6be84"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -174,7 +174,7 @@ Properties</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="namespace_open_tok_s_d_k.html#aa5c49b934f60d018d88d1be49d114d9d">MediaMode</a>&#160;</td>
-          <td class="paramname"><em>mediaMode</em> = <code>MediaMode.ROUTED</code>&#160;</td>
+          <td class="paramname"><em>mediaMode</em> = <code>MediaMode.RELAYED</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -187,7 +187,7 @@ Properties</h2></td></tr>
 <p><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> sessions do not expire. However, authentication tokens do expire (see the generateToken() method). Also note that sessions cannot explicitly be destroyed. </p>
 <p>A session ID string can be up to 255 characters long. </p>
 <p>Calling this method results in an OpenTokException in the event of an error. Check the error message for details.</p>
-<p>You can also create a session using the <a href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok REST API</a> or the <a href="https://dashboard.tokbox.com/projects">OpenTok sdashboard</a>.</p>
+<p>You can also create a session using the <a href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok REST API</a> or the <a href="https://dashboard.tokbox.com/projects">OpenTok dashboard</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">location</td><td>(String) An IP address that the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> servers will use to situate the session in its global network. If you do not set a location hint, the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> servers will be based on the first client connecting to the session.</td></tr>
@@ -397,7 +397,7 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
 </div><div class="memdoc">
 <p>Starts archiving an <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> 2.0 session.</p>
 <p>Clients must be actively connected to the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> session for you to successfully start recording an archive. </p>
-<p>You can only record one archive at a time for a given session. You can only record archives of sessions that uses the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router; you cannot archive peer-to-peer sessions.</p>
+<p>You can only record one archive at a time for a given session. You can only record archives of sessions that uses the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router (sessions with the media mode set to routed); you cannot archive sessions with the media mode set to relayed.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sessionId</td><td>The session ID of the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> session to archive.</td></tr>
@@ -499,12 +499,12 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>Sdk/Src/OpenTok.cs</li>
+<li>OpenTok/OpenTok.cs</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 16 2014 23:44:33 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 20 2014 11:19:59 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
