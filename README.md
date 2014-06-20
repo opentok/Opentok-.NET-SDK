@@ -6,7 +6,7 @@ and to generate [tokens](http://tokbox.com/opentok/tutorials/create-token/),
 and work with OpenTok 2.0 [archives](http://tokbox.com/#archiving).
 
 If you are updating from a previous version of this SDK, see
-[Important changes in v2.2](#important-changes-in-v22).
+[Important changes since v2.2.0](#important-changes-since-v220).
 
 ## Download
 
@@ -238,7 +238,17 @@ void ListArchives(OpenTok opentok)
 }
 </pre>
 
-# Important changes in v2.2
+# Important changes since v2.2.0
+
+**Changes in v2.2.1:**
+
+The default setting for the `CreateSession()` method is to create a session with the media mode set
+to relayed. In previous versions of the SDK, the default setting was to use the OpenTok Media Router
+(media mode set to routed). In a relayed session, clients will attempt to send streams directly
+between each other (peer-to-peer); if clients cannot connect due to firewall restrictions, the
+session uses the OpenTok TURN server to relay audio-video streams.
+
+**Changes in v2.2.0:**
 
 This version of the SDK includes support for working with OpenTok 2.0 archives. (This API does not
 work with OpenTok 1.0 archives.)
@@ -259,7 +269,7 @@ of API changes:
   `CreateSession(string location = "", MediaMode mediaMode = MediaMode.ROUTED)`.
   The `mediaMode` parameter replaces the `p2p.preference` setting in the
   previous version. The method returns a Session Object.
-
+  
 * GenerateToken -- In the previous version, there were two methods:
   `OpenTokSDK.GenerateToken(string sessionId)` and
   `OpenTokSDK.GenerateToken(string sessionId, Dictionary<string, object> options)`
