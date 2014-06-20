@@ -33,10 +33,14 @@ namespace OpenTokSDK
          */
         STOPPED,
         /**
-         * The archive file is available at the target S3 bucket you set at the
-         * <a href="https://dashboard.tokbox.com">OpenTok dashboard</a>.
+         * The archive file is available at the target Amazon S3 bucket or Windows Azure container
+         * you set at the <a href="https://dashboard.tokbox.com">OpenTok dashboard</a>.
          */
         UPLOADED,
+        /**
+         * The archive file is no longer available for download from the OpenTok cloud.
+         */
+        EXPIRED,
         /**
          * The status of the archive is unknown.
          */

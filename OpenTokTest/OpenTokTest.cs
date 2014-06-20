@@ -313,6 +313,34 @@ namespace OpenTokSDKTest
             mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/partner/"+this.apiKey+"/archive/"+archiveId))), Times.Once());
         }
 
+        [Fact]
+        public void GetExpiredArchiveTest()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = "{\n" +
+                                    " \"createdAt\" : 1395187836000,\n" +
+                                    " \"duration\" : 62,\n" +
+                                    " \"id\" : \"" + archiveId + "\",\n" +
+                                    " \"name\" : \"\",\n" +
+                                    " \"partnerId\" : 123456,\n" +
+                                    " \"reason\" : \"\",\n" +
+                                    " \"sessionId\" : \"SESSIONID\",\n" +
+                                    " \"size\" : 8347554,\n" +
+                                    " \"status\" : \"expired\",\n" +
+                                    " \"url\" : null\n" + " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = opentok.GetArchive(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/partner/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
+        }
+
         
         [Fact]
         public void ListArchivesTest()
