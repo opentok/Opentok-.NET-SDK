@@ -37,6 +37,8 @@ namespace OpenTokSDK
          * <a href="https://dashboard.tokbox.com">OpenTok dashboard</a>.
          */
         UPLOADED,
+
+        EXPIRED,
         /**
          * The status of the archive is unknown.
          */
