@@ -106,11 +106,6 @@ namespace OpenTokSDK
          *     feature, which lets you record, save, and retrieve OpenTok sessions.</li>
          * </ul>
          *
-         * <p>
-         * You will be billed for streamed minutes if you use the OpenTok Media Router or if the
-         * session uses the OpenTok TURN server to relay streams. For information on pricing, see
-         * the <a href="http://www.tokbox.com/pricing" target="_top">OpenTok pricing page</a>.
-         *
          * @return A Session object representing the new session. The <code>Id</code> property of
          * the Session is the session ID, which uniquely identifies the session. You will use
          * this session ID in the client SDKs to identify the session. For example, when using the
