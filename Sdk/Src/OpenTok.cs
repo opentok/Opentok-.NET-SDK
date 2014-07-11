@@ -106,10 +106,6 @@ namespace OpenTokSDK
          * session will attempt to transmit streams directly between clients. If clients cannot
          * connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
          * streams.
-         * <p>
-         * You will be billed for streamed minutes if you use the OpenTok Media Router or if the
-         * session uses the OpenTok TURN server to relay streams. For information on pricing, see
-         * the <a href="http://www.tokbox.com/pricing" target="_top">OpenTok pricing page</a>.
          *
          * @return A Session object representing the new session. The <code>Id</code> property of
          * the Session is the session ID, which uniquely identifies the session. You will use
