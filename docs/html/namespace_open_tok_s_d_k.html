@@ -18,9 +18,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">OpenTok .NET SDK
-   &#160;<span id="projectnumber">2.2</span>
    </div>
-   <div id="projectbrief">OpenTok .NET SDK</div>
   </td>
  </tr>
  </tbody>
@@ -44,7 +42,6 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
@@ -52,15 +49,6 @@
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr class="memitem:namespace_open_tok_s_d_k_1_1_constants"><td class="memItemLeft" align="right" valign="top">package &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_open_tok_s_d_k_1_1_constants.html">Constants</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespace_open_tok_s_d_k_1_1_exceptions"><td class="memItemLeft" align="right" valign="top">package &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_open_tok_s_d_k_1_1_exceptions.html">Exceptions</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespace_open_tok_s_d_k_1_1_util"><td class="memItemLeft" align="right" valign="top">package &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_open_tok_s_d_k_1_1_util.html">Util</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_archive.html">Archive</a></td></tr>
@@ -84,6 +72,7 @@ Enumerations</h2></td></tr>
 <br />
 &#160;&#160;<a class="el" href="namespace_open_tok_s_d_k.html#a6e59086355ea016396586cda97de7ff0a09d4d696b4e935115b9313e3c412509a">ArchiveStatus.STOPPED</a>, 
 <a class="el" href="namespace_open_tok_s_d_k.html#a6e59086355ea016396586cda97de7ff0a101646385a17f824bd0afcd843be463e">ArchiveStatus.UPLOADED</a>, 
+<a class="el" href="namespace_open_tok_s_d_k.html#a6e59086355ea016396586cda97de7ff0a38afd7ae34bd5e3e6fc170d8b09178a3">ArchiveStatus.EXPIRED</a>, 
 <a class="el" href="namespace_open_tok_s_d_k.html#a6e59086355ea016396586cda97de7ff0ab5a732549319af0ddb6913df89efc0df">ArchiveStatus.UNKOWN</a>
 <br />
  }</td></tr>
@@ -94,7 +83,7 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="separator:ab956e9ddc2edd999eba898d5d80fcfb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5c49b934f60d018d88d1be49d114d9d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_open_tok_s_d_k.html#aa5c49b934f60d018d88d1be49d114d9d">MediaMode</a> { <a class="el" href="namespace_open_tok_s_d_k.html#aa5c49b934f60d018d88d1be49d114d9da14e4753d47e8eb64cff7ada74c9db2bf">MediaMode.ROUTED</a>, 
-<a class="el" href="namespace_open_tok_s_d_k.html#aa5c49b934f60d018d88d1be49d114d9dacb93e62320530221f706e87510024870">MediaMode.RELAY</a>
+<a class="el" href="namespace_open_tok_s_d_k.html#aa5c49b934f60d018d88d1be49d114d9dabed162a3d048a3c4804f01d3de7ae6d9">MediaMode.RELAYED</a>
  }</td></tr>
 <tr class="separator:aa5c49b934f60d018d88d1be49d114d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -126,7 +115,10 @@ Enumerations</h2></td></tr>
 <p>The archive recording has stopped, but the file is not available. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="a6e59086355ea016396586cda97de7ff0a101646385a17f824bd0afcd843be463e"></a>UPLOADED&#160;</td><td class="fielddoc">
-<p>The archive file is available at the target S3 bucket you set at the <a href="https://dashboard.tokbox.com">OpenTok dashboard</a>. </p>
+<p>The archive file is available at the target Amazon S3 bucket or Windows Azure container you set at the <a href="https://dashboard.tokbox.com">OpenTok dashboard</a>. </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a6e59086355ea016396586cda97de7ff0a38afd7ae34bd5e3e6fc170d8b09178a3"></a>EXPIRED&#160;</td><td class="fielddoc">
+<p>The archive file is no longer available for download from the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> cloud. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="a6e59086355ea016396586cda97de7ff0ab5a732549319af0ddb6913df89efc0df"></a>UNKOWN&#160;</td><td class="fielddoc">
 <p>The status of the archive is unknown. </p>
@@ -149,7 +141,7 @@ Enumerations</h2></td></tr>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="aa5c49b934f60d018d88d1be49d114d9da14e4753d47e8eb64cff7ada74c9db2bf"></a>ROUTED&#160;</td><td class="fielddoc">
 <p>The session will transmit streams using the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Server. </p>
 </td></tr>
-<tr><td class="fieldname"><a class="anchor" id="aa5c49b934f60d018d88d1be49d114d9dacb93e62320530221f706e87510024870"></a>RELAY&#160;</td><td class="fielddoc">
+<tr><td class="fieldname"><a class="anchor" id="aa5c49b934f60d018d88d1be49d114d9dabed162a3d048a3c4804f01d3de7ae6d9"></a>RELAYED&#160;</td><td class="fielddoc">
 <p>The session will attempt to transmit streams directly between clients. If two clients cannot send and receive each others' streams, due to firewalls on the clients' networks, their streams will be relayed using the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> TURN Server. </p>
 </td></tr>
 </table>
@@ -183,7 +175,7 @@ Enumerations</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 21 2014 11:32:27 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 20 2014 11:19:59 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

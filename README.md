@@ -5,6 +5,9 @@ You can create OpenTok [sessions](http://tokbox.com/opentok/tutorials/create-ses
 and to generate [tokens](http://tokbox.com/opentok/tutorials/create-token/),
 and work with OpenTok 2.0 [archives](http://tokbox.com/#archiving).
 
+If you are updating from a previous version of this SDK, see
+[Important changes since v2.2.0](#important-changes-since-v220).
+
 ## Download
 
 Download the .NET SDK:
@@ -43,7 +46,8 @@ See the sample subdirectory of the SDK.
 # Creating Sessions
 Use the `CreateSession()` method of the OpenTok object to create a session and a session ID.
 
-The following code creates a session that uses the OpenTok Media Router:
+The following code creates a session that attempts to stream media directly between clients.
+If clients cannot connect, the session uses the OpenTok TURN server:
 
 <pre>
 namespace Example
@@ -68,7 +72,7 @@ namespace Example
 }
 </pre>
 
-The following code creates a peer-to-peer session:
+The following code creates a session that uses the OpenTok Media Router:
 
 <pre>
 namespace Example
@@ -84,7 +88,7 @@ namespace Example
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
 
             // Create a session that uses the OpenTok Media Router    
-            Session session = opentok.CreateSession(mediaMode: MediaMode.RELAY);
+            Session session = opentok.CreateSession(mediaMode: MediaMode.ROUTED);
            
             // The ID of the session we just created
             Console.Out.WriteLine("SessionId: {0}", session.Id);
@@ -234,10 +238,54 @@ void ListArchives(OpenTok opentok)
 }
 </pre>
 
+# Important changes since v2.2.0
+
+**Changes in v2.2.1:**
+
+The default setting for the `CreateSession()` method is to create a session with the media mode set
+to relayed. In previous versions of the SDK, the default setting was to use the OpenTok Media Router
+(media mode set to routed). In a relayed session, clients will attempt to send streams directly
+between each other (peer-to-peer); if clients cannot connect due to firewall restrictions, the
+session uses the OpenTok TURN server to relay audio-video streams.
+
+**Changes in v2.2.0:**
+
+This version of the SDK includes support for working with OpenTok 2.0 archives. (This API does not
+work with OpenTok 1.0 archives.)
+
+This version of the SDK includes a number of improvements in the API design. These include a number
+of API changes:
+
+* New OpenTok class --  The name of the main class has changed from OpenTokSDK to OpenTok.
+  In the previous version, the constructor was `OpenTokSDK()`.
+  In v2.2, it is `OpenTok(int apiKey, int apiSecret)`.
+
+* CreateSession -- In the previous version, there were two methods to create a session:
+  `OpenTokSDK.CreateSession(String location)` and
+  `OpenTokSDK.CreateSession(String location, Dictionary<string, object> options)`.
+  These methods returned a string (the session ID).
+
+  In v2.2, the OpenTok class includes one method, which takes two parameters (both optional):
+  `CreateSession(string location = "", MediaMode mediaMode = MediaMode.ROUTED)`.
+  The `mediaMode` parameter replaces the `p2p.preference` setting in the
+  previous version. The method returns a Session Object.
+  
+* GenerateToken -- In the previous version, there were two methods:
+  `OpenTokSDK.GenerateToken(string sessionId)` and
+  `OpenTokSDK.GenerateToken(string sessionId, Dictionary<string, object> options)`
+  In v2.2, this is replaced with the following method:
+  `OpenTokSDK.OpenTok.GenerateToken(string sessionId, Role role = Role.PUBLISHER, double expireTime = 0, string data = null)`.
+  All parameters, except the `sessionId` parameter, are optional.
+  
+  Also, the Session class includes a method for generating tokens:
+  `OpenTokSDK.Session.GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null)`.
+
+See the [OpenTok 2.2 SDK Reference](http://tokbox.com/opentok/libraries/server/dot-net/reference/)
+for details on the new API.
 
 # Support
 
 See http://tokbox.com/opentok/support/ for all our support options.
 
-Find a bug? File it on the [Issues](https://github.com/opentok/opentok-php-sdk/issues) page. Hint:
+Find a bug? File it on the [Issues](https://github.com/opentok/OpenTok-.NET-SDK/issues) page. Hint:
 test cases are really helpful!
