@@ -68,14 +68,12 @@ namespace Archiving
             Get["/start"] = _ =>
             {
                 Archive archive = opentokService.OpenTok.StartArchive(opentokService.Session.Id);
-                // TODO: JSON Serialization
                 return archive;
             };
 
             Get["/stop/{id}"] = parameters =>
             {
                 Archive archive = opentokService.OpenTok.StopArchive(parameters.id);
-                // TODO: JSON Serialization
                 return archive;
             };
 

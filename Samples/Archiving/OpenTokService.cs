@@ -46,7 +46,7 @@ namespace Archiving
 
             this.OpenTok = new OpenTok(apiKey, apiSecret);
 
-            this.Session = this.OpenTok.CreateSession();
+            this.Session = this.OpenTok.CreateSession(mediaMode: MediaMode.ROUTED);
         }
     }
 }
