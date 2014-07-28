@@ -107,7 +107,6 @@
     <None Include="views\master.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OpenTok\OpenTok.csproj">
