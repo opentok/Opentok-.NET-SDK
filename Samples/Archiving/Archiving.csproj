@@ -65,6 +65,9 @@
     <Reference Include="Nancy.Owin">
       <HintPath>..\..\packages\Nancy.Owin.0.22.2\lib\net40\Nancy.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.ViewEngines.Razor">
+      <HintPath>..\..\packages\Nancy.Viewengines.Razor.0.23.2\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="Owin">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
@@ -90,6 +93,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="views\history.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="views\host.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -99,6 +105,7 @@
     <None Include="views\master.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OpenTok\OpenTok.csproj">
@@ -150,6 +157,13 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+if $(ConfigurationName) == Debug (
+xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.0.23.2\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
+xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.0.23.2\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
+)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
