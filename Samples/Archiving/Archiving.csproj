@@ -104,7 +104,7 @@
     <None Include="views\index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="views\master.sshtml">
+    <None Include="views\participant.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="views\Shared\Layout.cshtml">
