@@ -101,7 +101,7 @@
     <None Include="views\host.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="views\index.sshtml">
+    <None Include="views\index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="views\master.sshtml">
