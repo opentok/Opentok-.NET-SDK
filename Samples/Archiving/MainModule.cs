@@ -42,19 +42,17 @@ namespace Archiving
 
             Get["/history"] = _ =>
             {
-                // TODO: does casting work here?
-                //var page = Request.Query.page.HasValue ? (int)Request.Query.page : 1;
-                //var offset = (page - 1) * 5;
-                //ArchiveList archives = opentokService.OpenTok.ListArchives(offset, 5);
+                var page = Request.Query.page.HasValue ? (int)Request.Query.page : 1;
+                var offset = (page - 1) * 5;
+                ArchiveList archives = opentokService.OpenTok.ListArchives(offset, 5);
 
-                //string showPrevious = page > 1 ? "/history?page=" + (page - 1).ToString() : null;
-                //string showNext = archives.TotalCount > (offset + 5) ? "/history?page=" + (page - 1).ToString() : null;
+                string showPrevious = page > 1 ? "/history?page=" + (page - 1).ToString() : null;
+                string showNext = archives.TotalCount > (offset + 5) ? "/history?page=" + (page + 1).ToString() : null;
 
                 dynamic locals = new ExpandoObject();
-                //locals.Archives = archives;
-                //locals.ShowPrevious = showPrevious;
-                //locals.ShowNext = showNext;
-                locals.Test = "Hello World";
+                locals.Archives = archives;
+                locals.ShowPrevious = showPrevious;
+                locals.ShowNext = showNext;
 
                 return View["history", locals];
             };
@@ -62,13 +60,12 @@ namespace Archiving
             Get["/download/{id}"] = parameters =>
             {
                 Archive archive = opentokService.OpenTok.GetArchive(parameters.id);
-                // TODO: JSON serialization
-                return archive;
+                return Response.AsRedirect(archive.Url);
             };
 
             Get["/start"] = _ =>
             {
-                Archive archive = opentokService.OpenTok.StartArchive(opentokService.Session.Id);
+                Archive archive = opentokService.OpenTok.StartArchive(opentokService.Session.Id, ".NET Archiving Sample App");
                 return archive;
             };
 
