@@ -98,7 +98,7 @@
     <None Include="views\history.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="views\host.sshtml">
+    <None Include="views\host.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="views\index.cshtml">
