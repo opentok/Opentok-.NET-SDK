@@ -95,16 +95,16 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="views\history.cshtml">
+    <None Include="views\History.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="views\host.cshtml">
+    <None Include="views\Host.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="views\index.cshtml">
+    <None Include="views\Index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="views\participant.cshtml">
+    <None Include="views\Participant.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="views\Shared\Layout.cshtml">
