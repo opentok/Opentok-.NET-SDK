@@ -1,4 +1,4 @@
-# OpenTok .NET SDK 2.2
+# OpenTok .NET SDK
 
 Use the OpenTok .NET SDK to work with [OpenTok](http://www.tokbox.com/) applications.
 You can create OpenTok [sessions](http://tokbox.com/opentok/tutorials/create-session/)

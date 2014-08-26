@@ -1,0 +1,85 @@
+﻿<div class="container bump-me">
+
+    <div class="body-content">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Past Recordings</h3>
+            </div>
+            <div class="panel-body">
+                @if (Model.Archives.Count > 0)
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Created</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var archive in Model.Archives)
+                            {
+
+                                <tr data-item-id="@archive.Id">
+                                    <td>
+                                        @if ((archive.Status == OpenTokSDK.ArchiveStatus.AVAILABLE) && (archive.Url.Length > 0))
+                                        {
+                                            @: <a href="/download/@archive.Id">
+                                        }
+                                        @if(!String.IsNullOrEmpty(archive.Name))
+                                        {
+                                            @archive.Name
+                                        } else
+                                        {
+                                            @: Untitled
+                                        }
+                                        @if ((archive.Status == OpenTokSDK.ArchiveStatus.AVAILABLE) && (archive.Url.Length > 0))
+                                        {
+                                            @: </a>
+                                        }
+                                    </td>
+                                    <td>
+                                        @{
+                                            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                                            @epoch.AddMilliseconds(archive.CreatedAt).ToString()
+                                        }
+                                    </td>
+                                    <td>@archive.Duration seconds</td>
+                                    <td>@archive.Status</td>
+                                    <td>
+                                        @if (archive.Status == OpenTokSDK.ArchiveStatus.AVAILABLE)
+                                        {
+                                            <a href="/delete/@archive.Id">Delete</a>
+                                        } else {
+                                            @: &nbsp;
+                                        }
+                                    </td>
+                                </tr>
+
+                            }
+
+                        </tbody>
+                    </table>
+                } else
+                {
+                    <p>
+                        There are no archives currently. Try making one in the <a href="/host">host view</a>.
+                    </p>
+                }
+            </div>
+            <div class="panel-footer">
+                @if (!String.IsNullOrEmpty(Model.ShowPrevious))
+                {
+                    <a href="@Model.ShowPrevious" class="pull-left">&larr; Newer</a>
+                }
+                &nbsp;
+                @if (!String.IsNullOrEmpty(Model.ShowNext))
+                {
+                    <a href="@Model.ShowNext" class="pull-right">Older &rarr;</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
