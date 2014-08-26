@@ -22,9 +22,9 @@ namespace Archiving
             {
                 dynamic locals = new ExpandoObject();
 
-                locals.Token = opentokService.Session.GenerateToken();
                 locals.ApiKey = opentokService.OpenTok.ApiKey.ToString();
                 locals.SessionId = opentokService.Session.Id;
+                locals.Token = opentokService.Session.GenerateToken();
 
                 return View["host", locals];
             };
@@ -33,9 +33,9 @@ namespace Archiving
             {
                 dynamic locals = new ExpandoObject();
 
-                locals.Token = opentokService.Session.GenerateToken();
                 locals.ApiKey = opentokService.OpenTok.ApiKey.ToString();
                 locals.SessionId = opentokService.Session.Id;
+                locals.Token = opentokService.Session.GenerateToken();
 
                 return View["participant", locals];
             };
