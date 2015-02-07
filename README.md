@@ -1,244 +1,166 @@
 # OpenTok .NET SDK
 
-Use the OpenTok .NET SDK to work with [OpenTok](http://www.tokbox.com/) applications.
-You can create OpenTok [sessions](http://tokbox.com/opentok/tutorials/create-session/)
-and to generate [tokens](http://tokbox.com/opentok/tutorials/create-token/),
-and work with OpenTok 2.0 [archives](http://tokbox.com/#archiving).
+The OpenTok .NET SDK lets you generate
+[sessions](https://www.tokbox.com/opentok/tutorials/create-session/) and
+[tokens](https://www.tokbox.com/opentok/tutorials/create-token/) for
+[OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. This version of the
+SDK also includes support for working with
+[OpenTok 2.x archives](https://www.tokbox.com/platform/archiving).
 
 If you are updating from a previous version of this SDK, see
-[Important changes since v2.2.0](#important-changes-since-v220).
+[Important changes since v2.2](#important-changes-since-v220).
 
-## Download
+# Installation
 
-Download the .NET SDK:
+Download the latest release from the [Releases Page](https://github.com/opentok/Opentok-.NET-SDK/releases).
+Open `OpenTok.sln` and build the `OpenTok` project. Use the built OpenTok.dll along with referenced assemblies
+in your own project.
 
-<https://github.com/opentok/Opentok-.NET-SDK/archive/master.zip>
+# Usage
 
-## Prerequisites
+## Initializing
 
-1. Visual Studio. The OpenTok archiving API does not require Visual Studio. However, this sample was
-   developed using Visual Studio to create a solution with the different projects.
+Import the `OpenTokSDK` namespace into any files that will be using OpenTok objects. Then initialize an
+`OpenTokSDK.OpenTok` object using your own API Key and API Secret.
 
-2. An OpenTok API key and secret (see <https://dashboard.tokbox.com>)
+```csharp
+using OpenTokSDK;
 
-# Setup 
+// ...
 
-1. Open Visual Studio, "File -> Open -> Project/Solution" and open the Opentok-DotNet-SDK.sln file in this directory. 
+int ApiKey = 000000; // YOUR API KEY
+string ApiSecret = "YOUR API SECRET";
+var OpenTok = new OpenTok(ApiKey, ApiSecret);
+```
 
-2. Visual Studio will load the four projects that are part of this solution. 
-    * Sdk contains the actual OpenTok .NET SDK
-    * SimpleSample contains a very sample app to show the most basic functionality the OpenTok platform offers
-    * ArchivingSample contains a sample app showing off the OpenTok 2.0 archiving feature.
+## Creating Sessions
 
-3. In order to run one of the sample apps, see the README.md the samples subdirectory.
-    * [SimpleSample documentation](sample/SimpleSample/README.md)
-    * [ArchivingSample documentation](sample/ArchivingSample/README.md)
+To create an OpenTok Session, use the `OpenTok` instance's `CreateSession(string location, MediaMode mediaMode)`
+method. Both of the properties are optional and can be omitted if not needed. They are:
+
+* `string location` : An IPv4 address used as a location hint. (default: "")
+* `MediaMode mediaMode` : Specifies whether the session will use the OpenTok Media Router (MediaMode.ROUTED) or
+   use relays (MediaMode.RELAYED). (default: MediaMode.RELAYED)
+
+The return value is a `OpenTokSDK.Session` object. Its `Id` property is useful to get an identifier that can be saved to a
+persistent store (such as a database).
+
+```csharp
+// Create a session that will attempt to transmit streams directly between clients
+var session = OpenTok.CreateSession();
+// Store this sessionId in the database for later use:
+string sessionId = session.Id;
+
+// Create a session that uses the OpenTok Media Router (necessary for Archiving)
+var session = OpenTok.CreateSession(mediaMode: MediaMode.ROUTED);
+// Store this sessionId in the database for later use:
+string sessionId = session.Id;
+```
+
+## Generating Tokens
+
+Once a Session is created, you can start generating Tokens for clients to use when connecting to it.
+You can generate a token either by calling an `OpenTokSDK.OpenTok` instance's
+`GenerateToken(string sessionId, Role role, double expireTime, double data)` method, or by calling a `OpenTokSDK.Session`
+instance's `GenerateToken(Role role, double expireTime, double data)` method after creating it. In the first method, the
+`sessionId` is required and the rest of the parameters are option. In the second method, all the parameters are optional.
+
+```csharp
+
+// Generate a token from a sessionId (fetched from database)
+string token = OpenTok.GenerateToken(sessionId);
+
+// Generate a token by calling the method on the Session (returned from CreateSession)
+string token = session.GenerateToken();
+
+// Set some options in a token
+double inOneWeek = (DateTime.UtcNow.Add(TimeSpan.FromDays(7)).Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+string token = session.GenerateToken(role: Role.MODERATOR, expireTime: inOneWeek, data: "name=Johnny");
+
+```
+
+## Working with Archives
+
+You can start the recording of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
+`StartArchive(string sessionId, string name)` method. This will return a `OpenTokSDK.Archive` instance.
+The parameter `name` is optional and used to assign a name for the Archive. Note that you can
+only start an Archive on a Session that has clients connected.
+
+```csharp
+// A simple Archive (without a name)
+var archive = OpenTok.StartArchive(sessionId);
+
+// Store this archive ID in the database for later use
+Guid archiveId = archive.Id;
+```
+
+You can stop the recording of a started Archive using a `OpenTokSDK.OpenTok` instance's
+`StopArchive(String archiveId)` method or using the `OpenTokSDK.Archive` instance's `Stop()` method.
+
+```csharp
+// Stop an Archive from an archive ID (fetched from database)
+var archive = OpenTok.StopArchive(archiveId);
+```
+
+To get an `OpenTokSDK.Archive` instance (and all the information about it) from an archive ID, use the
+`OpenTokSDK.OpenTok` instance's `GetArchive(archiveId)` method.
+
+```csharp
+var archive = OpenTok.GetArchive(archiveId);
+```
+
+To delete an archive, you can call a `OpenTokSDK.OpenTok` instance's `DeleteArchive(archiveId)` method or
+call the `OpenTokSDK.Archive` instance's `Delete()` method.
+
+```csharp
+// Delete an archive from an archive ID (fetched from database)
+OpenTok.DeleteArchive(archiveId);
+
+// Delete an archive from an Archive instance (returned from GetArchive)
+Archive.Delete();
+```
+
+You can also get a list of all the Archives you've created (up to 1000) with your API Key. This is
+done using an `OpenTokSDK.OpenTok` instance's `ListArchives(int offset, int count)` method. You may optionally
+paginate the Archives you receive using the offset and count parameters. This will return an
+`OpenTokSDK.ArchiveList` object.
+
+```csharp
+// Get a list with the first 1000 archives created by the API Key
+var archives = OpenTok.ListArchives();
+
+// Get a list of the first 50 archives created by the API Key
+var archives = OpenTok.ListArchives(0, 50);
+
+// Get a list of the next 50 archives
+var archives = OpenTok.ListArchives(50, 50);
+```
+
+# Samples
+
+There are two sample applications included with the SDK. To get going as fast as possible, clone the whole
+repository and follow the Walkthroughs:
+
+*  [HelloWorld](Samples/HelloWorld/README.md)
+*  [Archiving](Samples/Archiving/README.md)
 
 # Documentation
 
-Reference documentation is available at <http://www.tokbox.com/opentok/libraries/server/dot-net/reference/index.html> and in the
+Reference documentation is available at <https://www.tokbox.com/opentok/libraries/server/dot-net/reference/> and in the
 docs directory of the SDK.
 
-# Sample apps
+# Requirements
 
-See the sample subdirectory of the SDK.
+You need an OpenTok API key and API secret, which you can obtain at <https://dashboard.tokbox.com>.
 
-# Creating Sessions
-Use the `CreateSession()` method of the OpenTok object to create a session and a session ID.
+The OpenTok .NET SDK requires .NET Framework 3.5 or greater.
 
-The following code creates a session that attempts to stream media directly between clients.
-If clients cannot connect, the session uses the OpenTok TURN server:
+# Release Notes
 
-<pre>
-namespace Example
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            int apiKey = 0; // Replace with your OpenTok API key.
-            string apiSecret = ""; // Replace with your OpenTok API secret.
+See the [Releases](https://github.com/opentok/opentok-.net-sdk/releases) page for details
+about each release.
 
-            // Creating opentok object to access the opentok API
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-
-            // Create a session that uses the OpenTok Media Router    
-            Session session = opentok.CreateSession();
-           
-            // The ID of the session we just created
-            Console.Out.WriteLine("SessionId: {0}", session.Id);
-        }
-    }
-}
-</pre>
-
-The following code creates a session that uses the OpenTok Media Router:
-
-<pre>
-namespace Example
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            int apiKey = 0; // Replace with your OpenTok API key.
-            string apiSecret = ""; // Replace with your OpenTok API secret.
-
-            // Creating opentok object to access the opentok API
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-
-            // Create a session that uses the OpenTok Media Router    
-            Session session = opentok.CreateSession(mediaMode: MediaMode.ROUTED);
-           
-            // The ID of the session we just created
-            Console.Out.WriteLine("SessionId: {0}", session.Id);
-        }
-    }
-}
-</pre>
-
-# Generating tokens
-Use the  `GenerateToken()` method of the OpenTokSDK object to create an OpenTok token:
-
-The following example shows how to obtain a token:
-
-<pre>
-using OpenTokSDK;
-
-namespace Example
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            int apiKey = 0; // Replace with your OpenTok API key.
-            string apiSecret = ""; // Replace with your OpenTok API secret.
-
-            // Creating opentok object to access the opentok API
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-
-            // Create a session that uses the OpenTok Media Router    
-            Session session = opentok.CreateSession();
-           
-            // Generate a token from the session we just created            
-            string token = opentok.GenerateToken(session.Id);
-
-            // We finally print out the id of the session with the new token created
-            Console.Out.WriteLine("SessionId: {0} \ntoken: {1}", session.Id, token);
-        }
-    }
-}
-</pre>
-
-The following C# code example shows how to obtain a token that has a role of "subscriber" and that has
-a connection metadata string:
-
-<pre>
-using OpenTokSDK;
-
-namespace Example
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            int apiKey = 0; // Replace with your OpenTok API key.
-            string apiSecret = ""; // Replace with your OpenTok API secret.
-            string connectionData = "username=Bob,userLevel=4";
-
-            // Creating opentok object to access the opentok API
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-
-            // Create a session that uses the OpenTok Media Router    
-            Session session = opentok.CreateSession();
-           
-            // Generate a token from the session we just created            
-            string token = opentok.GenerateToken(session.Id, role: Role.SUBSCRIBER, data: connectionData);
-
-            // We finally print out the id of the session with the new token created
-            Console.Out.WriteLine("SessionId: {0} \ntoken: {1}", session.Id, token);
-        }
-    }
-}
-</pre>
-
-# Working with OpenTok 2.0 archives
-
-The following method starts recording an archive of an OpenTok 2.0 session (given a session ID)
-and returns the archive ID (on success).
-
-<pre>
-Guid StartArchive(OpenTok opentok, string sessionId, string name)
-{
-    try
-    {
-        Archive archive = opentok.StartArchive(sessionId, name);
-        return archive.Id;
-    }
-    catch (OpenTokException)
-    {
-        return Guid.Empty;
-    }
-}
-</pre>
-
-The following method stops the recording of an archive (given an archive ID), returning
-true on success, and false on failure.
-
-<pre>
-bool StopArchive(OpenTok opentok, string archiveId)
-{
-    try
-    {
-        Archive archive = opentok.StopArchive(archiveId);
-        return true;
-    }
-    catch (OpenTokException)
-    {
-        return false;
-    }
-}
-</pre>
-
-The following method logs information on a given archive.
-
-<pre>
-void LogArchiveInfo(OpenTok opentok, string archiveId)
-{
-    try
-    {
-        Archive archive = opentok.GetArchive(archiveId);
-        Console.Out.WriteLine("ArchiveId: {0}", archive.Id.ToString());
-    }
-    catch (OpenTokException exception)
-    {
-        Console.Out.WriteLine(exception.ToString());
-    }
-}
-</pre>
-
-The following method logs information on all archives (up to 50)
-for your API key:
-
-<pre>
-void ListArchives(OpenTok opentok) 
-{
-    try 
-    {
-        ArchiveList archives = opentok.ListArchives();
-        for (int i = 0; i &lt; archives.Count(); i++) 
-        {
-            Archive archive = archives.ElementAt(i);
-            Console.Out.WriteLine("ArchiveId: {0}", archive.Id.ToString());
-        }
-    } catch (OpenTokException exception) 
-    {
-        Console.Out.WriteLine(exception.ToString());
-    }
-}
-</pre>
-
-# Important changes since v2.2.0
+## Important changes since v2.2.0
 
 **Changes in v2.2.1:**
 
@@ -280,12 +202,14 @@ of API changes:
   Also, the Session class includes a method for generating tokens:
   `OpenTokSDK.Session.GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null)`.
 
-See the [OpenTok 2.2 SDK Reference](http://tokbox.com/opentok/libraries/server/dot-net/reference/)
-for details on the new API.
+# Development and Contributing
+
+Interested in contributing? We :heart: pull requests! See the [Development](DEVELOPING.md) and
+[Contribution](CONTRIBUTING.md) guidelines.
 
 # Support
 
-See http://tokbox.com/opentok/support/ for all our support options.
+See <https://support.tokbox.com/> for all our support options.
 
-Find a bug? File it on the [Issues](https://github.com/opentok/OpenTok-.NET-SDK/issues) page. Hint:
+Find a bug? File it on the [Issues](https://github.com/opentok/opentok-.net-sdk/issues) page. Hint:
 test cases are really helpful!
