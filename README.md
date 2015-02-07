@@ -13,8 +13,8 @@ If you are updating from a previous version of this SDK, see
 # Installation
 
 Download the latest release from the [Releases Page](https://github.com/opentok/Opentok-.NET-SDK/releases).
-Open `OpenTok.sln` and build the `OpenTok` project. Use the built OpenTok.dll along with referenced assemblies
-in your own project.
+Unzip the file and place the place the `OpenTok.dll`, dependent assemblies, and supporting files into your
+own project.
 
 # Usage
 
