@@ -12,6 +12,16 @@ If you are updating from a previous version of this SDK, see
 
 # Installation
 
+## NuGet (recommended):
+
+Using the [Package Manager Console](http://docs.nuget.org/consume/package-manager-console):
+
+```
+PM> Install-Package OpenTok
+```
+
+## Manually:
+
 Download the latest release from the [Releases Page](https://github.com/opentok/Opentok-.NET-SDK/releases).
 Unzip the file and place the place the `OpenTok.dll`, dependent assemblies, and supporting files into your
 own project.

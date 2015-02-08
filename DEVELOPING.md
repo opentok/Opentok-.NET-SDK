@@ -11,7 +11,7 @@ this project. If you use this package within your own software as is but don't p
 
 *  [NuGet Package Manager](http://www.nuget.org/): an open source package manager that is built into many newer
    versions of Visual Studio. If you do not already have this extension, you can install it via
-   Tools > Extensions and Updates.
+   Tools > Extensions and Updates. Make sure the command line version of the tools are available.
 
 ## Tasks
 
@@ -40,15 +40,17 @@ In order to create a release, the following should be completed in order.
 1. Make sure you are on the `master` branch of the repository, with all changes merged/commited already.
 1. Update the version number in the source code and the README. See [Versioning](#versioning) for information
    about selecting an appropriate version number. Files to change:
-   - OpenTok\Constants\OpenTokVersion.cs
    - OpenTok\Properties\AssemblyInfo.cs (AssemblyInformationalVersion contains full semver, AssemblyVersion only
      only contains major.minor.*)
    - README.md
-1. Commit the version number change with the message "Update to version x.x.x", substituting the new version number.
-1. Create a git tag: `git tag -a vx.x.x -m "Release vx.x.x"`
+1. Commit the version number change with the message "Update to version x.y.z", substituting the new version number.
+1. Create a git tag: `git tag -a vx.y.z -m "Release vx.y.z"`
+1. Ensure that you have permissions to publish an update to [the NuGet package](https://www.nuget.org/packages/OpenTok/)
+   and that the command line tools have been configured using your account's API Key.
+1. Publish a NuGet package using these commands at the command line (substituting for {version}):
+   `NuGet.exe pack -sym OpenTok\OpenTok.csproj; nuget push OpenTok.{version}.nupkg`
 1. Change the version number for future development by incrementing the patch number and
-   adding "-alpha.1" in each file except the README. Building may have generated the docs files once again, so to clear
-   them run `git checkout -- docs/`. Then stage the remaining files and commit with the message
+   adding "-Alpha1" in each file except the README. Then stage the remaining files and commit with the message
    "Begin development on next version".
 1. Push the changes to the source repository: `git push origin master; git push --tags origin`
 1. Compress the contents of the `OpenTok\bin\Release\` directory, name it using the following template: `OpenTokSDK_x.y.z.zip`
@@ -62,7 +64,7 @@ The project uses [semantic versioning](http://semver.org/) as a policy for incre
 work that will go into a future version, there should be a Milestone created in the Github Issues named with the version
 number (e.g. "v2.2.1").
 
-During development the version number should end in "-alphax" or "-betax", where x is an increasing number starting from 1.
+During development the version number should end in "-Alphax" or "-Betax", where x is an increasing number starting from 1.
 Using a "." in the prerelease tag is not allowed in the .NET platform.
 
 ### Branches
