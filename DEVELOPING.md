@@ -47,6 +47,7 @@ In order to create a release, the following should be completed in order.
 1. Create a git tag: `git tag -a vx.y.z -m "Release vx.y.z"`
 1. Ensure that you have permissions to publish an update to [the NuGet package](https://www.nuget.org/packages/OpenTok/)
    and that the command line tools have been configured using your account's API Key.
+1. Rebuild the solution with the new version number.
 1. Publish a NuGet package using these commands at the command line (substituting for {version}):
    `NuGet.exe pack -sym OpenTok\OpenTok.csproj; nuget push OpenTok.{version}.nupkg`
 1. Change the version number for future development by incrementing the patch number and
