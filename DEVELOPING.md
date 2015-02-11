@@ -55,7 +55,7 @@ In order to create a release, the following should be completed in order.
    "Begin development on next version".
 1. Push the changes to the source repository: `git push origin master; git push --tags origin`
 1. Compress the contents of the `OpenTok\bin\Release\` directory, name it using the following template: `OpenTokSDK_x.y.z.zip`
-   Upload the zip as an attached file in the latest GitHub Release.
+   Upload the zip as an attached file in the latest GitHub Release. Add release notes with a description of changes and fixes.
 
 ## Workflow
 
