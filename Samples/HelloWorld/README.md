@@ -129,10 +129,10 @@ message is written to the console. Then the API Key and API Secret are used to i
 of `OpenTok`, which is stored into the one of the public properties. 
 
 Now, lets discuss the Hello World application's functionality. We want to set up a group chat so
-that any client that visits a page will connect to the same OpenTok Session. Once they are connected
-they can Publish a Stream and Subscribe to all the other streams in that Session. So we just need
-one Session object, and the OpenTokService can be used to make it accessible. The next line of our
-application simply calls the `OpenTok` instance's `CreateSession()` method and stores the resulting
+that any client (user in a browser) that visits a page will connect to the same OpenTok Session. Once
+they are connected they can Publish a Stream and Subscribe to all the other streams in that Session. So we
+just need one Session object, and the OpenTokService can be used to make it accessible. The next line of
+our application simply calls the `OpenTok` instance's `CreateSession()` method and stores the resulting
 Session object in the other public property. Alternatively, for applications that have many Sessions,
 the `Id` property of a `Session` can be stored in a database and used for all of the same operations that
 can be done with the instance (using slightly different API).
@@ -144,7 +144,7 @@ opportunity to respond to requests using route matching. This class's dependenci
 arguments to the constructor, which the IoC Container will fill in the right instance, such as an
 instance of OpenTokService as we need in this Module.
 
-As we've discussed already, since we want any user who lands comes to the application to be placed inro
+As we've discussed already, since we want any user who comes to the application to be placed into
 one group chat, we only need one page. So we create one route handler for any HTTP GET requests to trigger,
 which is done by using just the `"/"` as the route.
 
