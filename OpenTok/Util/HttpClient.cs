@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,16 +76,21 @@ namespace OpenTokSDK.Util
                 {
                     SendData(request, data);
                 }
-                response = (HttpWebResponse)request.GetResponse();
-                switch (response.StatusCode)
+                using (response = (HttpWebResponse) request.GetResponse())
                 {
-                    case HttpStatusCode.OK:
-                        StreamReader stream = new StreamReader(response.GetResponseStream());
-                        return stream.ReadToEnd();
-                    case HttpStatusCode.NoContent:
-                        return "";
-                    default:
-                        throw new OpenTokWebException("Response returned with unexpected status code " + response.StatusCode.ToString());
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.OK:
+                            using (var stream = new StreamReader(response.GetResponseStream()))
+                            {
+                                return stream.ReadToEnd();
+                            }
+                        case HttpStatusCode.NoContent:
+                            return "";
+                        default:
+                            throw new OpenTokWebException("Response returned with unexpected status code " +
+                                                          response.StatusCode.ToString());
+                    }
                 }
             }
             catch (WebException e)
