@@ -6,8 +6,12 @@ connect and conduct a group chat.
 
 **Note**: These instructions assume you will be using Visual Studio. Since the application runs as a 
 [self hosted OWIN-compatible console application](https://github.com/NancyFx/Nancy/wiki/Hosting-nancy-with-owin#katana---httplistener-selfhost),
-you should open Visual Studio using 'Run as administrator'. The sample projects are contained inside
-the `OpenTok.sln` solution at the top level.
+you have two options to run this sample:
+* Open Visual Studio using 'Run as administrator'.
+* Use your current user to run Visual Studio but reserve the url by running this command from a Administrator Command Prompt:
+```netsh http add urlacl url=http://+:8080/ user=DOMAIN\USERNAME```
+
+The sample projects are contained inside the `OpenTok.sln` solution at the top level.
 
 
 ## Running the App
