@@ -71,8 +71,8 @@ string sessionId = session.Id;
 
 Once a Session is created, you can start generating Tokens for clients to use when connecting to it.
 You can generate a token either by calling an `OpenTokSDK.OpenTok` instance's
-`GenerateToken(string sessionId, Role role, double expireTime, double data)` method, or by calling a `OpenTokSDK.Session`
-instance's `GenerateToken(Role role, double expireTime, double data)` method after creating it. In the first method, the
+`GenerateToken(string sessionId, Role role, double expireTime, string data)` method, or by calling a `OpenTokSDK.Session`
+instance's `GenerateToken(Role role, double expireTime, string data)` method after creating it. In the first method, the
 `sessionId` is required and the rest of the parameters are option. In the second method, all the parameters are optional.
 
 ```csharp
