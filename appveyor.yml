@@ -1,0 +1,6 @@
+test:
+  assemblies:
+  -  OpenTokTest.dll
+
+test_script:
+  xunit.console <assembly> /appveyor
