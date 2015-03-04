@@ -167,11 +167,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Unix' ">
 if $(ConfigurationName) == Debug (
 xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.1\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
 xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.1\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
 )</PostBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Unix' ">
+if [$(ConfigurationName) == "Debug"]; then
+  cp -R "$(SolutionDir)packages/Nancy.Viewengines.Razor.1.1/BuildProviders/Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
+  cp -R "$(SolutionDir)packages/Nancy.Viewengines.Razor.1.1/lib/Net40/Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
+fi</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
