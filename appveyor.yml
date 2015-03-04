@@ -1,3 +1,6 @@
+install:
+  - NuGet.exe restore
+
 test:
   assemblies:
   -  OpenTokTest.dll
