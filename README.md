@@ -1,5 +1,8 @@
 # OpenTok .NET SDK
 
+[![Build status](https://ci.appveyor.com/api/projects/status/tw2d8ufd3tpwkf5b?svg=true)](https://ci.appveyor.com/project/aoberoi/opentok-net-sdk)
+
+
 The OpenTok .NET SDK lets you generate
 [sessions](https://www.tokbox.com/opentok/tutorials/create-session/) and
 [tokens](https://www.tokbox.com/opentok/tutorials/create-token/) for
