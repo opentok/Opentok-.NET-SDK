@@ -1,6 +1,6 @@
 # OpenTok .NET SDK
 
-[![Build status](https://ci.appveyor.com/api/projects/status/tw2d8ufd3tpwkf5b?svg=true)](https://ci.appveyor.com/project/aoberoi/opentok-net-sdk)
+[![Build status](https://ci.appveyor.com/api/projects/status/tw2d8ufd3tpwkf5b?svg=true)](https://ci.appveyor.com/project/aoberoi/opentok-net-sdk)  [![Build Status](https://travis-ci.org/opentok/Opentok-.NET-SDK.svg)](https://travis-ci.org/opentok/Opentok-.NET-SDK)
 
 
 The OpenTok .NET SDK lets you generate
