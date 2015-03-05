@@ -2,4 +2,4 @@ install:
   - NuGet.exe restore
 
 test_script:
-  xunit.console OpenTokTest\bin\Debug\OpenTokTest.dll /appveyor
+  xunit.console --runtime=v4.0 OpenTokTest\bin\Debug\OpenTokTest.dll /appveyor
