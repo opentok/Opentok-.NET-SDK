@@ -3,7 +3,7 @@ install:
 
 test:
   assemblies:
-  -  **\*.Test.dll
+  -  '**\*.Test.dll'
 
 test_script:
   xunit.console <assembly> /appveyor
