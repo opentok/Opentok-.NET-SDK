@@ -3,7 +3,7 @@ install:
 
 test:
   assemblies:
-  -  OpenTokTest\bin\Debug\OpenTokTest.dll
+  -  **\*.Test.dll
 
 test_script:
   xunit.console <assembly> /appveyor
