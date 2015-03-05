@@ -76,6 +76,8 @@ namespace OpenTokSDK
             this.Size = archive.Size;
             this.Status = archive.Status;
             this.Url = archive.Url;
+            this.HasVideo = archive.HasVideo;
+            this.HasAudio = archive.HasAudio;
         }
 
         /**
@@ -110,6 +112,10 @@ namespace OpenTokSDK
 
 
         public String Reason { get; set; }
+
+        public bool HasVideo { get; set; }
+
+        public bool HasAudio { get; set; }
 
         /** 
          * The size of the MP4 file. For archives that have not been generated, this value is set
