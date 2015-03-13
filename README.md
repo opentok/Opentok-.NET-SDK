@@ -106,6 +106,11 @@ var archive = OpenTok.StartArchive(sessionId);
 // Store this archive ID in the database for later use
 Guid archiveId = archive.Id;
 ```
+You can add a name for the archive (to use for identification) by setting the `name` parameter of
+the `OpenTok.StartArchive()` method.
+
+You can also disable audio or video recording by setting the `hasAudio` or `hasVideo` parameter of
+the `OpenTok.StartArchive()` method `false`.
 
 You can stop the recording of a started Archive using a `OpenTokSDK.OpenTok` instance's
 `StopArchive(String archiveId)` method or using the `OpenTokSDK.Archive` instance's `Stop()` method.

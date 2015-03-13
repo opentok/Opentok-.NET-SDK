@@ -66,8 +66,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab98270ce3bf621f475ee6c35aac6be84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f55acbac2b94d4a4185ac28bfdc3584"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a8f55acbac2b94d4a4185ac28bfdc3584">GenerateToken</a> (string sessionId, <a class="el" href="namespace_open_tok_s_d_k.html#ab956e9ddc2edd999eba898d5d80fcfb7">Role</a> role=Role.PUBLISHER, double expireTime=0, string data=null)</td></tr>
 <tr class="separator:a8f55acbac2b94d4a4185ac28bfdc3584"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a477f1a0eb5ed92519a07d152790e99e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_archive.html">Archive</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a477f1a0eb5ed92519a07d152790e99e0">StartArchive</a> (string sessionId, string name=&quot;&quot;)</td></tr>
-<tr class="separator:a477f1a0eb5ed92519a07d152790e99e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b0df454a8684b99c4b13aff8df6a244"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_archive.html">Archive</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a6b0df454a8684b99c4b13aff8df6a244">StartArchive</a> (string sessionId, string name=&quot;&quot;, bool hasVideo=true, bool hasAudio=true)</td></tr>
+<tr class="separator:a6b0df454a8684b99c4b13aff8df6a244"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36af4ea80fe9f33a6a233183f2faaa5e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_archive.html">Archive</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a36af4ea80fe9f33a6a233183f2faaa5e">StopArchive</a> (string archiveId)</td></tr>
 <tr class="separator:a36af4ea80fe9f33a6a233183f2faaa5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d1abe39c668a1badb14aec01e3f8009"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_open_tok_s_d_k_1_1_archive_list.html">ArchiveList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html#a5d1abe39c668a1badb14aec01e3f8009">ListArchives</a> ()</td></tr>
@@ -371,7 +371,7 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
 
 </div>
 </div>
-<a class="anchor" id="a477f1a0eb5ed92519a07d152790e99e0"></a>
+<a class="anchor" id="a6b0df454a8684b99c4b13aff8df6a244"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -385,7 +385,19 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>name</em> = <code>&quot;&quot;</code>&#160;</td>
+          <td class="paramname"><em>name</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>hasVideo</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>hasAudio</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -401,6 +413,8 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
   <table class="params">
     <tr><td class="paramname">sessionId</td><td>The session ID of the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> session to archive.</td></tr>
     <tr><td class="paramname">name</td><td>The name of the archive. You can use this name to identify the archive. It is a property of the <a class="el" href="class_open_tok_s_d_k_1_1_archive.html">Archive</a> object, and it is a property of archive-related events in the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> client libraries.</td></tr>
+    <tr><td class="paramname">hasVideo</td><td>Whether the archive will record video (true) or not (false). The default value is true (video is recorded). If you set both <code>hasAudio</code> and <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method results in an error.</td></tr>
+    <tr><td class="paramname">hasAudio</td><td>Whether the archive will record audio (true) or not (false). The default value is true (audio is recorded). If you set both <code>hasAudio</code> and <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method results in an error.</td></tr>
   </table>
   </dd>
 </dl>
@@ -503,7 +517,7 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jun 20 2014 11:19:59 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 5 2015 00:33:18 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
