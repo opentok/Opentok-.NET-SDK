@@ -6,9 +6,8 @@
 The OpenTok .NET SDK lets you generate
 [sessions](https://www.tokbox.com/opentok/tutorials/create-session/) and
 [tokens](https://www.tokbox.com/opentok/tutorials/create-token/) for
-[OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. This version of the
-SDK also includes support for working with
-[OpenTok 2.x archives](https://www.tokbox.com/platform/archiving).
+[OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. The SDK also includes
+support for working with [OpenTok archives](https://tokbox.com/opentok/tutorials/archiving).
 
 If you are updating from a previous version of this SDK, see
 [Important changes since v2.2](#important-changes-since-v220).
