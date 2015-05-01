@@ -196,14 +196,14 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 <p>With the <code>mediaMode</code> parameter set to <code>MediaMode.RELAYED</code>, the session will attempt to transmit streams directly between clients. If clients cannot connect due to firewall restrictions, the session uses the <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> TURN server to relay streams. </p>
-<p>The <a href="http://tokbox.com/#multiparty" target="_top">OpenTok Media Router</a> provides the following benefits:</p>
+<p>The a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode" target="_top"&gt;<a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router provides the following benefits:</p>
 <ul>
 <li>
 The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router can decrease bandwidth usage in multiparty sessions. (When the <code>mediaMode</code> parameter is set to <code>MediaMode.ROUTED</code>, each client must send a separate audio-video stream to each client subscribing to it.) </li>
 <li>
-The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router can improve the quality of the user experience through <a href="http://tokbox.com/#iqc" target="_top">Intelligent Quality Control</a>. With Intelligent Quality Control, if a client's connectivity degrades to a degree that it does not support video for a stream it's subscribing to, the video is dropped on that client (without affecting other clients), and the client receives audio only. If the client's connectivity improves, the video returns. </li>
+The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router can improve the quality of the user experience through <a href="https://tokbox.com/platform/fallback" target="_top">audio fallback and video recovery</a>. With these features, if a client's connectivity degrades to a degree that it does not support video for a stream it's subscribing to, the video is dropped on that client (without affecting other clients), and the client receives audio only. If the client's connectivity improves, the video returns. </li>
 <li>
-The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router supports the <a href="http://tokbox.com/#archiving" target="_top">archiving and playback</a> feature, which lets you record, save, and retrieve <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> sessions. </li>
+The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Media Router supports the <a href="http://tokbox.com/opentok/tutorials/archiving" target="_top">archiving</a> feature, which lets you record, save, and retrieve <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> sessions. </li>
 </ul>
 <dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="class_open_tok_s_d_k_1_1_session.html">Session</a> object representing the new session. The <code>Id</code> property of the <a class="el" href="class_open_tok_s_d_k_1_1_session.html">Session</a> is the session ID, which uniquely identifies the session. You will use this session ID in the client SDKs to identify the session. For example, when using the OpenTok.js library, use the session ID when calling the <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a> method (to initialize an <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> session). </dd></dl>
 
@@ -517,7 +517,7 @@ The <a class="el" href="class_open_tok_s_d_k_1_1_open_tok.html">OpenTok</a> Medi
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 5 2015 00:33:18 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Apr 28 2015 16:58:30 for OpenTok .NET SDK by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
