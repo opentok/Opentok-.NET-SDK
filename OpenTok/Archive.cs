@@ -25,10 +25,12 @@ namespace OpenTokSDK
          */
         FAILED,
         /**
-         * The archive is pauased. This happens when all clients stop publishing streams after the archive is started.
-         * If another client publishes a stream within 60 seconds, the archive recording resumes, and the status
-         * changes to STARTED. If no clients publish after 60 seconds, the archive recording stops, and the status
-         * changes to STOPPED.
+         * The archive is in progress and no clients are publishing streams to the session.
+         * When an archive is in progress and any client publishes a stream, the status is STARTED.
+         * When an archive is PAUSED, nothing is recorded. When a client starts publishing a stream,
+         * the recording starts (or resumes). If all clients disconnect from a session that is being
+         * archived, the status changes to PAUSED, and after 60 seconds the archive recording stops
+         * (and the status changes to STOPPED).
          */
         PAUSED,
         /**
