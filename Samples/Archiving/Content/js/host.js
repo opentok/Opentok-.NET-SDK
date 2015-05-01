@@ -29,10 +29,9 @@ session.on('archiveStopped', function(event) {
 
 $(document).ready(function() {
   $(".start").click(function (event) {
-    // TODO: disable fields
+      $(".archive-options-fields").attr('disabled', 'disabled');
     $.post("/start", $(".archive-options").serialize(), function () {
-      console.log('success');
-      // TODO: enable fields
+        $(".archive-options-fields").removeAttr('disabled');
     });
   }).show();
   $(".stop").click(function(event){
