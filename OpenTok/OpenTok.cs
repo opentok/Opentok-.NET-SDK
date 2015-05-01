@@ -216,6 +216,16 @@ namespace OpenTokSDK
          * a property of the Archive object, and it is a property of archive-related events in the
          * OpenTok client libraries.
          *
+         * @param hasVideo Whether the archive will record video (true) or not (false). The default
+         * value is true (video is recorded). If you set both <code>hasAudio</code> and
+         * <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method
+         * results in an error.
+         *
+         * @param hasAudio Whether the archive will record audio (true) or not (false). The default
+         * value is true (audio is recorded). If you set both <code>hasAudio</code> and
+         * <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method
+         * results in an error.
+         *
          * @return The Archive object. This object includes properties defining the archive,
          * including the archive ID.
          */

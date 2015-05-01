@@ -113,8 +113,14 @@ namespace OpenTokSDK
 
         public String Reason { get; set; }
 
+        /**
+         * Whether the archive includes a video track (true) or not (false).
+         */
         public bool HasVideo { get; set; }
 
+        /**
+         * Whether the archive includes an audio track (true) or not (false).
+         */
         public bool HasAudio { get; set; }
 
         /** 
