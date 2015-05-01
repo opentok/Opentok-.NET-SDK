@@ -47,6 +47,12 @@ namespace OpenTokSDK
         UNKOWN
     }
 
+    public enum OutputMode
+    {
+        COMPOSED,
+        INDIVIDUAL
+    }
+
     /**
     * Represents an archive of an OpenTok session.
     */
@@ -78,6 +84,7 @@ namespace OpenTokSDK
             this.Url = archive.Url;
             this.HasVideo = archive.HasVideo;
             this.HasAudio = archive.HasAudio;
+            this.OutputMode = archive.OutputMode;
         }
 
         /**
@@ -122,6 +129,8 @@ namespace OpenTokSDK
          * Whether the archive includes an audio track (true) or not (false).
          */
         public bool HasAudio { get; set; }
+
+        public OutputMode OutputMode { get; set; }
 
         /** 
          * The size of the MP4 file. For archives that have not been generated, this value is set
