@@ -72,16 +72,23 @@ generates the three strings that the client (JavaScript) needs to connect to the
 URL. The route handler for this URL is shown below:
 
 ```csharp
-    Get["/start"] = _ =>
-    {
-        Archive archive = opentokService.OpenTok.StartArchive(opentokService.Session.Id, ".NET Archiving Sample App");
-        return archive;
-    };
+Post["/start"] = _ =>
+{
+Archive archive = opentokService.OpenTok.StartArchive(
+    opentokService.Session.Id,
+    name: ".NET Archiving Sample App",
+    hasAudio: (Boolean)(this.Request.Form.hasAudio),
+    hasVideo: (Boolean)(this.Request.Form.hasVideo),
+    outputMode: (this.Request.Form.outputMode == "composed" ? OutputMode.COMPOSED : OutputMode.INDIVIDUAL)
+);
+return archive;
+};
 ```
 
 In this handler, the `StartArchive()` method of the `OpenTok` instance is called with the `Id`
-for the session that needs to be archived. The optional second argument is `Name`, which is stored with
-the archive and can be read later. In this case, as in the HelloWorld sample app, there is
+for the session that needs to be archived. The remaining arguments are a set of optional properties for the
+Archive. The  `Name` is stored with the archive and can be read later. The `hasAudio`, `hasVideo`, and `outputMode`
+values are read from the request body. In this case, as in the HelloWorld sample app, there is
 only one session created, which is stored in the OpenTokService, and it is used here and for the
 participant view. This will trigger the recording to begin. The response sent back to the client's XHR
 request will be the JSON representation of the archive, which Nancy knows how to serialize from the object.
