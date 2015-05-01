@@ -77,7 +77,7 @@ namespace OpenTokSDK
          * situate the session in its global network. If you do not set a location hint,
          * the OpenTok servers will be based on the first client connecting to the session.
          *
-         * @param mediaMode determine whether the session will transmit streams using the
+         * @param mediaMode Whether the session will transmit streams using the
          * OpenTok Media Router (<code>MediaMode.ROUTED</code>) or not
          * (<code>MediaMode.RELAYED</code>). By default, the setting is
          * <code>MediaMode.RELAYED</code>.
@@ -87,7 +87,7 @@ namespace OpenTokSDK
          * connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
          * streams.
          * <p>
-         * The a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode"
+         * The <a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode"
          * target="_top">OpenTok Media Router</a> provides the following benefits:
          *
          * <ul>
@@ -105,6 +105,13 @@ namespace OpenTokSDK
          *     <a href="http://tokbox.com/opentok/tutorials/archiving" target="_top">archiving</a>
          *     feature, which lets you record, save, and retrieve OpenTok sessions.</li>
          * </ul>
+         *
+         * @param archiveMode Whether the session is automatically archived
+         * (<code>ArchiveMode.ALWAYS</code>) or not (<code>ArchiveMode.MANUAL</code>). By default,
+         * the setting is <code>ArchiveMode.MANUAL</code>, and you must call the
+         * StartArchive() method of the OpenTok object to start archiving. To archive the session
+         * (either automatically or not), you must set the mediaMode parameter to
+         * <code>MediaMode.ROUTED</code>.
          *
          * @return A Session object representing the new session. The <code>Id</code> property of
          * the Session is the session ID, which uniquely identifies the session. You will use
@@ -200,7 +207,7 @@ namespace OpenTokSDK
         }
 
         /**
-         * Starts archiving an OpenTok 2.0 session.
+         * Starts archiving an OpenTok session.
          *
          * <p>
          * Clients must be actively connected to the OpenTok session for you to successfully start
@@ -209,6 +216,9 @@ namespace OpenTokSDK
          * You can only record one archive at a time for a given session. You can only record
          * archives of sessions that uses the OpenTok Media Router (sessions with the media mode set
          * to routed); you cannot archive sessions with the media mode set to relayed.
+         * <p>
+         * Note that you can have the session be automatically archived by setting the archiveMode
+         * parameter of the OpenTok.CreateSession() method to ArchiveMode.ALWAYS.
          *
          * @param sessionId The session ID of the OpenTok session to archive.
          *
@@ -218,13 +228,17 @@ namespace OpenTokSDK
          *
          * @param hasVideo Whether the archive will record video (true) or not (false). The default
          * value is true (video is recorded). If you set both <code>hasAudio</code> and
-         * <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method
+         * <code>hasVideo</code> to false, the call to the <code>StartArchive()</code> method
          * results in an error.
          *
          * @param hasAudio Whether the archive will record audio (true) or not (false). The default
          * value is true (audio is recorded). If you set both <code>hasAudio</code> and
-         * <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method
+         * <code>hasVideo</code> to false, the call to the <code>StartArchive()</code> method
          * results in an error.
+         *
+         * @param outputMode Whether all streams in the archive are recorded to a single file
+         * (<code>OutputMode.COMPOSED</code>, the default) or to individual files
+         * (<code>OutputMode.INDIVIDUAL</code>).
          *
          * @return The Archive object. This object includes properties defining the archive,
          * including the archive ID.
