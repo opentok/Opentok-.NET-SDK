@@ -9,9 +9,6 @@ The OpenTok .NET SDK lets you generate
 [OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. The SDK also includes
 support for working with [OpenTok archives](https://tokbox.com/opentok/tutorials/archiving).
 
-If you are updating from a previous version of this SDK, see
-[Important changes since v2.2](#important-changes-since-v220).
-
 # Installation
 
 ## NuGet (recommended):
@@ -49,7 +46,7 @@ var OpenTok = new OpenTok(ApiKey, ApiSecret);
 
 To create an OpenTok Session, call the `OpenTok` instance's
 `CreateSession(string location, MediaMode mediaMode, ArchiveMode archiveMode)`
-method. Each the parameters are optional and can be omitted if not needed. They are:
+method. Each of the parameters are optional and can be omitted if not needed. They are:
 
 * `string location` : An IPv4 address used as a location hint. (default: "")
 
@@ -209,8 +206,7 @@ session uses the OpenTok TURN server to relay audio-video streams.
 
 **Changes in v2.2.0:**
 
-This version of the SDK includes support for working with OpenTok 2.0 archives. (This API does not
-work with OpenTok 1.0 archives.)
+This version of the SDK includes support for working with OpenTok archives.
 
 This version of the SDK includes a number of improvements in the API design. These include a number
 of API changes:
