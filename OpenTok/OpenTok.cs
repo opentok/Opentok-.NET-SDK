@@ -87,8 +87,8 @@ namespace OpenTokSDK
          * connect due to firewall restrictions, the session uses the OpenTok TURN server to relay
          * streams.
          * <p>
-         * The <a href="http://tokbox.com/#multiparty" target="_top"> OpenTok Media Router</a>
-         * provides the following benefits:
+         * The a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode"
+         * target="_top">OpenTok Media Router</a> provides the following benefits:
          *
          * <ul>
          *   <li>The OpenTok Media Router can decrease bandwidth usage in multiparty sessions.
@@ -96,13 +96,13 @@ namespace OpenTokSDK
          *       <code>MediaMode.ROUTED</code>, each client must send a separate audio-video stream
          *      to each client subscribing to it.)</li>
          *   <li>The OpenTok Media Router can improve the quality of the user experience through
-         *     <a href="http://tokbox.com/#iqc" target="_top">Intelligent Quality Control</a>. With
-         *     Intelligent Quality Control, if a client's connectivity degrades to a degree that
-         *     it does not support video for a stream it's subscribing to, the video is dropped on
-         *     that client (without affecting other clients), and the client receives audio only.
+         *     <a href="https://tokbox.com/platform/fallback" target="_top">audio fallback and video
+         *     recovery</a>. With these features, if a client's connectivity degrades to a degree
+         *     that it does not support video for a stream it's subscribing to, the video is dropped
+         *     on that client (without affecting other clients), and the client receives audio only.
          *     If the client's connectivity improves, the video returns.</li>
          *   <li>The OpenTok Media Router supports the
-         *     <a href="http://tokbox.com/#archiving" target="_top">archiving and playback</a>
+         *     <a href="http://tokbox.com/opentok/tutorials/archiving" target="_top">archiving</a>
          *     feature, which lets you record, save, and retrieve OpenTok sessions.</li>
          * </ul>
          *
