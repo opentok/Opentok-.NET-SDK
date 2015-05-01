@@ -17,7 +17,7 @@ namespace OpenTokSDK
     public enum MediaMode
     {
         /**
-         * The session will transmit streams using the OpenTok Media Server.
+         * The session will transmit streams using the OpenTok Media Router.
          */
         ROUTED,
         /**
@@ -28,9 +28,21 @@ namespace OpenTokSDK
         RELAYED
     }
 
+    /**
+     * Defines values for the archiveMode property of the Session object. You also use these values
+     * for the archiveMode parameter of the OpenTok.CreateSession() method.
+     */
     public enum ArchiveMode
     {
+        /**
+         * The session is not archived automatically. To archive the session, you can call the
+         * StartArchive() method of the Session object.
+         */
         MANUAL,
+        /**
+         * The session is archived automatically (as soon as there are clients publishing streams
+         * to the session).
+         */
         ALWAYS
     }
 
@@ -61,11 +73,16 @@ namespace OpenTokSDK
         public string Location { get; set; }
 
         /**
-         * Defines whether the session will transmit streams using the OpenTok Media Server or
-         * attempt to transmit streams directly between clients.
+         * Defines whether the session will transmit streams using the OpenTok Media Router
+         * (<code>MediaMode.ROUTED</code>) or attempt to transmit streams directly between clients
+         * (<code>MediaMode.RELAYED</code>).
          */
         public MediaMode MediaMode { get; private set; }
 
+        /**
+         * Defines whether the session is automatically archived (<code>ArchiveMode.ALWAYS</code>)
+         * or not (<code>ArchiveMode.MANUAL</code>).
+         */
         public ArchiveMode ArchiveMode { get; private set; }
 
         private const int MAX_CONNECTION_DATA_LENGTH = 1000;

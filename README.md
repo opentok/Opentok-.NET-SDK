@@ -47,12 +47,18 @@ var OpenTok = new OpenTok(ApiKey, ApiSecret);
 
 ## Creating Sessions
 
-To create an OpenTok Session, use the `OpenTok` instance's `CreateSession(string location, MediaMode mediaMode)`
-method. Both of the properties are optional and can be omitted if not needed. They are:
+To create an OpenTok Session, call the `OpenTok` instance's
+`CreateSession(string location, MediaMode mediaMode, ArchiveMode archiveMode)`
+method. Each the parameters are optional and can be omitted if not needed. They are:
 
 * `string location` : An IPv4 address used as a location hint. (default: "")
-* `MediaMode mediaMode` : Specifies whether the session will use the OpenTok Media Router (MediaMode.ROUTED) or
-   use relays (MediaMode.RELAYED). (default: MediaMode.RELAYED)
+
+* `MediaMode mediaMode` : Specifies whether the session will use the OpenTok Media Router
+   (MediaMode.ROUTED) or attempt to transmit streams directly between clients
+   (MediaMode.RELAYED, the default)
+
+* `ArchiveMode archiveMode` : Specifies whether the session will be automatically archived
+  (ArchiveMode.MANUAL) or not (ArchiveMode.MANUAL, the default)
 
 The return value is a `OpenTokSDK.Session` object. Its `Id` property is useful to get an identifier that can be saved to a
 persistent store (such as a database).
@@ -63,8 +69,13 @@ var session = OpenTok.CreateSession();
 // Store this sessionId in the database for later use:
 string sessionId = session.Id;
 
-// Create a session that uses the OpenTok Media Router (necessary for Archiving)
+// Create a session that uses the OpenTok Media Router (which is required for archiving)
 var session = OpenTok.CreateSession(mediaMode: MediaMode.ROUTED);
+// Store this sessionId in the database for later use:
+string sessionId = session.Id;
+
+// Create an automatically archived session:
+var session = OpenTok.CreateSession(mediaMode: MediaMode.ROUTED, ArchiveMode.ALWAYS);
 // Store this sessionId in the database for later use:
 string sessionId = session.Id;
 ```
@@ -152,6 +163,11 @@ var archives = OpenTok.ListArchives(0, 50);
 // Get a list of the next 50 archives
 var archives = OpenTok.ListArchives(50, 50);
 ```
+
+Note that you can also create an automatically archived session, by passing in `ArchiveMode.ALWAYS`
+as the `archiveMode` parameter when you call the `OpenTok.CreateSession()` method (see "Creating
+Sessions," above).
+
 
 # Samples
 
