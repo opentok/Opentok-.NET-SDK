@@ -113,20 +113,27 @@ namespace OpenTokSDK
          * <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">
          * OT.initSession()</a> method (to initialize an OpenTok session).
          */
-        public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED)
+        public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
         {
 
             if (!OpenTokUtils.TestIpAddress(location))
             {
                 throw new OpenTokArgumentException(string.Format("Location {0} is not a valid IP address", location));
             }
+
+            if (archiveMode == ArchiveMode.ALWAYS && mediaMode != MediaMode.ROUTED)
+            {
+                throw new OpenTokArgumentException("A session with always archive mode must also have the routed media mode.");
+            }
+
             string preference = (mediaMode == MediaMode.RELAYED) ? "enabled" : "disabled";
 
             var headers = new Dictionary<string, string> { { "Content-type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
             {
                 {"location", location},
-                {"p2p.preference", preference}
+                {"p2p.preference", preference},
+                {"archiveMode", archiveMode.ToString().ToLower()}
             };
 
             var response = Client.Post("session/create", headers, data);
@@ -138,7 +145,7 @@ namespace OpenTokSDK
             }
             var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
             var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
-            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode);
+            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
         }
 
         /**

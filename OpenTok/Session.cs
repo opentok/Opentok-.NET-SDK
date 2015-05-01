@@ -28,6 +28,12 @@ namespace OpenTokSDK
         RELAYED
     }
 
+    public enum ArchiveMode
+    {
+        MANUAL,
+        ALWAYS
+    }
+
     /**
     * Represents an OpenTok session. Use the CreateSession() method of the OpenTok class to create
     * an OpenTok session. Use the Id property of the Session object to get the session ID.
@@ -58,7 +64,9 @@ namespace OpenTokSDK
          * Defines whether the session will transmit streams using the OpenTok Media Server or
          * attempt to transmit streams directly between clients.
          */
-        public MediaMode MediaMode { get; set; }
+        public MediaMode MediaMode { get; private set; }
+
+        public ArchiveMode ArchiveMode { get; private set; }
 
         private const int MAX_CONNECTION_DATA_LENGTH = 1000;
 
@@ -69,13 +77,14 @@ namespace OpenTokSDK
             this.ApiSecret = apiSecret;
         }
 
-        internal Session(string sessionId, int apiKey, string apiSecret, string location, MediaMode mediaMode)
+        internal Session(string sessionId, int apiKey, string apiSecret, string location, MediaMode mediaMode, ArchiveMode archiveMode)
         {
             this.Id = sessionId;
             this.ApiKey = apiKey;
             this.ApiSecret = apiSecret;
             this.Location = location;
             this.MediaMode = mediaMode;
+            this.ArchiveMode = archiveMode;
         }
 
 
