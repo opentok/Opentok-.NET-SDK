@@ -28,8 +28,12 @@ session.on('archiveStopped', function(event) {
 });
 
 $(document).ready(function() {
-  $(".start").click(function(event){
-    $.get("start");
+  $(".start").click(function (event) {
+    // TODO: disable fields
+    $.post("/start", $(".archive-options").serialize(), function () {
+      console.log('success');
+      // TODO: enable fields
+    });
   }).show();
   $(".stop").click(function(event){
     $.get("stop/" + archiveID);
