@@ -109,7 +109,7 @@ namespace OpenTokSDK
          * @param archiveMode Whether the session is automatically archived
          * (<code>ArchiveMode.ALWAYS</code>) or not (<code>ArchiveMode.MANUAL</code>). By default,
          * the setting is <code>ArchiveMode.MANUAL</code>, and you must call the
-         * StartArchive() method of the Session object to start archiving. To archive the session
+         * StartArchive() method of the OpenTok object to start archiving. To archive the session
          * (either automatically or not), you must set the mediaMode parameter to
          * <code>MediaMode.ROUTED</code>.
          *
@@ -228,13 +228,17 @@ namespace OpenTokSDK
          *
          * @param hasVideo Whether the archive will record video (true) or not (false). The default
          * value is true (video is recorded). If you set both <code>hasAudio</code> and
-         * <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method
+         * <code>hasVideo</code> to false, the call to the <code>StartArchive()</code> method
          * results in an error.
          *
          * @param hasAudio Whether the archive will record audio (true) or not (false). The default
          * value is true (audio is recorded). If you set both <code>hasAudio</code> and
-         * <code>hasVideo</code> to false, the call to the <code>startArchive()</code> method
+         * <code>hasVideo</code> to false, the call to the <code>StartArchive()</code> method
          * results in an error.
+         *
+         * @param outputMode Whether all streams in the archive are recorded to a single file
+         * (<code>OutputMode.COMPOSED</code>, the default) or to individual files
+         * (<code>OutputMode.INDIVIDUAL</code>).
          *
          * @return The Archive object. This object includes properties defining the archive,
          * including the archive ID.

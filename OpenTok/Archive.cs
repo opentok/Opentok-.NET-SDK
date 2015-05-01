@@ -47,9 +47,18 @@ namespace OpenTokSDK
         UNKOWN
     }
 
+    /**
+     * Defines values for the OutputMode property of an Archive object.
+     */
     public enum OutputMode
     {
+        /**
+         * All streams in the archive are recorded to a single (composed) file.
+         */
         COMPOSED,
+        /**
+         * Each stream in the archive is recorded to its own individual file.
+         */
         INDIVIDUAL
     }
 
@@ -117,7 +126,11 @@ namespace OpenTokSDK
          */
         public String SessionId { get; set; }
 
-
+        /**
+         * For archives with the status "stopped", this can be set to "90 mins exceeded",
+         * "failure", "session ended", or "user initiated". For archives with the status "failed",
+         * this can be set to "system failure".
+         */
         public String Reason { get; set; }
 
         /**
@@ -130,6 +143,13 @@ namespace OpenTokSDK
          */
         public bool HasAudio { get; set; }
 
+        /**
+         * Whether all streams in the archive are recorded to a single file
+         * (<code>OutputMode.COMPOSED</code>) or to individual files
+         * (<code>OutputMode.INDIVIDUAL</code>). To record streams to individual
+         * files, pass <code>OutputMode.INDIVIDUAL</code> as the <code>outputMode</code>
+         * parameter when calling the <code>OpenTok.StartArchive()</code> method.
+         */
         public OutputMode OutputMode { get; set; }
 
         /** 

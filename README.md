@@ -105,9 +105,9 @@ string token = session.GenerateToken(role: Role.MODERATOR, expireTime: inOneWeek
 ## Working with Archives
 
 You can start the recording of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
-`StartArchive(string sessionId, string name)` method. This will return a `OpenTokSDK.Archive` instance.
-The parameter `name` is optional and used to assign a name for the Archive. Note that you can
-only start an Archive on a Session that has clients connected.
+`StartArchive(sessionId, name, hasVideo, hasAudio, outputMode)` method. This will return an
+`OpenTokSDK.Archive` instance. The parameter `name` is optional and used to assign a name for the
+Archive. Note that you can only start an Archive on a Session that has clients connected.
 
 ```csharp
 // A simple Archive (without a name)
@@ -121,6 +121,10 @@ the `OpenTok.StartArchive()` method.
 
 You can also disable audio or video recording by setting the `hasAudio` or `hasVideo` parameter of
 the `OpenTok.StartArchive()` method `false`.
+
+By default, all streams are recorded to a single (composed) file. You can record the different
+streams in the session to individual files (instead of a single composed file) by setting the
+`outputMode` parameter of the `OpenTok.StartArchive()` method `OutputMode.INDIVIDUAL`.
 
 You can stop the recording of a started Archive using a `OpenTokSDK.OpenTok` instance's
 `StopArchive(String archiveId)` method or using the `OpenTokSDK.Archive` instance's `Stop()` method.

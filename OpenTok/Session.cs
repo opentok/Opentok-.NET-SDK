@@ -36,7 +36,7 @@ namespace OpenTokSDK
     {
         /**
          * The session is not archived automatically. To archive the session, you can call the
-         * StartArchive() method of the Session object.
+         * OpenTok.StartArchive() method.
          */
         MANUAL,
         /**
