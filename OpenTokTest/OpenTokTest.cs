@@ -25,7 +25,7 @@ namespace OpenTokSDKTest
             Assert.IsType(typeof(OpenTok), opentok);
         }
         
-        // TODO: all create session tests should verify the HTTP request body
+        // TODO: all create session and archive tests should verify the HTTP request body
 
         [Fact]
         public void CreateSimpleSessionTest()
@@ -543,6 +543,36 @@ namespace OpenTokSDKTest
             Assert.NotNull(archive.Id);
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/"+ apiKey +"/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public void StartArchiveIndividualTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"outputMode\" : \"individual\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \""+ sessionId +"\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.INDIVIDUAL);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]

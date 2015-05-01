@@ -229,7 +229,7 @@ namespace OpenTokSDK
          * @return The Archive object. This object includes properties defining the archive,
          * including the archive ID.
          */
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED)
         {
             if (String.IsNullOrEmpty(sessionId))
             {
@@ -237,7 +237,7 @@ namespace OpenTokSDK
             }
             string url = string.Format("v2/partner/{0}/archive", this.ApiKey);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio } };
+            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLower() } };
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }
