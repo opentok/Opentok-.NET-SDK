@@ -6,12 +6,8 @@
 The OpenTok .NET SDK lets you generate
 [sessions](https://www.tokbox.com/opentok/tutorials/create-session/) and
 [tokens](https://www.tokbox.com/opentok/tutorials/create-token/) for
-[OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. This version of the
-SDK also includes support for working with
-[OpenTok 2.x archives](https://www.tokbox.com/platform/archiving).
-
-If you are updating from a previous version of this SDK, see
-[Important changes since v2.2](#important-changes-since-v220).
+[OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. The SDK also includes
+support for working with [OpenTok archives](https://tokbox.com/opentok/tutorials/archiving).
 
 # Installation
 
@@ -48,12 +44,18 @@ var OpenTok = new OpenTok(ApiKey, ApiSecret);
 
 ## Creating Sessions
 
-To create an OpenTok Session, use the `OpenTok` instance's `CreateSession(string location, MediaMode mediaMode)`
-method. Both of the properties are optional and can be omitted if not needed. They are:
+To create an OpenTok Session, call the `OpenTok` instance's
+`CreateSession(string location, MediaMode mediaMode, ArchiveMode archiveMode)`
+method. Each of the parameters are optional and can be omitted if not needed. They are:
 
 * `string location` : An IPv4 address used as a location hint. (default: "")
-* `MediaMode mediaMode` : Specifies whether the session will use the OpenTok Media Router (MediaMode.ROUTED) or
-   use relays (MediaMode.RELAYED). (default: MediaMode.RELAYED)
+
+* `MediaMode mediaMode` : Specifies whether the session will use the OpenTok Media Router
+   (MediaMode.ROUTED) or attempt to transmit streams directly between clients
+   (MediaMode.RELAYED, the default)
+
+* `ArchiveMode archiveMode` : Specifies whether the session will be automatically archived
+  (ArchiveMode.MANUAL) or not (ArchiveMode.MANUAL, the default)
 
 The return value is a `OpenTokSDK.Session` object. Its `Id` property is useful to get an identifier that can be saved to a
 persistent store (such as a database).
@@ -64,8 +66,13 @@ var session = OpenTok.CreateSession();
 // Store this sessionId in the database for later use:
 string sessionId = session.Id;
 
-// Create a session that uses the OpenTok Media Router (necessary for Archiving)
+// Create a session that uses the OpenTok Media Router (which is required for archiving)
 var session = OpenTok.CreateSession(mediaMode: MediaMode.ROUTED);
+// Store this sessionId in the database for later use:
+string sessionId = session.Id;
+
+// Create an automatically archived session:
+var session = OpenTok.CreateSession(mediaMode: MediaMode.ROUTED, ArchiveMode.ALWAYS);
 // Store this sessionId in the database for later use:
 string sessionId = session.Id;
 ```
@@ -95,9 +102,9 @@ string token = session.GenerateToken(role: Role.MODERATOR, expireTime: inOneWeek
 ## Working with Archives
 
 You can start the recording of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
-`StartArchive(string sessionId, string name)` method. This will return a `OpenTokSDK.Archive` instance.
-The parameter `name` is optional and used to assign a name for the Archive. Note that you can
-only start an Archive on a Session that has clients connected.
+`StartArchive(sessionId, name, hasVideo, hasAudio, outputMode)` method. This will return an
+`OpenTokSDK.Archive` instance. The parameter `name` is optional and used to assign a name for the
+Archive. Note that you can only start an Archive on a Session that has clients connected.
 
 ```csharp
 // A simple Archive (without a name)
@@ -106,6 +113,15 @@ var archive = OpenTok.StartArchive(sessionId);
 // Store this archive ID in the database for later use
 Guid archiveId = archive.Id;
 ```
+You can add a name for the archive (to use for identification) by setting the `name` parameter of
+the `OpenTok.StartArchive()` method.
+
+You can also disable audio or video recording by setting the `hasAudio` or `hasVideo` parameter of
+the `OpenTok.StartArchive()` method `false`.
+
+By default, all streams are recorded to a single (composed) file. You can record the different
+streams in the session to individual files (instead of a single composed file) by setting the
+`outputMode` parameter of the `OpenTok.StartArchive()` method `OutputMode.INDIVIDUAL`.
 
 You can stop the recording of a started Archive using a `OpenTokSDK.OpenTok` instance's
 `StopArchive(String archiveId)` method or using the `OpenTokSDK.Archive` instance's `Stop()` method.
@@ -149,6 +165,11 @@ var archives = OpenTok.ListArchives(0, 50);
 var archives = OpenTok.ListArchives(50, 50);
 ```
 
+Note that you can also create an automatically archived session, by passing in `ArchiveMode.ALWAYS`
+as the `archiveMode` parameter when you call the `OpenTok.CreateSession()` method (see "Creating
+Sessions," above).
+
+
 # Samples
 
 There are two sample applications included with the SDK. To get going as fast as possible, clone the whole
@@ -185,8 +206,7 @@ session uses the OpenTok TURN server to relay audio-video streams.
 
 **Changes in v2.2.0:**
 
-This version of the SDK includes support for working with OpenTok 2.0 archives. (This API does not
-work with OpenTok 1.0 archives.)
+This version of the SDK includes support for working with OpenTok archives.
 
 This version of the SDK includes a number of improvements in the API design. These include a number
 of API changes:

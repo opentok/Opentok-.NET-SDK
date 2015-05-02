@@ -25,6 +25,15 @@ namespace OpenTokSDK
          */
         FAILED,
         /**
+         * The archive is in progress and no clients are publishing streams to the session.
+         * When an archive is in progress and any client publishes a stream, the status is STARTED.
+         * When an archive is PAUSED, nothing is recorded. When a client starts publishing a stream,
+         * the recording starts (or resumes). If all clients disconnect from a session that is being
+         * archived, the status changes to PAUSED, and after 60 seconds the archive recording stops
+         * (and the status changes to STOPPED).
+         */
+        PAUSED,
+        /**
          * The archive recording has started and is in progress.
          */
         STARTED,
@@ -45,6 +54,21 @@ namespace OpenTokSDK
          * The status of the archive is unknown.
          */
         UNKOWN
+    }
+
+    /**
+     * Defines values for the OutputMode property of an Archive object.
+     */
+    public enum OutputMode
+    {
+        /**
+         * All streams in the archive are recorded to a single (composed) file.
+         */
+        COMPOSED,
+        /**
+         * Each stream in the archive is recorded to its own individual file.
+         */
+        INDIVIDUAL
     }
 
     /**
@@ -76,6 +100,9 @@ namespace OpenTokSDK
             this.Size = archive.Size;
             this.Status = archive.Status;
             this.Url = archive.Url;
+            this.HasVideo = archive.HasVideo;
+            this.HasAudio = archive.HasAudio;
+            this.OutputMode = archive.OutputMode;
         }
 
         /**
@@ -108,8 +135,31 @@ namespace OpenTokSDK
          */
         public String SessionId { get; set; }
 
-
+        /**
+         * For archives with the status "stopped", this can be set to "90 mins exceeded",
+         * "failure", "session ended", or "user initiated". For archives with the status "failed",
+         * this can be set to "system failure".
+         */
         public String Reason { get; set; }
+
+        /**
+         * Whether the archive includes a video track (true) or not (false).
+         */
+        public bool HasVideo { get; set; }
+
+        /**
+         * Whether the archive includes an audio track (true) or not (false).
+         */
+        public bool HasAudio { get; set; }
+
+        /**
+         * Whether all streams in the archive are recorded to a single file
+         * (<code>OutputMode.COMPOSED</code>) or to individual files
+         * (<code>OutputMode.INDIVIDUAL</code>). To record streams to individual
+         * files, pass <code>OutputMode.INDIVIDUAL</code> as the <code>outputMode</code>
+         * parameter when calling the <code>OpenTok.StartArchive()</code> method.
+         */
+        public OutputMode OutputMode { get; set; }
 
         /** 
          * The size of the MP4 file. For archives that have not been generated, this value is set

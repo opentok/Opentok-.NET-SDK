@@ -25,6 +25,8 @@ namespace OpenTokSDKTest
             Assert.IsType(typeof(OpenTok), opentok);
         }
         
+        // TODO: all create session and archive tests should verify the HTTP request body
+
         [Fact]
         public void CreateSimpleSessionTest()
         {
@@ -135,6 +137,33 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public void CreateAlwaysArchivedSessionTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                                "session_id>" + sessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                                "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            var expectedUrl = "session/create";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+
+            HttpClient client = mockClient.Object;
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = client;
+            Session session = opentok.CreateSession(mediaMode: MediaMode.ROUTED, archiveMode: ArchiveMode.ALWAYS);
+
+            Assert.NotNull(session);
+            Assert.Equal(this.apiKey, session.ApiKey);
+            Assert.Equal(sessionId, session.Id);
+            Assert.Equal(session.MediaMode, MediaMode.ROUTED);
+            Assert.Equal(session.ArchiveMode, ArchiveMode.ALWAYS);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
         public void CreateInvalidSessionLocationTest()
         {
             var mockClient = new Mock<HttpClient>();
@@ -145,6 +174,25 @@ namespace OpenTokSDKTest
             try
             {
                 session = opentok.CreateSession(location: "A location");
+                Assert.True(false);
+            }
+            catch (OpenTokArgumentException)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
+        public void CreateInvalidAlwaysArchivedReplayedSessionTest()
+        {
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns("This function should not return anything");
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            Session session;
+            try
+            {
+                session = opentok.CreateSession(mediaMode: MediaMode.RELAYED, archiveMode: ArchiveMode.ALWAYS);
                 Assert.True(false);
             }
             catch (OpenTokArgumentException)
@@ -495,6 +543,68 @@ namespace OpenTokSDKTest
             Assert.NotNull(archive.Id);
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/"+ apiKey +"/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public void StartArchiveIndividualTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"outputMode\" : \"individual\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \""+ sessionId +"\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.INDIVIDUAL);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public void StartArchiveVoiceOnlyTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null,\n" +
+                                " \"hasVideo\" : false,\n" +
+                                " \"hasAudio\" : true\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = opentok.StartArchive(sessionId, hasVideo: false);
+
+            Assert.NotNull(archive);
+            Assert.Equal(sessionId, archive.SessionId);
+            Assert.NotNull(archive.Id);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]

@@ -63,9 +63,15 @@ namespace Archiving
                 return Response.AsRedirect(archive.Url);
             };
 
-            Get["/start"] = _ =>
+            Post["/start"] = _ =>
             {
-                Archive archive = opentokService.OpenTok.StartArchive(opentokService.Session.Id, ".NET Archiving Sample App");
+                Archive archive = opentokService.OpenTok.StartArchive(
+                    opentokService.Session.Id,
+                    name: ".NET Archiving Sample App",
+                    hasAudio: (Boolean)(this.Request.Form.hasAudio),
+                    hasVideo: (Boolean)(this.Request.Form.hasVideo),
+                    outputMode: (this.Request.Form.outputMode == "composed" ? OutputMode.COMPOSED : OutputMode.INDIVIDUAL)
+                );
                 return archive;
             };
 
