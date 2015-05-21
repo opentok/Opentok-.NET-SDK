@@ -55,7 +55,7 @@ method. Each of the parameters are optional and can be omitted if not needed. Th
    (MediaMode.RELAYED, the default)
 
 * `ArchiveMode archiveMode` : Specifies whether the session will be automatically archived
-  (ArchiveMode.MANUAL) or not (ArchiveMode.MANUAL, the default)
+  (ArchiveMode.ALWAYS) or not (ArchiveMode.MANUAL, the default)
 
 The return value is a `OpenTokSDK.Session` object. Its `Id` property is useful to get an identifier that can be saved to a
 persistent store (such as a database).
