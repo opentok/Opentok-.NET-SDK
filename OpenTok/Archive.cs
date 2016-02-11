@@ -93,6 +93,8 @@ namespace OpenTokSDK
         {
             this.CreatedAt = archive.CreatedAt;
             this.Duration = archive.Duration;
+            this.Sha256sum = archive.Sha256sum;
+            this.Password = archive.Password;
             this.Id = archive.Id;
             this.Name = archive.Name;
             this.PartnerId = archive.PartnerId;
@@ -114,6 +116,16 @@ namespace OpenTokSDK
          * The duration of the archive, in milliseconds.
          */
         public long Duration { get; set; }
+
+        /**
+         * SHA-256 hash of the file.
+         */
+        public string Sha256sum { get; set; }
+
+        /**
+         * File password
+         */
+        public string Password { get; set; }
 
         /**
          * The archive ID.
@@ -183,7 +195,6 @@ namespace OpenTokSDK
 
         /**
          * Stops the OpenTok archive if it is being recorded.
-         * <p>
          * Archives automatically stop recording after 90 minutes or when all clients have disconnected from the
          * session being archived.
          */
@@ -198,7 +209,6 @@ namespace OpenTokSDK
 
         /**
          * Deletes the OpenTok archive.
-         * <p>
          * You can only delete an archive which has a status of "available" or "uploaded". Deleting
          * an archive removes its record from the list of archives. For an "available" archive, it
          * also removes the archive file, making it unavailable for download.

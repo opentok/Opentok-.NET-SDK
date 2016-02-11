@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 2012
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTok", "OpenTok\OpenTok.csproj", "{5CA3CED1-4957-4968-900B-02F0493058E7}"
@@ -22,12 +22,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "Samples\Hello
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiving", "Samples\Archiving\Archiving.csproj", "{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchiveDecryption", "Samples\ArchiveDecryption\ArchiveDecryption.csproj", "{10653A92-2C6D-4FF2-8F82-453F7A2B4DED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10653A92-2C6D-4FF2-8F82-453F7A2B4DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10653A92-2C6D-4FF2-8F82-453F7A2B4DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10653A92-2C6D-4FF2-8F82-453F7A2B4DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10653A92-2C6D-4FF2-8F82-453F7A2B4DED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5CA3CED1-4957-4968-900B-02F0493058E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5CA3CED1-4957-4968-900B-02F0493058E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CA3CED1-4957-4968-900B-02F0493058E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -36,14 +42,16 @@ Global
 		{8A4E545A-4A4D-419F-A5B2-567586436764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A4E545A-4A4D-419F-A5B2-567586436764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A4E545A-4A4D-419F-A5B2-567586436764}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
