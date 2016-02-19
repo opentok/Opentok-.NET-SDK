@@ -136,9 +136,9 @@ namespace OpenTokSDK
         public String SessionId { get; set; }
 
         /**
-         * For archives with the status "stopped", this can be set to "90 mins exceeded",
-         * "failure", "session ended", or "user initiated". For archives with the status "failed",
-         * this can be set to "system failure".
+         * For archives with the status "stopped", this can be set to "maximum duration
+         * exceeded", "maximum idle time exceeded", "session ended", "user initiated. For archives
+         * with the status "failed", this can be set to "failure".
          */
         public String Reason { get; set; }
 
@@ -184,8 +184,8 @@ namespace OpenTokSDK
         /**
          * Stops the OpenTok archive if it is being recorded.
          * <p>
-         * Archives automatically stop recording after 90 minutes or when all clients have disconnected from the
-         * session being archived.
+         * Archives automatically stop recording after 120 minutes or when all clients have
+         * disconnected from the session being archived.
          */
         public void Stop()
         {

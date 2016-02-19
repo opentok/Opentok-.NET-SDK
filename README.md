@@ -180,8 +180,7 @@ repository and follow the Walkthroughs:
 
 # Documentation
 
-Reference documentation is available at <https://www.tokbox.com/opentok/libraries/server/dot-net/reference/> and in the
-docs directory of the SDK.
+Reference documentation is available at <https://tokbox.com/developer/sdks/dot-net/reference/>.
 
 # Requirements
 
