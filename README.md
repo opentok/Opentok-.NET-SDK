@@ -50,9 +50,11 @@ method. Each of the parameters are optional and can be omitted if not needed. Th
 
 * `string location` : An IPv4 address used as a location hint. (default: "")
 
-* `MediaMode mediaMode` : Specifies whether the session will use the OpenTok Media Router
+* `MediaMode mediaMode` : Specifies whether the session will use the
+   [OpenTok Media Router](https://tokbox.com/developer/guides/create-session/#media-mode)
    (MediaMode.ROUTED) or attempt to transmit streams directly between clients
-   (MediaMode.RELAYED, the default)
+   (MediaMode.RELAYED, the default). A routed session is required for some
+   OpenTok features (such as archiving).
 
 * `ArchiveMode archiveMode` : Specifies whether the session will be automatically archived
   (ArchiveMode.ALWAYS) or not (ArchiveMode.MANUAL, the default)
@@ -100,6 +102,9 @@ string token = session.GenerateToken(role: Role.MODERATOR, expireTime: inOneWeek
 ```
 
 ## Working with Archives
+
+**Important:** You can only archive sessions that use the OpenTok Media Router
+(sessions with the media mode set to routed).
 
 You can start the recording of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
 `StartArchive(sessionId, name, hasVideo, hasAudio, outputMode)` method. This will return an
