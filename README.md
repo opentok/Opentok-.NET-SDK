@@ -103,7 +103,7 @@ string token = session.GenerateToken(role: Role.MODERATOR, expireTime: inOneWeek
 
 ## Working with Archives
 
-**Important:** You can only archive sessions that use the OpenTok Media Router
+You can only archive sessions that use the OpenTok Media Router
 (sessions with the media mode set to routed).
 
 You can start the recording of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
