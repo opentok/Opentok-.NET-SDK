@@ -15,7 +15,7 @@ namespace OpenTokSDK
     * Contains methods for creating OpenTok sessions, generating tokens, and working with archives.
     * <p>
     * To create a new OpenTok object, call the OpenTok() constructor with your OpenTok API key
-    * and the API secret from <a href="https://dashboard.tokbox.com">the OpenTok dashboard</a>.
+    * and the API secret for your <a href="https://tokbox.com/account">OpenTok project</a>.
     * Do not publicly share your API secret. You will use it with the OpenTok constructor
     * (only on your web server) to create OpenTok sessions.
     */
@@ -33,10 +33,10 @@ namespace OpenTokSDK
         /**
         * Creates an OpenTok object.
         *
-        * @param apiKey Your OpenTok API key. (See the <a href="https://dashboard.tokbox.com">
-        * OpenTok dashboard</a> page.)
+        * @param apiKey Your OpenTok API key. (See the
+        * <a href="https://tokbox.com/account">TokBox account page</a>.)
         * @param apiSecret Your OpenTok API secret. (See the
-        * <a href="https://dashboard.tokbox.com">OpenTok dashboard</a> page.)
+        * <a href="https://tokbox.com/account">TokBox account page</a>.)
         */
         public OpenTok(int apiKey, string apiSecret)
         {
@@ -70,8 +70,8 @@ namespace OpenTokSDK
          *
          * You can also create a session using the
          * <a href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok
-         * REST API</a> or the <a href="https://dashboard.tokbox.com/projects">OpenTok
-         * dashboard</a>.
+         * REST API</a> or by logging in to your
+         * <a href="https://tokbox.com/account">TokBox account</a>.
          *
          * @param location (String) An IP address that the OpenTok servers will use to
          * situate the session in its global network. If you do not set a location hint,
@@ -160,8 +160,8 @@ namespace OpenTokSDK
          * connecting to an OpenTok session, the client passes a token when connecting to the
          * session.
          * <p>
-         * For testing, you can also use the <a href="https://dashboard.tokbox.com/projects">OpenTok
-         * dashboard</a> page to generate test tokens.
+         * For testing, you can also generate test tokens by logging in to your
+         * <a href="https://tokbox.com/account">TokBox account</a>.
          *
          * @param sessionId The session ID corresponding to the session to which the user will
          * connect.

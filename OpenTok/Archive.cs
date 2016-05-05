@@ -42,8 +42,9 @@ namespace OpenTokSDK
          */
         STOPPED,
         /**
-         * The archive file is available at the target Amazon S3 bucket or Windows Azure container
-         * you set at the <a href="https://dashboard.tokbox.com">OpenTok dashboard</a>.
+         * The archive is available for download from the the upload target
+         * Amazon S3 bucket or Windows Azure container you set up for your
+         * <a href="https://tokbox.com/account">OpenTok project</a>.
          */
         UPLOADED,
         /**
