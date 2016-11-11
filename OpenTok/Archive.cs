@@ -136,9 +136,8 @@ namespace OpenTokSDK
         public String SessionId { get; set; }
 
         /**
-         * For archives with the status "stopped", this can be set to "maximum duration
-         * exceeded", "maximum idle time exceeded", "session ended", "user initiated. For archives
-         * with the status "failed", this can be set to "failure".
+         * For archives with the status ArchiveStatus.STOPPED or ArchiveStatus.FAILED, this string
+         * describes the reason the archive stopped (such as "maximum duration exceeded") or failed.
          */
         public String Reason { get; set; }
 
