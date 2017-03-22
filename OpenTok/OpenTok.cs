@@ -249,7 +249,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
-            string url = string.Format("v2/partner/{0}/archive", this.ApiKey);
+            string url = string.Format("v2/project/{0}/archive", this.ApiKey);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLower() } };
             string response = Client.Post(url, headers, data);
@@ -267,7 +267,7 @@ namespace OpenTokSDK
          */
         public Archive StopArchive(string archiveId)
         {
-            string url = string.Format("v2/partner/{0}/archive/{1}/stop", this.ApiKey, archiveId);
+            string url = string.Format("v2/project/{0}/archive/{1}/stop", this.ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
@@ -306,7 +306,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("count cannot be smaller than 1");
             }
-            string url = string.Format("v2/partner/{0}/archive?offset={1}", this.ApiKey, offset);
+            string url = string.Format("v2/project/{0}/archive?offset={1}", this.ApiKey, offset);
             if (count > 0)
             {
                 url = string.Format("{0}&count={1}", url, count);
@@ -326,7 +326,7 @@ namespace OpenTokSDK
          */
         public Archive GetArchive(string archiveId)
         {
-            string url = string.Format("v2/partner/{0}/archive/{1}", this.ApiKey, archiveId);
+            string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             string response = Client.Get(url); ;
             return JsonConvert.DeserializeObject<Archive>(response);
@@ -343,7 +343,7 @@ namespace OpenTokSDK
          */
         public void DeleteArchive(string archiveId)
         {
-            string url = string.Format("v2/partner/{0}/archive/{1}", this.ApiKey, archiveId);
+            string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             Client.Delete(url, headers, new Dictionary<string, object>());
         }

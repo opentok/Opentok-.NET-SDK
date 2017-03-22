@@ -358,7 +358,7 @@ namespace OpenTokSDKTest
             Assert.Equal("http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" + archiveId + "%2Farchive.mp4?Expires=13951" +
                     "94362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", archive.Url);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/partner/"+this.apiKey+"/archive/"+archiveId))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/"+this.apiKey+"/archive/"+archiveId))), Times.Once());
         }
 
         [Fact]
@@ -386,7 +386,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(archive);
             Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/partner/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
         }
 
         public void GetArchiveWithUnknownPropertiesTest()
@@ -413,7 +413,7 @@ namespace OpenTokSDKTest
 
             Assert.NotNull(archive);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/partner/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
         }
 
         
@@ -512,7 +512,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(archives);
             Assert.Equal(6, archives.Count);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/partner/"+apiKey + "/archive?offset=0"))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/"+apiKey + "/archive?offset=0"))), Times.Once());
         }
 
         [Fact]
@@ -542,7 +542,7 @@ namespace OpenTokSDKTest
             Assert.Equal(sessionId, archive.SessionId);
             Assert.NotNull(archive.Id);
 
-            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/"+ apiKey +"/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/"+ apiKey +"/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -572,7 +572,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
 
-            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -604,7 +604,7 @@ namespace OpenTokSDKTest
             Assert.Equal(sessionId, archive.SessionId);
             Assert.NotNull(archive.Id);
 
-            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/partner/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -637,7 +637,7 @@ namespace OpenTokSDKTest
             Assert.Equal(archiveId, archive.Id.ToString());
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(
-                url => url.Equals("v2/partner/" + apiKey + "/archive/" + archiveId +"/stop")), 
+                url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId +"/stop")), 
                 It.IsAny<Dictionary<string, string>>(), 
                 It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
@@ -657,7 +657,7 @@ namespace OpenTokSDKTest
             opentok.DeleteArchive(archiveId);
 
             mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
-                url => url.Equals("v2/partner/" + apiKey + "/archive/" + archiveId)),
+                url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId)),
                 It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
