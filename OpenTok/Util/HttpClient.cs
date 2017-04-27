@@ -10,6 +10,9 @@ using System.Xml;
 using System.Web;
 
 using Newtonsoft.Json;
+using JWT;
+using JWT.Algorithms;
+using JWT.Serializers;
 
 using OpenTokSDK.Constants;
 using OpenTokSDK.Exception;
@@ -122,6 +125,10 @@ namespace OpenTokSDK.Util
             request.ContentLength = data.Length;
             request.UserAgent = userAgent;
 
+            if (!headers.ContainsKey("X-OPENTOK-AUTH"))
+            {
+                headers["X-OPENTOK-AUTH"] = GenerateJwt();
+            }
             if (headers.ContainsKey("Content-type"))
             {
                 request.ContentType = headers["Content-type"];
@@ -179,10 +186,38 @@ namespace OpenTokSDK.Util
             }
             return data.Substring(0, data.Length - 1);
         }
+
+        private string GenerateJwt()
+        {
+            IDateTimeProvider provider = new UtcDateTimeProvider();
+            var now = provider.GetNow();
+
+            var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var secondsSinceEpoch = Math.Round((now - unixEpoch).TotalSeconds);
+
+            var expiry = secondsSinceEpoch + 300;
+
+            var payload = new Dictionary<string, object>
+            {
+                { "iss", apiKey },
+                { "ist", "project" },
+                { "iat", secondsSinceEpoch },
+                { "exp", expiry }
+            };
+
+            IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+            IJsonSerializer serializer = new JsonNetSerializer();
+            IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+            IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+
+            var token = encoder.Encode(payload, apiSecret);
+            return token;
+        }
+
         private Dictionary<string, string> GetCommonHeaders()
         {
-            return new Dictionary<string, string> 
-            {   { "X-TB-PARTNER-AUTH", String.Format("{0}:{1}", apiKey, apiSecret) },            
+            return new Dictionary<string, string>
+            {
                 { "X-TB-VERSION", "1" },
             };
         }
