@@ -10,6 +10,9 @@ using System.Xml;
 using System.Web;
 
 using Newtonsoft.Json;
+using JWT;
+using JWT.Algorithms;
+using JWT.Serializers;
 
 using OpenTokSDK.Constants;
 using OpenTokSDK.Exception;
@@ -179,10 +182,38 @@ namespace OpenTokSDK.Util
             }
             return data.Substring(0, data.Length - 1);
         }
+
+        private string GenerateJwt(int key, string secret, int expiryPeriod = 300)
+        {
+            IDateTimeProvider provider = new UtcDateTimeProvider();
+            var now = provider.GetNow();
+
+            var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            int secondsSinceEpoch = (int) Math.Round((now - unixEpoch).TotalSeconds);
+
+            int expiry = secondsSinceEpoch + expiryPeriod;
+
+            var payload = new Dictionary<string, object>
+            {
+                { "iss", Convert.ToString(key) },
+                { "ist", "project" },
+                { "iat", secondsSinceEpoch },
+                { "exp", expiry }
+            };
+
+            IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+            IJsonSerializer serializer = new JsonNetSerializer();
+            IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+            IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+
+            var token = encoder.Encode(payload, secret);
+            return token;
+        }
+
         private Dictionary<string, string> GetCommonHeaders()
         {
-            return new Dictionary<string, string> 
-            {   { "X-TB-PARTNER-AUTH", String.Format("{0}:{1}", apiKey, apiSecret) },            
+            return new Dictionary<string, string>
+            {   { "X-OPENTOK-AUTH", GenerateJwt(apiKey, apiSecret) },
                 { "X-TB-VERSION", "1" },
             };
         }
