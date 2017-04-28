@@ -125,10 +125,6 @@ namespace OpenTokSDK.Util
             request.ContentLength = data.Length;
             request.UserAgent = userAgent;
 
-            if (!headers.ContainsKey("X-OPENTOK-AUTH"))
-            {
-                headers["X-OPENTOK-AUTH"] = GenerateJwt();
-            }
             if (headers.ContainsKey("Content-type"))
             {
                 request.ContentType = headers["Content-type"];
@@ -217,7 +213,7 @@ namespace OpenTokSDK.Util
         private Dictionary<string, string> GetCommonHeaders()
         {
             return new Dictionary<string, string>
-            {
+            {   { "X-OPENTOK-AUTH", GenerateJwt() },
                 { "X-TB-VERSION", "1" },
             };
         }
