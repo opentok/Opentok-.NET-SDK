@@ -189,9 +189,9 @@ namespace OpenTokSDK.Util
             var now = provider.GetNow();
 
             var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var secondsSinceEpoch = Math.Round((now - unixEpoch).TotalSeconds);
+            int secondsSinceEpoch = (int) Math.Round((now - unixEpoch).TotalSeconds);
 
-            var expiry = secondsSinceEpoch + 300;
+            int expiry = secondsSinceEpoch + 300;
 
             var payload = new Dictionary<string, object>
             {
