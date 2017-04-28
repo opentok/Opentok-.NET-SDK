@@ -183,7 +183,7 @@ namespace OpenTokSDK.Util
             return data.Substring(0, data.Length - 1);
         }
 
-        private string GenerateJwt()
+        private string GenerateJwt(int key, string secret, int expiryPeriod = 300)
         {
             IDateTimeProvider provider = new UtcDateTimeProvider();
             var now = provider.GetNow();
@@ -191,11 +191,11 @@ namespace OpenTokSDK.Util
             var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             int secondsSinceEpoch = (int) Math.Round((now - unixEpoch).TotalSeconds);
 
-            int expiry = secondsSinceEpoch + 300;
+            int expiry = secondsSinceEpoch + expiryPeriod;
 
             var payload = new Dictionary<string, object>
             {
-                { "iss", apiKey },
+                { "iss", Convert.ToString(key) },
                 { "ist", "project" },
                 { "iat", secondsSinceEpoch },
                 { "exp", expiry }
@@ -206,14 +206,14 @@ namespace OpenTokSDK.Util
             IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
             IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
-            var token = encoder.Encode(payload, apiSecret);
+            var token = encoder.Encode(payload, secret);
             return token;
         }
 
         private Dictionary<string, string> GetCommonHeaders()
         {
             return new Dictionary<string, string>
-            {   { "X-OPENTOK-AUTH", GenerateJwt() },
+            {   { "X-OPENTOK-AUTH", GenerateJwt(apiKey, apiSecret) },
                 { "X-TB-VERSION", "1" },
             };
         }
