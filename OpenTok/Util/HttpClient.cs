@@ -28,6 +28,9 @@ namespace OpenTokSDK.Util
         private int apiKey;
         private string apiSecret;
         private string server;
+        private readonly DateTime unixEpoch = new DateTime(
+          1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
+        );
 
         public HttpClient()
         {
@@ -183,21 +186,25 @@ namespace OpenTokSDK.Util
             return data.Substring(0, data.Length - 1);
         }
 
-        private string GenerateJwt(int key, string secret, int expiryPeriod = 300)
+        private int CurrentTime()
         {
             IDateTimeProvider provider = new UtcDateTimeProvider();
             var now = provider.GetNow();
 
-            var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             int secondsSinceEpoch = (int) Math.Round((now - unixEpoch).TotalSeconds);
+            return secondsSinceEpoch;
+        }
 
-            int expiry = secondsSinceEpoch + expiryPeriod;
+        private string GenerateJwt(int key, string secret, int expiryPeriod = 300)
+        {
+            int now = CurrentTime();
+            int expiry = now + expiryPeriod;
 
             var payload = new Dictionary<string, object>
             {
                 { "iss", Convert.ToString(key) },
                 { "ist", "project" },
-                { "iat", secondsSinceEpoch },
+                { "iat", now },
                 { "exp", expiry }
             };
 
