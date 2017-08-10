@@ -37,7 +37,7 @@ You can now either click the Run All command or use the keyboard shortcut (Ctrl+
 In order to create a release, the following should be completed in order.
 
 1. Build the solution using the Release confgiuration. Ensure all the tests are passing and that there is enough test coverage.
-1. Make sure you are on the `master` branch of the repository, with all changes merged/commited already.
+1. Make sure you are on the `dev` branch of the repository, with all changes merged/commited already.
 1. Update the version number in the source code and the README. See [Versioning](#versioning) for information
    about selecting an appropriate version number. Files to change:
    - OpenTok\Properties\AssemblyInfo.cs (AssemblyInformationalVersion contains full semver, AssemblyVersion only
@@ -53,7 +53,7 @@ In order to create a release, the following should be completed in order.
 1. Change the version number for future development by incrementing the patch number and
    adding "-Alpha1" in each file except the README. Then stage the remaining files and commit with the message
    "Begin development on next version".
-1. Push the changes to the source repository: `git push origin master; git push --tags origin`
+1. Push the changes to the source repository: `git push origin dev; git push --tags origin`
 1. Compress the contents of the `OpenTok\bin\Release\` directory, name it using the following template: `OpenTokSDK_x.y.z.zip`
    Upload the zip as an attached file in the latest GitHub Release. Add release notes with a description of changes and fixes.
 
@@ -70,11 +70,12 @@ Using a "." in the prerelease tag is not allowed in the .NET platform.
 
 ### Branches
 
-*  `master` - the main development branch.
+*  `dev` - the main development branch.
+*  `master` - reflects the latest stable release.
 *  `feat.foo` - feature branches. these are used for longer running tasks that cannot be accomplished in one commit.
-   once merged into master, these branches should be deleted.
-*  `vx.x.x` - if development for a future version/milestone has begun while master is working towards a sooner
-   release, this is the naming scheme for that branch. once merged into master, these branches should be deleted.
+   once merged into dev, these branches should be deleted.
+*  `vx.x.x` - if development for a future version/milestone has begun while dev is working towards a sooner
+   release, this is the naming scheme for that branch. once merged into dev, these branches should be deleted.
 
 ### Tags
 

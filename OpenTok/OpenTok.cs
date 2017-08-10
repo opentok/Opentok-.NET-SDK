@@ -31,6 +31,20 @@ namespace OpenTokSDK
         public HttpClient Client { private get; set; }
 
         /**
+         * Enables writing request/response details to console.
+         * Don't use in a production environment.
+         */
+        private bool _debug;
+        public bool Debug {
+          get { return _debug; }
+          set
+          {
+            _debug = value;
+            Client.debug = _debug;
+          }
+        }
+
+        /**
         * Creates an OpenTok object.
         *
         * @param apiKey Your OpenTok API key. (See the
@@ -44,6 +58,7 @@ namespace OpenTokSDK
             this.ApiSecret = apiSecret;
             this.OpenTokServer = "https://api.opentok.com";
             Client = new HttpClient(apiKey, apiSecret, this.OpenTokServer);
+            this.Debug = false;
         }
 
         /**
@@ -55,6 +70,7 @@ namespace OpenTokSDK
             this.ApiSecret = apiSecret;
             this.OpenTokServer = apiUrl;
             Client = new HttpClient(apiKey, apiSecret, this.OpenTokServer);
+            this.Debug = false;
         }
 
         /**
