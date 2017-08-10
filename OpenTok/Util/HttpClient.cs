@@ -225,5 +225,29 @@ namespace OpenTokSDK.Util
                 { "X-TB-VERSION", "1" },
             };
         }
+
+        private void DebugLog(string message)
+        {
+            if (this.debug)
+            {
+                var now = Convert.ToString(CurrentTime());
+                Console.WriteLine("[{0}] {1}", now, message);
+            }
+        }
+
+        private void DebugLogHeaders(WebHeaderCollection headers, string label)
+        {
+            if (this.debug)
+            {
+                for(int i = 0; i < headers.Count; ++i)
+                {
+                    string header = headers.GetKey(i);
+                    foreach(string value in headers.GetValues(i))
+                    {
+                        DebugLog(label + " Header: " + header + " = " + value);
+                    }
+                }
+            }
+        }
     }
 }
