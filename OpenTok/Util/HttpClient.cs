@@ -75,16 +75,26 @@ namespace OpenTokSDK.Util
             string data = GetRequestPostData(bodyData, specificHeaders);
             var headers = GetRequestHeaders(specificHeaders);
             HttpWebRequest request = CreateRequest(url, headers, data);
+
+            DebugLog("Request Method: " + request.Method);
+            DebugLog("Request URI: " + request.RequestUri);
+            DebugLogHeaders(request.Headers, "Request");
+
             HttpWebResponse response;
 
             try
             {
                 if (!String.IsNullOrEmpty(data))
                 {
+                    DebugLog("Request Body: " + data);
                     SendData(request, data);
                 }
                 using (response = (HttpWebResponse) request.GetResponse())
                 {
+                    DebugLog("Response Status Code: " + response.StatusCode);
+                    DebugLog("Response Status Description: " + response.StatusDescription);
+                    DebugLogHeaders(response.Headers, "Response");
+
                     switch (response.StatusCode)
                     {
                         case HttpStatusCode.OK:
@@ -102,6 +112,22 @@ namespace OpenTokSDK.Util
             }
             catch (WebException e)
             {
+                DebugLog("WebException Status: " + e.Status + ", Message: " + e.Message);
+
+                response = (HttpWebResponse)e.Response;
+
+                DebugLog("Response Status Code: " + response.StatusCode);
+                DebugLog("Response Status Description: " + response.StatusDescription);
+                DebugLogHeaders(response.Headers, "Response");
+
+                if (this.debug)
+                {
+                    using (var stream = new StreamReader(response.GetResponseStream()))
+                    {
+                        DebugLog("Response Body: " + stream.ReadToEnd());
+                    }
+                }
+
                 throw new OpenTokWebException("Error with request submission", e);
             }
 
