@@ -28,6 +28,10 @@ namespace OpenTokSDK.Util
         private int apiKey;
         private string apiSecret;
         private string server;
+        public bool debug = false;
+        private readonly DateTime unixEpoch = new DateTime(
+          1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
+        );
 
         public HttpClient()
         {
@@ -71,16 +75,26 @@ namespace OpenTokSDK.Util
             string data = GetRequestPostData(bodyData, specificHeaders);
             var headers = GetRequestHeaders(specificHeaders);
             HttpWebRequest request = CreateRequest(url, headers, data);
+
+            DebugLog("Request Method: " + request.Method);
+            DebugLog("Request URI: " + request.RequestUri);
+            DebugLogHeaders(request.Headers, "Request");
+
             HttpWebResponse response;
 
             try
             {
                 if (!String.IsNullOrEmpty(data))
                 {
+                    DebugLog("Request Body: " + data);
                     SendData(request, data);
                 }
                 using (response = (HttpWebResponse) request.GetResponse())
                 {
+                    DebugLog("Response Status Code: " + response.StatusCode);
+                    DebugLog("Response Status Description: " + response.StatusDescription);
+                    DebugLogHeaders(response.Headers, "Response");
+
                     switch (response.StatusCode)
                     {
                         case HttpStatusCode.OK:
@@ -98,6 +112,22 @@ namespace OpenTokSDK.Util
             }
             catch (WebException e)
             {
+                DebugLog("WebException Status: " + e.Status + ", Message: " + e.Message);
+
+                response = (HttpWebResponse)e.Response;
+
+                DebugLog("Response Status Code: " + response.StatusCode);
+                DebugLog("Response Status Description: " + response.StatusDescription);
+                DebugLogHeaders(response.Headers, "Response");
+
+                if (this.debug)
+                {
+                    using (var stream = new StreamReader(response.GetResponseStream()))
+                    {
+                        DebugLog("Response Body: " + stream.ReadToEnd());
+                    }
+                }
+
                 throw new OpenTokWebException("Error with request submission", e);
             }
 
@@ -183,21 +213,25 @@ namespace OpenTokSDK.Util
             return data.Substring(0, data.Length - 1);
         }
 
-        private string GenerateJwt(int key, string secret, int expiryPeriod = 300)
+        private int CurrentTime()
         {
             IDateTimeProvider provider = new UtcDateTimeProvider();
             var now = provider.GetNow();
 
-            var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             int secondsSinceEpoch = (int) Math.Round((now - unixEpoch).TotalSeconds);
+            return secondsSinceEpoch;
+        }
 
-            int expiry = secondsSinceEpoch + expiryPeriod;
+        private string GenerateJwt(int key, string secret, int expiryPeriod = 300)
+        {
+            int now = CurrentTime();
+            int expiry = now + expiryPeriod;
 
             var payload = new Dictionary<string, object>
             {
                 { "iss", Convert.ToString(key) },
                 { "ist", "project" },
-                { "iat", secondsSinceEpoch },
+                { "iat", now },
                 { "exp", expiry }
             };
 
@@ -216,6 +250,30 @@ namespace OpenTokSDK.Util
             {   { "X-OPENTOK-AUTH", GenerateJwt(apiKey, apiSecret) },
                 { "X-TB-VERSION", "1" },
             };
+        }
+
+        private void DebugLog(string message)
+        {
+            if (this.debug)
+            {
+                var now = Convert.ToString(CurrentTime());
+                Console.WriteLine("[{0}] {1}", now, message);
+            }
+        }
+
+        private void DebugLogHeaders(WebHeaderCollection headers, string label)
+        {
+            if (this.debug)
+            {
+                for(int i = 0; i < headers.Count; ++i)
+                {
+                    string header = headers.GetKey(i);
+                    foreach(string value in headers.GetValues(i))
+                    {
+                        DebugLog(label + " Header: " + header + " = " + value);
+                    }
+                }
+            }
         }
     }
 }
