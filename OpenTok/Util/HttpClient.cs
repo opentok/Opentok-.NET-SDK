@@ -28,6 +28,7 @@ namespace OpenTokSDK.Util
         private int apiKey;
         private string apiSecret;
         private string server;
+        public bool debug = false;
         private readonly DateTime unixEpoch = new DateTime(
           1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
         );
