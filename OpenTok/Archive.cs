@@ -163,9 +163,9 @@ namespace OpenTokSDK
 
         /** 
          * The size of the MP4 file. For archives that have not been generated, this value is set
-         * to 0.
+         * to 0. We use long instead of int to support archives larger than 2GB.
          */
-        public int Size { get; set; }
+        public long Size { get; set; }
 
         /**
          * The status of the archive, as defined by the ArchiveStatus enum.
