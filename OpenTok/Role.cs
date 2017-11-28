@@ -34,7 +34,7 @@ namespace OpenTokSDK
     {
         public static string ToString(this Role role)
         {
-            return role.ToString().ToLower();
+            return role.ToString().ToLowerInvariant();
         }
     }
 }
