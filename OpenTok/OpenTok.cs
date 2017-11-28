@@ -156,7 +156,7 @@ namespace OpenTokSDK
             {
                 {"location", location},
                 {"p2p.preference", preference},
-                {"archiveMode", archiveMode.ToString().ToLower()}
+                {"archiveMode", archiveMode.ToString().ToLowerInvariant()}
             };
 
             var response = Client.Post("session/create", headers, data);
@@ -267,7 +267,7 @@ namespace OpenTokSDK
             }
             string url = string.Format("v2/project/{0}/archive", this.ApiKey);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLower() } };
+            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }

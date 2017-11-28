@@ -53,7 +53,7 @@ namespace OpenTokSDK.Util
             // iterates over bytes and converts them each to a 2 digit hexidecimal string representation,
             // concatenates, and converts to lower case
             string encodedInput = string.Concat(hashedValue.Select(b => string.Format("{0:X2}", b)).ToArray());
-            return encodedInput.ToLower();
+            return encodedInput.ToLowerInvariant();
         }
 
         public static string Convert64(string input)
