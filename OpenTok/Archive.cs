@@ -101,6 +101,7 @@ namespace OpenTokSDK
             this.Size = archive.Size;
             this.Status = archive.Status;
             this.Url = archive.Url;
+            this.Password = archive.Password;
             this.HasVideo = archive.HasVideo;
             this.HasAudio = archive.HasAudio;
             this.OutputMode = archive.OutputMode;
@@ -180,6 +181,11 @@ namespace OpenTokSDK
          * new URL, call the ListArchives() or GetArchive() method of the OpenTok object.
          */
         public String Url { get; set; }
+
+        /**
+         * The encryption password of the archive. 
+         */
+        public String Password { get; set; }
 
         /**
          * Stops the OpenTok archive if it is being recorded.
