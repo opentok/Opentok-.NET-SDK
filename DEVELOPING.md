@@ -36,7 +36,7 @@ You can now either click the Run All command or use the keyboard shortcut (Ctrl+
 
 In order to create a release, the following should be completed in order.
 
-1. Build the solution using the Release confgiuration. Ensure all the tests are passing and that there is enough test coverage.
+1. Build the solution using the Release configuration. Ensure all the tests are passing and that there is enough test coverage.
 1. Make sure you are on the `dev` branch of the repository, with all changes merged/commited already.
 1. Update the version number in the source code and the README. See [Versioning](#versioning) for information
    about selecting an appropriate version number. Files to change:
