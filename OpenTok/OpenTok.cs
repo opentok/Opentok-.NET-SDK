@@ -267,15 +267,11 @@ namespace OpenTokSDK
             }
             string url = string.Format("v2/project/{0}/archive", this.ApiKey);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() }, { "resolution", resolution } };
+            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() }};
 
 			if (String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
 			{
-				resolution = "640x480";
-			}
-			else if (String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
-			{
-				data.Remove("resolution");
+				data.Add("resolution", "640x480");
 			}
 			else if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
 			{

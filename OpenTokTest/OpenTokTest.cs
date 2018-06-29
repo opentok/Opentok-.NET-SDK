@@ -677,6 +677,39 @@ namespace OpenTokSDKTest
 			}
 		}
 
+		[Fact]
+		public void StartArchiveNoResolutionTest()
+		{
+			string sessionId = "SESSIONID";
+			string resolution = "640x480";
+			string returnString = "{\n" +
+								" \"createdAt\" : 1395183243556,\n" +
+								" \"duration\" : 0,\n" +
+								" \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+								" \"name\" : \"\",\n" +
+								" \"partnerId\" : 123456,\n" +
+								" \"reason\" : \"\",\n" +
+								" \"sessionId\" : \"SESSIONID\",\n" +
+								" \"resolution\" : \"640x480\",\n" +
+								" \"size\" : 0,\n" +
+								" \"status\" : \"started\",\n" +
+								" \"url\" : null\n" +
+								" }";
+			var mockClient = new Mock<HttpClient>();
+			mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+
+			OpenTok opentok = new OpenTok(apiKey, apiSecret);
+			opentok.Client = mockClient.Object;
+			Archive archive = opentok.StartArchive(sessionId);
+
+			Assert.NotNull(archive);
+			Assert.Equal(sessionId, archive.SessionId);
+			Assert.NotNull(archive.Id);
+			Assert.Equal(resolution, archive.Resolution);
+
+			mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+		}
+
 
 		[Fact]
         public void StartArchiveVoiceOnlyTest()
