@@ -102,7 +102,7 @@ string token = session.GenerateToken(role: Role.MODERATOR, expireTime: inOneWeek
 ## Working with Archives
 
 You can start the recording of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
-`StartArchive(sessionId, name, hasVideo, hasAudio, outputMode)` method. This will return an
+`StartArchive(sessionId, name, hasVideo, hasAudio, outputMode, resolution)` method. This will return an
 `OpenTokSDK.Archive` instance. The parameter `name` is optional and used to assign a name for the
 Archive. Note that you can only start an Archive on a Session that has clients connected.
 
@@ -118,6 +118,9 @@ the `OpenTok.StartArchive()` method.
 
 You can also disable audio or video recording by setting the `hasAudio` or `hasVideo` parameter of
 the `OpenTok.StartArchive()` method `false`.
+
+You can also set the resolution of the recording to high definition by setting the `resolution` parameter of
+the `OpenTok.StartArchive()` method to `"1280x720"`. Please note that you cannot specify the `resolution` when you set the `outputMode` parameter to `OutputMode.INDIVIDUAL`.
 
 By default, all streams are recorded to a single (composed) file. You can record the different
 streams in the session to individual files (instead of a single composed file) by setting the
