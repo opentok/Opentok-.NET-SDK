@@ -259,7 +259,7 @@ namespace OpenTokSDK
          * @return The Archive object. This object includes properties defining the archive,
          * including the archive ID.
          */
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED)
         {
             if (String.IsNullOrEmpty(sessionId))
             {
@@ -267,20 +267,7 @@ namespace OpenTokSDK
             }
             string url = string.Format("v2/project/{0}/archive", this.ApiKey);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() }, { "resolution", resolution } };
-
-			if (String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
-			{
-				resolution = "640x480";
-			}
-			else if (String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
-			{
-				data.Remove("resolution");
-			}
-			else if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
-			{
-				throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
-			}
+            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }

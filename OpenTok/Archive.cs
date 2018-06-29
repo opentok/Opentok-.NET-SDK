@@ -105,7 +105,6 @@ namespace OpenTokSDK
             this.HasVideo = archive.HasVideo;
             this.HasAudio = archive.HasAudio;
             this.OutputMode = archive.OutputMode;
-			this.Resolution = archive.Resolution;
         }
 
         /**
@@ -163,15 +162,11 @@ namespace OpenTokSDK
          */
         public OutputMode OutputMode { get; set; }
 
-		/**
-		* The resolution of the Archive.
-		*/
-		public string Resolution { get; set; }
-		/** 
+        /** 
          * The size of the MP4 file. For archives that have not been generated, this value is set
          * to 0. We use long instead of int to support archives larger than 2GB.
          */
-		public long Size { get; set; }
+        public long Size { get; set; }
 
         /**
          * The status of the archive, as defined by the ArchiveStatus enum.
