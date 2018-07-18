@@ -168,7 +168,7 @@ namespace OpenTokSDK
             }
             var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
             var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
-            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+            return new Session(this, sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
         }
 
         /**
@@ -218,7 +218,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
-            Session session = new Session(sessionId, this.ApiKey, this.ApiSecret);
+            Session session = new Session(this, sessionId, this.ApiKey, this.ApiSecret);
             return session.GenerateToken(role, expireTime, data);
         }
 
@@ -362,6 +362,20 @@ namespace OpenTokSDK
             string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             Client.Delete(url, headers, new Dictionary<string, object>());
+        }
+
+        /**
+         * Gets a Stream object for the given stream ID.
+         *
+         * @param streamId The stream ID.
+         * @return The Stream object.
+        */
+        public Stream GetStream(string sessionId, string streamId)
+        {
+            string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            string response = Client.Get(url);
+            return JsonConvert.DeserializeObject<Stream>(response);
         }
     }
 }
