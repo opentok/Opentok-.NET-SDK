@@ -187,7 +187,7 @@ Reference documentation is available at <https://tokbox.com/developer/sdks/dot-n
 You need an OpenTok API key and API secret, which you can obtain by logging into your
 [TokBox account](https://tokbox.com/account).
 
-The OpenTok .NET SDK requires .NET Framework 3.5 or greater.
+The OpenTok .NET SDK requires .NET Framework 4.5.2 or greater.
 
 # Release Notes
 
@@ -195,6 +195,10 @@ See the [Releases](https://github.com/opentok/opentok-.net-sdk/releases) page fo
 about each release.
 
 ## Important changes since v2.2.0
+
+**Changes in v3.0.0:**
+
+This version requires .NET Framework 4.5.2 or greater.
 
 **Changes in v2.2.1:**
 
