@@ -256,6 +256,9 @@ namespace OpenTokSDK
          * (<code>OutputMode.COMPOSED</code>, the default) or to individual files
          * (<code>OutputMode.INDIVIDUAL</code>).
          *
+         * @param resolution The resolution for the archive. The default for <code>OutputMode.COMPOSED</code>
+         * is "640x480". You cannot specify the resolution for <code>OutputMode.INDIVIDUAL</code>.
+         * 
          * @return The Archive object. This object includes properties defining the archive,
          * including the archive ID.
          */
