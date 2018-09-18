@@ -54,10 +54,6 @@ namespace OpenTokSDK
     {
 
         /**
-        * The OpenTok instance
-        */
-        public OpenTok OpenTok { get; set; }
-        /**
          * The session ID, which uniquely identifies the session.
          */
         public string Id { get; set; }
@@ -92,17 +88,15 @@ namespace OpenTokSDK
 
         private const int MAX_CONNECTION_DATA_LENGTH = 1000;
 
-        internal Session(OpenTok opentok, string sessionId, int apiKey, string apiSecret)
+        internal Session(string sessionId, int apiKey, string apiSecret)
         {
-            this.OpenTok = opentok;
             this.Id = sessionId;
             this.ApiKey = apiKey;
             this.ApiSecret = apiSecret;
         }
 
-        internal Session(OpenTok opentok, string sessionId, int apiKey, string apiSecret, string location, MediaMode mediaMode, ArchiveMode archiveMode)
+        internal Session(string sessionId, int apiKey, string apiSecret, string location, MediaMode mediaMode, ArchiveMode archiveMode)
         {
-            this.OpenTok = opentok;
             this.Id = sessionId;
             this.ApiKey = apiKey;
             this.ApiSecret = apiSecret;
@@ -148,17 +142,6 @@ namespace OpenTokSDK
 
             string dataString = BuildDataString(role, expireTime, data, createTime, nonce);
             return BuildTokenString(dataString);
-        }
-
-        /**
-         * Gets a Stream object for the given stream ID.
-         *
-         * @param streamId The stream ID.
-         * @return The Stream object.
-        */
-        public Stream GetStream(string streamId)
-        {
-            return this.OpenTok.GetStream(this.Id, streamId);
         }
 
         private string BuildTokenString(string dataString)

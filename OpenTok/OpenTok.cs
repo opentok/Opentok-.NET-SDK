@@ -168,7 +168,7 @@ namespace OpenTokSDK
             }
             var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
             var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
-            return new Session(this, sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
         }
 
         /**
@@ -218,7 +218,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
-            Session session = new Session(this, sessionId, this.ApiKey, this.ApiSecret);
+            Session session = new Session(sessionId, this.ApiKey, this.ApiSecret);
             return session.GenerateToken(role, expireTime, data);
         }
 
