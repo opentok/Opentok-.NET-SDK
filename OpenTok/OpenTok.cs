@@ -363,5 +363,22 @@ namespace OpenTokSDK
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             Client.Delete(url, headers, new Dictionary<string, object>());
         }
+
+        /**
+         * Gets a Stream object for the given stream ID.
+         *
+         * @param sessionId The session ID of the OpenTok session.
+         * 
+         * @param streamId The stream ID.
+         * 
+         * @return The Stream object.
+        */
+        public Stream GetStream(string sessionId, string streamId)
+        {
+            string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            string response = Client.Get(url);
+            return JsonConvert.DeserializeObject<Stream>(response);
+        }
     }
 }
