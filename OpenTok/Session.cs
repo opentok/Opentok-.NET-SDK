@@ -52,7 +52,6 @@ namespace OpenTokSDK
     */
     public class Session
     {
-
         /**
          * The session ID, which uniquely identifies the session.
          */
