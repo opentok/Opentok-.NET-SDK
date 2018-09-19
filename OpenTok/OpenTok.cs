@@ -367,7 +367,10 @@ namespace OpenTokSDK
         /**
          * Gets a Stream object for the given stream ID.
          *
+         * @param sessionId The session ID of the OpenTok session.
+         * 
          * @param streamId The stream ID.
+         * 
          * @return The Stream object.
         */
         public Stream GetStream(string sessionId, string streamId)
