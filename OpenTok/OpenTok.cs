@@ -272,13 +272,12 @@ namespace OpenTokSDK
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
 
-            if (String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
-            {
-                data.Add("resolution", "640x480");
-            }
-            else if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
             {
                 throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
+            } else if(!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+            {
+                data.Add("resolution", resolution);
             }
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
