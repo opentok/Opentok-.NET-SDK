@@ -718,27 +718,32 @@ namespace OpenTokSDKTest
             Assert.Equal("screen", stream.VideoType);
             Assert.Equal(LayoutClassList, stream.LayoutClassList);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream/" + streamId))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId +"/stream/" + streamId))), Times.Once());
         }
 
         [Fact]
         public void ListStreamTestFromOpenTokInstance()
         {
             string sessionId = "SESSIONID";
+            List<string> LayoutClassListOne = new List<string>();
+            List<string> LayoutClassListTwo = new List<string>();
+            LayoutClassListOne.Add("layout1");
+            LayoutClassListTwo.Add("layout2");
+
             string returnString = "{\n" +
                                 " \"count\" : 2,\n" +
                                 " \"items\" : [ {\n" +
                                 " \"id\" : \"ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
                                 " \"name\" : \"johndoe\",\n" +
                                 " \"layoutClassList\" : [\"layout1\"],\n" +
-                                " \"type\" : \"screen\",\n" +
+                                " \"videoType\" : \"screen\",\n" +
                                 " }, {\n" +
                                 " \"createdAt\" : 1394321113000,\n" +
                                 " \"duration\" : 1294,\n" +
                                 " \"id\" : \"1f546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
                                 " \"name\" : \"janedoe\",\n" +
                                 " \"layoutClassList\" : [\"layout2\"],\n" +
-                                " \"type\" : \"camera\",\n" +
+                                " \"videoType\" : \"camera\",\n" +
                                 " } ]\n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
@@ -747,11 +752,22 @@ namespace OpenTokSDKTest
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             StreamList streamList = opentok.ListStreams(sessionId);
+            Stream streamOne = streamList[0];
+            Stream streamTwo = streamList[1];
 
             Assert.NotNull(streamList);
             Assert.Equal(2, streamList.Count);
+            Assert.Equal("ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d", streamOne.Id);
+            Assert.Equal("johndoe", streamOne.Name);
+            Assert.Equal(LayoutClassListOne, streamOne.LayoutClassList);
+            Assert.Equal("screen", streamOne.VideoType);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream/"))), Times.Once());
+            Assert.Equal("1f546c5a-4fd7-4e59-ab3d-f1cfb4148d1d", streamTwo.Id);
+            Assert.Equal("janedoe", streamTwo.Name);
+            Assert.Equal(LayoutClassListTwo, streamTwo.LayoutClassList);
+            Assert.Equal("camera", streamTwo.VideoType);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream"))), Times.Once());
         }
 
         private Dictionary<string,string> CheckToken(string token, int apiKey)
