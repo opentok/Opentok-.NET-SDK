@@ -378,7 +378,28 @@ namespace OpenTokSDK
             string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             string response = Client.Get(url);
-            return JsonConvert.DeserializeObject<Stream>(response);
+            Stream stream = JsonConvert.DeserializeObject<Stream>(response);
+            Stream streamCopy = new Stream();
+            streamCopy.CopyStream(stream);
+            return streamCopy;
+        }
+
+        /**
+         * Returns a List of Stream objects, representing streams that are in-progress,
+         * for the Session Id.
+         *
+         * @param sessionId The session ID corresponding to the session.
+         * 
+         * @return A List of Stream objects.
+        */
+        public StreamList ListStreams(string sessionId)
+        {
+            string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
+            string response = Client.Get(url);
+            JObject streams = JObject.Parse(response);
+            JArray streamsArray = (JArray)streams["items"];
+            StreamList streamList = new StreamList(streamsArray.ToObject<List<Stream>>(), (int)streams["count"]);
+            return streamList;
         }
     }
 }

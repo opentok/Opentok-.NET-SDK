@@ -721,6 +721,39 @@ namespace OpenTokSDKTest
             mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream/" + streamId))), Times.Once());
         }
 
+        [Fact]
+        public void ListStreamTestFromOpenTokInstance()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                " \"count\" : 2,\n" +
+                                " \"items\" : [ {\n" +
+                                " \"id\" : \"ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
+                                " \"name\" : \"johndoe\",\n" +
+                                " \"layoutClassList\" : [\"layout1\"],\n" +
+                                " \"type\" : \"screen\",\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394321113000,\n" +
+                                " \"duration\" : 1294,\n" +
+                                " \"id\" : \"1f546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
+                                " \"name\" : \"janedoe\",\n" +
+                                " \"layoutClassList\" : [\"layout2\"],\n" +
+                                " \"type\" : \"camera\",\n" +
+                                " } ]\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            StreamList streamList = opentok.ListStreams(sessionId);
+
+            Assert.NotNull(streamList);
+            Assert.Equal(2, streamList.Count);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream/"))), Times.Once());
+        }
+
         private Dictionary<string,string> CheckToken(string token, int apiKey)
         {
             string baseToken = OpenTokUtils.Decode64(token.Substring(4));

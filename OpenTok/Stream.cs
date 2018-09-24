@@ -11,11 +11,17 @@ namespace OpenTokSDK
     public class Stream
     {
 
-        protected Stream()
+        internal Stream()
         {
-
         }
 
+        internal void CopyStream(Stream stream)
+        {
+            this.Id = stream.Id;
+            this.Name = stream.Name;
+            this.LayoutClassList = stream.LayoutClassList;
+            this.VideoType = stream.VideoType;
+        }
         /**
          * The layout class list as a list of strings.
          */
