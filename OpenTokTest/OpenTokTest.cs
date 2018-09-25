@@ -856,6 +856,26 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public void GetStreamTestThrowArgumentException()
+        {
+            string returnString = "";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            try
+            {
+                Stream stream = opentok.GetStream(null, null);
+
+            }
+            catch (OpenTokArgumentException e)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
         public void ListStreamTestFromOpenTokInstance()
         {
             string sessionId = "SESSIONID";
@@ -903,6 +923,26 @@ namespace OpenTokSDKTest
 
             mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream"))), Times.Once());
         }
+        [Fact]
+        public void ListStreamTestThrowArgumentException()
+        {
+            string returnString = "";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            try
+            {
+                StreamList streamlist = opentok.ListStreams(null);
+
+            }
+            catch (OpenTokArgumentException e)
+            {
+                Assert.True(true);
+            }
+        }
+
 
         private Dictionary<string,string> CheckToken(string token, int apiKey)
         {

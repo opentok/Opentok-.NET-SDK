@@ -386,6 +386,10 @@ namespace OpenTokSDK
         */
         public Stream GetStream(string sessionId, string streamId)
         {
+            if (String.IsNullOrEmpty(sessionId) || String.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The sessionId or streamId cannot be null or empty");
+            }
             string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             string response = Client.Get(url);
@@ -405,6 +409,10 @@ namespace OpenTokSDK
         */
         public StreamList ListStreams(string sessionId)
         {
+            if (String.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty");
+            }
             string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
             string response = Client.Get(url);
             JObject streams = JObject.Parse(response);
