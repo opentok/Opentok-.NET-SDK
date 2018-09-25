@@ -172,7 +172,27 @@ Note that you can also create an automatically archived session, by passing in `
 as the `archiveMode` parameter when you call the `OpenTok.CreateSession()` method (see "Creating
 Sessions," above).
 
+## Working with Streams
 
+You can get information about a stream by calling the `GetStream(sessionId, streamId)` method of the `OpenTok` class.
+
+```csharp
+Stream stream = OpenTok.GetStream(sessionId, streamId);
+
+// Stream Properties
+stream.Id; // string with the stream ID
+stream.VideoType; // string with the video type
+stream.Name; // string with the name
+stream.LayoutClassList; // list with the layout class list
+```
+
+You can get information about all the streams in a session by calling the `ListStreams(sessionId)` method of the `OpenTok` class.
+
+```csharp
+StreamList streamList = OpenTok.ListStreams(sessionId);
+
+streamList.Count; // total count 
+```
 # Samples
 
 There are two sample applications included with the SDK. To get going as fast as possible, clone the whole
