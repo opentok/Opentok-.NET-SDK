@@ -188,6 +188,15 @@ stream.LayoutClassList; // list with the layout class list
 
 You can get information about all the streams in a session by calling the `ListStreams(sessionId)` method of the `OpenTok` class.
 
+## Force Disconnecting
+
+Your application server can disconnect a client from an OpenTok session by calling the `ForceDisconnect(sessionId, connectionId)` method of the `OpenTok` class.
+
+```csharp
+// Force disconnect a client connection
+OpenTok.ForceDisconnect(sessionId, connectionId);
+```
+
 ```csharp
 StreamList streamList = OpenTok.ListStreams(sessionId);
 

@@ -420,5 +420,20 @@ namespace OpenTokSDK
             StreamList streamList = new StreamList(streamsArray.ToObject<List<Stream>>(), (int)streams["count"]);
             return streamList;
         }
+
+        /**
+          * Force disconnects a specific client connected to an OpenTok session.
+          *
+          * @param sessionId The session ID corresponding to the session.
+          * 
+          * @param connectionId The connectionId of the connection in a session..
+         */
+        public void ForceDisconnect(string sessionId, string connectionId)
+        {
+            string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", this.ApiKey, sessionId, connectionId);
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            Client.Delete(url, headers, new Dictionary<string, object>());
+        }
+
     }
 }

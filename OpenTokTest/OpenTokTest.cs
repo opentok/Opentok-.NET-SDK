@@ -944,6 +944,27 @@ namespace OpenTokSDKTest
         }
 
 
+        [Fact]
+        public void ForceDisconnectTest()
+        {
+            string connectionId = "3b0c260e-801e-47e9-a245-4ee3ffd9bd6f";
+            string sessionId = "SESSIONID";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            opentok.ForceDisconnect(sessionId, connectionId);
+
+            mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
+                url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/connection/" + connectionId)),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
         private Dictionary<string,string> CheckToken(string token, int apiKey)
         {
             string baseToken = OpenTokUtils.Decode64(token.Substring(4));
