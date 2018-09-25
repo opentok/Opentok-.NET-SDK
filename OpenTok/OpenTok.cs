@@ -430,6 +430,15 @@ namespace OpenTokSDK
          */
         public void ForceDisconnect(string sessionId, string connectionId)
         {
+            if (String.IsNullOrEmpty(sessionId) || String.IsNullOrEmpty(connectionId))
+            {
+                throw new OpenTokArgumentException("The sessionId or connectionId cannot be null or empty");
+            }
+            
+            if (!OpenTokUtils.ValidateSession(sessionId))
+            {
+                throw new OpenTokArgumentException("Invalid session Id");
+            }
             string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", this.ApiKey, sessionId, connectionId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             Client.Delete(url, headers, new Dictionary<string, object>());
