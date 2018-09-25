@@ -256,10 +256,13 @@ namespace OpenTokSDK
          * (<code>OutputMode.COMPOSED</code>, the default) or to individual files
          * (<code>OutputMode.INDIVIDUAL</code>).
          *
+         * @param resolution The resolution for the archive. The default for <code>OutputMode.COMPOSED</code>
+         * is "640x480". You cannot specify the resolution for <code>OutputMode.INDIVIDUAL</code>.
+         * 
          * @return The Archive object. This object includes properties defining the archive,
          * including the archive ID.
          */
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null)
         {
             if (String.IsNullOrEmpty(sessionId))
             {
@@ -268,6 +271,14 @@ namespace OpenTokSDK
             string url = string.Format("v2/project/{0}/archive", this.ApiKey);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
+
+            if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            {
+                throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
+            } else if(!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+            {
+                data.Add("resolution", resolution);
+            }
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }
