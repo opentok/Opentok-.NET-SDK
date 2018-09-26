@@ -7,7 +7,7 @@ this project. If you use this package within your own software as is but don't p
 ## Tools
 
 *  [Visual Studio](http://www.visualstudio.com/): the IDE provided by Microsoft with which the product is built. The
-   code may work with other IDEs and tools but Visual Studio is required to effectively maintaiin the project.
+   code may work with other IDEs and tools but Visual Studio is required to effectively maintain the project.
 
 *  [NuGet Package Manager](http://www.nuget.org/): an open source package manager that is built into many newer
    versions of Visual Studio. If you do not already have this extension, you can install it via
