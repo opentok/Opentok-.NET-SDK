@@ -212,7 +212,7 @@ namespace OpenTokSDK
          *
          * @return The token string.
          */
-        public string GenerateToken(string sessionId, Role role = Role.PUBLISHER, double expireTime = 0, string data = null)
+        public string GenerateToken(string sessionId, Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null)
         {
             if (String.IsNullOrEmpty(sessionId))
             {
@@ -225,7 +225,7 @@ namespace OpenTokSDK
             }
 
             Session session = new Session(sessionId, this.ApiKey, this.ApiSecret);
-            return session.GenerateToken(role, expireTime, data);
+            return session.GenerateToken(role, expireTime, data, initialLayoutClassList);
         }
 
         /**
