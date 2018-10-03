@@ -609,5 +609,45 @@ namespace OpenTokSDK
             return JsonConvert.DeserializeObject<Broadcast>(response);
         }
 
+        /**
+        * Use this method to change the layout classes of a stream
+        * 
+        * <p>
+        * For more information on broadcasting, see the
+        * <a href="https://tokbox.com/developer/rest/#change_live_streaming_layout">Broadcast developer guide.</a>
+        *
+        * @param sessionId The sessionId
+        *
+        * @param streams A list of streams
+        * 
+        * @return The Broadcast object. This object includes properties defining the broadcast, including the broadcast ID.
+        */
+        public String setStreamLayouts(string sessionId, List<StreamProperties> streams)
+        {
+            string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var items = new List<object>();
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            if (streams == null || streams.Count() == 0)
+            {
+               throw new OpenTokArgumentException("The stream list must include at least one item.");
+            } else
+            {
+                foreach (StreamProperties stream in streams)
+                {
+                    items.Add(
+                        new
+                        {
+                            id = stream.Id,
+                            layoutClassList = stream.LayoutClassList
+                        }
+                    );
+                }
+            }
+            data.Add("items", items);
+
+            string response = Client.Put(url, headers, data);
+            return response;
+        }
     }
 }
