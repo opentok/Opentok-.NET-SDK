@@ -53,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Broadcast.cs" />
+    <Compile Include="BroadcastLayout.cs" />
+    <Compile Include="Rtmp.cs" />
     <Compile Include="Archive.cs" />
     <Compile Include="ArchiveList.cs" />
     <Compile Include="Constants\OpenTokVersion.cs" />

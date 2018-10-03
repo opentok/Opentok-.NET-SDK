@@ -8,6 +8,12 @@ using OpenTokSDK.Util;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
+
+using System.Diagnostics;
+using System.Data;
+
+
 
 namespace OpenTokSDK
 {
@@ -21,7 +27,7 @@ namespace OpenTokSDK
     */
     public class OpenTok
     {
-
+        
         /** The OpenTok API key passed into the OpenTok() constructor. */
         public int ApiKey { get; private set; }
         /** The OpenTok API secret passed into the OpenTok() constructor. */
@@ -442,6 +448,165 @@ namespace OpenTokSDK
             string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", this.ApiKey, sessionId, connectionId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             Client.Delete(url, headers, new Dictionary<string, object>());
+        }
+
+        /**
+        * Use this method to start a live streaming for an OpenTok session.
+        * This broadcasts the session to an HLS (HTTP live streaming) or to RTMP streams.
+        * <p>
+        * To successfully start broadcasting a session, at least one client must be connected to the session.
+        * <p>
+        * You can only have one active live streaming broadcast at a time for a session
+        * (however, having more than one would not be useful).
+        * The live streaming broadcast can target one HLS endpoint and up to five RTMP servers simulteneously for a session.
+        * You can only start live streaming for sessions that use the OpenTok Media Router (with the media mode set to routed);
+        * you cannot use live streaming with sessions that have the media mode set to relayed OpenTok Media Router. See
+        * <a href="https://tokbox.com/developer/guides/create-session/#media-mode">The OpenTok Media Router and media modes.</a>
+        * <p>
+        * For more information on broadcasting, see the
+        * <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        *
+        * @param sessionId The session ID corresponding to the session.
+        *
+        * @param properties This BroadcastProperties object defines options for the broadcast.
+        *
+        * @return The Broadcast object. This object includes properties defining the archive, including the archive ID.
+        */
+        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = "640x480", int maxDuration = 7200, BroadcastLayout layout = null)
+        {
+            if (String.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("Session not valid");
+            }
+
+            if(String.IsNullOrEmpty(resolution) || (resolution != "640x480" && resolution != "1280x720"))
+            {
+                throw new OpenTokArgumentException("Resolution value must be either 640x480 (SD) or 1280x720 (HD).");
+            }
+
+            if (maxDuration < 60 || maxDuration > 36000)
+            {
+                throw new OpenTokArgumentException("MaxDuration value must be between 60 and 36000 (inclusive).");
+            }
+
+            if (rtmpList != null && rtmpList.Count() >= 5)
+            {
+                throw new OpenTokArgumentException("Cannot add more than 5 RTMP properties");
+            }
+
+            string url = string.Format("v2/project/{0}/broadcast", this.ApiKey);
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var outputs = new Dictionary<string, object>();
+
+            if (hls) {
+                outputs.Add("hls", new Object());
+            }
+
+            if(rtmpList != null)
+            {
+               outputs.Add("rtmp", rtmpList);
+            }
+
+            var data = new Dictionary<string, object>() {
+                { "sessionId", sessionId },
+                { "resolution", resolution },
+                { "maxDuration", maxDuration },
+                { "outputs", outputs }
+            };
+
+            if (layout != null)
+            {
+                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.Stylesheet)) ||
+                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet))) {
+                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
+                } else {
+                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                    {
+                        data.Add("layout", layout);
+                    } else {
+                        data.Add("layout", new { type = OpenTokUtils.convertToCamelCase(layout.Type.ToString()) });
+                    }
+                }
+            }
+
+            string response = Client.Post(url, headers, data);
+            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /**
+        * Use this method to stop a live broadcast of an OpenTok session.
+        * Note that broadcasts automatically stop 120 minutes after they are started.
+        * <p>
+        * For more information on broadcasting, see the
+        * <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        *
+        * @param broadcastId The broadcast ID of the broadcasting session
+        *
+        * @return The Broadcast object. This object includes properties defining the broadcast, including the broadcast ID.
+        */
+        public Broadcast StopBroadcast(string broadcastId)
+        {
+            string url = string.Format("v2/project/{0}/broadcast/{1}/stop", this.ApiKey, broadcastId);
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+
+            string response = Client.Post(url, headers, new Dictionary<string, object>());
+            return JsonConvert.DeserializeObject<Broadcast>(response);
+        }
+
+        /**
+        * Use this method to get a live streaming broadcast of an OpenTok session.
+        * <p>
+        * For more information on broadcasting, see the
+        * <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        *
+        * @param broadcastId The broadcast ID of the broadcasting session
+        *
+        * @return The Broadcast object. This object includes properties defining the broadcast, including the broadcast ID.
+        */
+        public Broadcast GetBroadcast(string broadcastId)
+        {
+            string url = string.Format("v2/project/{0}/broadcast/{1}", this.ApiKey, broadcastId);
+            string response = Client.Get(url);
+            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /**
+        * Use this method to update the layout of a live broadcast of an OpenTok session.
+        * 
+        * <p>
+        * For more information on broadcasting, see the
+        * <a href="https://tokbox.com/developer/rest/#change_live_streaming_layout">Broadcast developer guide.</a>
+        *
+        * @param broadcastId The broadcast ID of the broadcasting session
+        *
+        * @param layout The new layout
+        * 
+        * @return The Broadcast object. This object includes properties defining the broadcast, including the broadcast ID.
+        */
+        public Broadcast SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
+        {
+            string url = string.Format("v2/project/{0}/broadcast/{1}/layout", this.ApiKey, broadcastId);
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var data = new Dictionary<string, object>();
+            if (layout != null)
+            {
+                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.Stylesheet)) ||
+                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet)))
+                {
+                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
+                }
+                else
+                {
+                    data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
+                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                    {
+                        data.Add("stylesheet", layout.Stylesheet);
+                    }
+                }
+            }
+
+            string response = Client.Put(url, headers, data);
+            return JsonConvert.DeserializeObject<Broadcast>(response);
         }
 
     }
