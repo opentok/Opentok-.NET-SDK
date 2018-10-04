@@ -12,19 +12,31 @@ namespace OpenTokSDK
         * The stream id.
         */
         [JsonProperty("id")]
-        public String Id { get; set; }
+        public string Id { get; set; }
 
         /**
         * The server URL.
         */
         [JsonProperty("serverUrl")]
-        public String ServerUrl { get; set; }
+        public string ServerUrl { get; set; }
 
         /**
         * The stream name.
         */
         [JsonProperty("streamName")]
-        public String StreamName { get; set; }
+        public string StreamName { get; set; }
+
+        public Rtmp()
+        {
+            
+        }
+
+        public Rtmp(string id, string serverUrl, string streamName)
+        {
+            Id = id;
+            ServerUrl = serverUrl;
+            StreamName = streamName;
+        }
 
     }
 }
