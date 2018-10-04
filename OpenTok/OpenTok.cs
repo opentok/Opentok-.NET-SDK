@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using OpenTokSDK.Exception;
 using OpenTokSDK.Util;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
-
-using System.Diagnostics;
-using System.Data;
-
-
 
 namespace OpenTokSDK
 {
@@ -209,6 +200,8 @@ namespace OpenTokSDK
          * @param data A string containing connection metadata describing the end-user. For example,
          * you can pass the user ID, name, or other data describing the end-user. The length of the
          * string is limited to 1000 characters. This data cannot be updated once it is set.
+         * 
+         * @param initialLayoutClassList A list of strings values containing the initial layout for the stream.
          *
          * @return The token string.
          */
@@ -554,7 +547,7 @@ namespace OpenTokSDK
         }
 
         /**
-        * Use this method to get a live streaming broadcast of an OpenTok session.
+        * Use this method to get a live streaming broadcast object of an OpenTok session.
         * <p>
         * For more information on broadcasting, see the
         * <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
@@ -571,19 +564,15 @@ namespace OpenTokSDK
         }
 
         /**
-        * Use this method to update the layout of a live broadcast of an OpenTok session.
-        * 
-        * <p>
-        * For more information on broadcasting, see the
-        * <a href="https://tokbox.com/developer/rest/#change_live_streaming_layout">Broadcast developer guide.</a>
-        *
+        * Sets the layout type for the broadcast. For a description of layout types, see 
+        * <a href="hhttps://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts">Configuring
+        *  the video layout for OpenTok live streaming broadcasts</a>.
         * @param broadcastId The broadcast ID of the broadcasting session
         *
-        * @param layout The new layout
+        * @param layout The BroadcastLayout that defines layout options for the broadcast.
         * 
-        * @return The Broadcast object. This object includes properties defining the broadcast, including the broadcast ID.
         */
-        public Broadcast SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
+        public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
             string url = string.Format("v2/project/{0}/broadcast/{1}/layout", this.ApiKey, broadcastId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
@@ -605,24 +594,28 @@ namespace OpenTokSDK
                 }
             }
 
-            string response = Client.Put(url, headers, data);
-            return JsonConvert.DeserializeObject<Broadcast>(response);
+            Client.Put(url, headers, data);
         }
 
         /**
-        * Use this method to change the layout classes of a stream
-        * 
+        * Sets the layout class list for streams in a session. Layout classes are used in
+        * the layout for composed archives and live streaming broadcasts. For more information, see
+        * <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing
+        * the video layout for composed archives</a> and
+        * <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts">Configuring
+        * video layout for OpenTok live streaming broadcasts</a>.
+        *
         * <p>
-        * For more information on broadcasting, see the
-        * <a href="https://tokbox.com/developer/rest/#change_live_streaming_layout">Broadcast developer guide.</a>
+        * You can set the initial layout class list for streams published by a client when you generate
+        * used by the client. See the {@link #generateToken(String, TokenOptions)} method.
         *
         * @param sessionId The sessionId
         *
-        * @param streams A list of streams
-        * 
-        * @return The Broadcast object. This object includes properties defining the broadcast, including the broadcast ID.
+        * @param streams A list of StreamsProperties that defines class lists for one or more
+        * streams in the session.
+        *
         */
-        public String setStreamLayouts(string sessionId, List<StreamProperties> streams)
+        public void SetStreamLayouts(string sessionId, List<StreamProperties> streams)
         {
             string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
@@ -646,8 +639,7 @@ namespace OpenTokSDK
             }
             data.Add("items", items);
 
-            string response = Client.Put(url, headers, data);
-            return response;
+            Client.Put(url, headers, data);
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 namespace OpenTokSDK
 {
     /**
-    * Represents a broadcast of an OpenTok session.
+    * Represents a broadcast layout of an OpenTok session.
     */
     public class BroadcastLayout
     {

@@ -11,9 +11,8 @@ namespace OpenTokSDK
     public class Broadcast
     {
         /**
-     * Defines values returned by the Status property of an Archive object. See the ListArchives()
-     * method of the OpenTok class.
-     */
+        * Defines values returned by the Status property of a Broadcast object.
+        */
         public enum BroadcastStatus
         {
             /**
@@ -114,7 +113,7 @@ namespace OpenTokSDK
         public BroadcastStatus Status { get; set; }
 
         /**
-         * The status of the broadcast: either "started" or "stopped".
+         * The maximun duration of the broadcast
          */
         [JsonProperty("maxDuration")]
         public int MaxDuration { get; set; }
@@ -131,8 +130,8 @@ namespace OpenTokSDK
         public String Hls { get; set; }
 
         /**
-         * The broadcast HLS and RTMP URLs 
-         * */
+         * The broadcast HLS and RTMP URLs
+         */
         [JsonProperty("broadcastUrls")]
         private Dictionary<string, object> BroadcastUrls { get; set; }
 
@@ -148,6 +147,4 @@ namespace OpenTokSDK
             }
         }
     }
-
-    
 }
