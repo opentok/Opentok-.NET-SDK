@@ -177,7 +177,7 @@ Get["/broadcast"] = _ =>
 };
 ```
 
-The router method for the broadcast URL calls the Opentok.GetBroadcast(), defined in the OpenTok .NET SDK, to get information about the broadcast. The Broadcast object returned to the GetBroadcast() completion handler includes the HLS broadcast URL (the broadcastUrls.hls property) as well as the status of the broadcast. If the status of the broacast is 'started', Nancy redirects the client to the URL of the HLS stream.
+The router method for the broadcast URL calls the Opentok.GetBroadcast(), defined in the OpenTok .NET SDK, to get information about the broadcast. The Broadcast object returned to the GetBroadcast() completion handler includes the HLS broadcast URL (the broadcastUrls.hls property) as well as the status of the broadcast. If the status of the broacast is 'started', the server redirects the client to the URL of the HLS stream.
 
 Again, only Safari natively support viewing of an HLS stream. In other clients, you will need to use a HLS viewing extension.
 
