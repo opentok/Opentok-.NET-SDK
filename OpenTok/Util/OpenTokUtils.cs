@@ -129,7 +129,7 @@ namespace OpenTokSDK.Util
             return broadcastCopy;
         }
 
-        internal static string convertToCamelCase(string text)
+        public static string convertToCamelCase(string text)
         {
             return Char.ToLowerInvariant(text[0]) + text.Substring(1);
         }
