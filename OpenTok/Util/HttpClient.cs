@@ -116,16 +116,23 @@ namespace OpenTokSDK.Util
 
                 response = (HttpWebResponse)e.Response;
 
-                DebugLog("Response Status Code: " + response.StatusCode);
-                DebugLog("Response Status Description: " + response.StatusDescription);
-                DebugLogHeaders(response.Headers, "Response");
-
-                if (this.debug)
+                if (response != null)
                 {
-                    using (var stream = new StreamReader(response.GetResponseStream()))
+                    DebugLog("Response Status Code: " + response.StatusCode);
+                    DebugLog("Response Status Description: " + response.StatusDescription);
+                    DebugLogHeaders(response.Headers, "Response");
+
+                    if (this.debug)
                     {
-                        DebugLog("Response Body: " + stream.ReadToEnd());
+                        using (var stream = new StreamReader(response.GetResponseStream()))
+                        {
+                            DebugLog("Response Body: " + stream.ReadToEnd());
+                        }
                     }
+                }
+                else if (e.Status == WebExceptionStatus.SendFailure)
+                {
+                    throw new OpenTokWebException("Error with request submission (TLS1.1 or other network/protocol issue)", e);
                 }
 
                 throw new OpenTokWebException("Error with request submission", e);
