@@ -74,7 +74,7 @@ namespace OpenTokSDK
          * The broadcast ID.
          */
         [JsonProperty("id")]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         /**
          * The session ID of the OpenTok session associated with this broadcast.
@@ -142,7 +142,7 @@ namespace OpenTokSDK
         {
             if (opentok != null)
             {
-                Broadcast broadcast = opentok.StopBroadcast(Id.ToString());
+                Broadcast broadcast = opentok.StopBroadcast(Id);
                 Status = broadcast.Status;
             }
         }
