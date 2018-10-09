@@ -124,7 +124,7 @@ namespace Broadcasting
                     }
                     streamPropertiesList.Add(streamProperties);
                 }
-                opentokService.OpenTok.SetStreamLayouts(opentokService.Session.Id, streamPropertiesList);
+                opentokService.OpenTok.SetStreamClassLists(opentokService.Session.Id, streamPropertiesList);
                 return HttpStatusCode.OK;
             };
         }

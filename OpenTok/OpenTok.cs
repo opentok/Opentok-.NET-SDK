@@ -619,7 +619,7 @@ namespace OpenTokSDK
         * streams in the session.
         *
         */
-        public void SetStreamLayouts(string sessionId, List<StreamProperties> streams)
+        public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
             string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
