@@ -465,14 +465,14 @@ namespace OpenTokSDK
         *
         * @return The Broadcast object. This object includes properties defining the archive, including the archive ID.
         */
-        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = "640x480", int maxDuration = 7200, BroadcastLayout layout = null)
+        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, int maxDuration = 7200, BroadcastLayout layout = null)
         {
             if (String.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
 
-            if(String.IsNullOrEmpty(resolution) || (resolution != "640x480" && resolution != "1280x720"))
+            if(!String.IsNullOrEmpty(resolution) && resolution != "640x480" && resolution != "1280x720")
             {
                 throw new OpenTokArgumentException("Resolution value must be either 640x480 (SD) or 1280x720 (HD).");
             }
@@ -502,10 +502,14 @@ namespace OpenTokSDK
 
             var data = new Dictionary<string, object>() {
                 { "sessionId", sessionId },
-                { "resolution", resolution },
                 { "maxDuration", maxDuration },
                 { "outputs", outputs }
             };
+
+            if (!String.IsNullOrEmpty(resolution))
+            {
+                data.Add("resolution", resolution);
+            } 
 
             if (layout != null)
             {
