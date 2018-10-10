@@ -1156,13 +1156,65 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Broadcast broadcast = opentok.StartBroadcast(sessionId, rtmpList: rtmpList);
+            Broadcast broadcast = opentok.StartBroadcast(sessionId, hls: false, rtmpList: rtmpList);
 
             Assert.NotNull(broadcast);
             Assert.Equal(sessionId, broadcast.SessionId);
             Assert.NotNull(broadcast.RtmpList);
             Assert.Equal(broadcast.RtmpList.Count(), 2);
             Assert.Null(broadcast.Hls);
+            Assert.NotNull(broadcast.Id);
+            Assert.Equal(broadcast.Status, Broadcast.BroadcastStatus.STARTED);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public void StartBroadcastWithRTMPandHLSTest()
+        {
+            string sessionId = "SESSIONID";
+            List<Rtmp> rtmpList = new List<Rtmp>();
+            rtmpList.Add(new Rtmp("foo", "rtmp://myfooserver/myfooapp", "myfoostream"));
+            rtmpList.Add(new Rtmp("bar", "rtmp://mybarserver/mybarapp", "mybarstream"));
+
+            string returnString = "{\n" +
+                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                  " \"sessionId\" : \"SESSIONID\",\n" +
+                                  " \"projectId\" : 123456,\n" +
+                                  " \"createdAt\" : 1395183243556,\n" +
+                                  " \"updatedAt\" : 1395183243556,\n" +
+                                  " \"resolution\" : \"640x480\",\n" +
+                                  " \"status\" : \"started\",\n" +
+                                  " \"broadcastUrls\": { \n" +
+                                    " \"hls\": \"http://server/fakepath/playlist.m3u8\", \n" +
+                                    " \"rtmp\": [ \n" +
+                                        " { \n" +
+                                            " \"status\": \"connecting\", \n" +
+                                            " \"id\": \"foo\", \n" +
+                                            " \"serverUrl\": \"rtmp://myfooserver/myfooapp\", \n" +
+                                            " \"streamName\": \"myfoostream\" \n" +
+                                        " }, \n" +
+                                        " { \n" +
+                                            " \"status\": \"connecting\", \n" +
+                                            " \"id\": \"bar\", \n" +
+                                            " \"serverUrl\": \"rtmp://mybarserver/mybarapp\", \n" +
+                                            " \"streamName\": \"mybarstream\" \n" +
+                                        " } \n" +
+                                    " ] \n" +
+                                  " } \n" +
+                                " } ";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = opentok.StartBroadcast(sessionId, rtmpList: rtmpList);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(sessionId, broadcast.SessionId);
+            Assert.NotNull(broadcast.RtmpList);
+            Assert.Equal(broadcast.RtmpList.Count(), 2);
+            Assert.NotNull(broadcast.Hls);
             Assert.NotNull(broadcast.Id);
             Assert.Equal(broadcast.Status, Broadcast.BroadcastStatus.STARTED);
 
