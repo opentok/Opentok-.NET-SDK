@@ -650,7 +650,7 @@ namespace OpenTokSDK
         * 
         * @param sessionId The OpenTok sessionId where the signal will be sent.
         *
-        * @param signalProperties This signalProperties defins the payload for the signal.
+        * @param signalProperties This signalProperties defines the payload for the signal.
         * 
         * @param connectionId An optional parameter used to send the signal to a specific connection in a session. 
         *
