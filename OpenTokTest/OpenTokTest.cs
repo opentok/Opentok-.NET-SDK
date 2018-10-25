@@ -1008,6 +1008,70 @@ namespace OpenTokSDKTest
                 It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
+        [Fact]
+        public void SignalOpenTokArgumentExceptionTest()
+        {
+            string sessionId = "";
+            SignalProperties signalProperties = new SignalProperties("data");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            try
+            {
+                opentok.Signal(sessionId, signalProperties);
+            }
+            catch (OpenTokArgumentException e)
+            {
+                Assert.True(true);
+            }
+        }
+        [Fact]
+        public void SignalToAllTest()
+        {
+            string sessionId = "SESSIONID";
+            SignalProperties signalProperties = new SignalProperties("data");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            opentok.Signal(sessionId, signalProperties);
+        }
+
+        [Fact]
+        public void SignalWithDataAndTypeTest()
+        {
+            string sessionId = "SESSIONID";
+            SignalProperties signalProperties = new SignalProperties("data", "type");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            opentok.Signal(sessionId, signalProperties);
+        }
+
+        [Fact]
+        public void SignalToSingleConnection()
+        {
+            string sessionId = "SESSIONID";
+            string connectionId = "CONNECTIONID";
+            SignalProperties signalProperties = new SignalProperties("data");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            opentok.Signal(sessionId, signalProperties, connectionId);
+        }
+
+
         private Dictionary<string,string> CheckToken(string token, int apiKey)
         {
             string baseToken = OpenTokUtils.Decode64(token.Substring(4));

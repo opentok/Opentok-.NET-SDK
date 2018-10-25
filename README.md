@@ -188,6 +188,13 @@ stream.LayoutClassList; // list with the layout class list
 
 You can get information about all the streams in a session by calling the `ListStreams(sessionId)` method of the `OpenTok` class.
 
+
+```csharp
+StreamList streamList = OpenTok.ListStreams(sessionId);
+
+streamList.Count; // total count 
+```
+
 ## Force Disconnecting
 
 Your application server can disconnect a client from an OpenTok session by calling the `ForceDisconnect(sessionId, connectionId)` method of the `OpenTok` class.
@@ -196,12 +203,26 @@ Your application server can disconnect a client from an OpenTok session by calli
 // Force disconnect a client connection
 OpenTok.ForceDisconnect(sessionId, connectionId);
 ```
+## Sending Signals
+Once a Session is created, you can send signals to everyone in the session or to a specific connection. You can send a signal by calling the `Signal(sessionId, signalProperties, connectionId)` method of the `OpenTok` class.
+
+The `sessionId` parameter is the session ID of the session.
+
+The `signalProperties` parameter is an instance of the `SignalProperties` class where you can set the `data` paramter and the `type` parameter.
+* `data` (string) -- The data string for the signal. You can send a maximum of 8kB.
+* `type` (string) -- (Optional) The type string for the signal. You can send a maximum of 128 charaacters, and only the following characters are allowed: A-Z, a-z, numbers (0-9), '-', '_', and '~'.
+
+The `connectionId` parameter is an optional string used to specify the connection ID of a client conencted to the session. If you specify this value, the signal is sent to the specified client. Otherwise, the signal is sent to all clients connected to the session.
 
 ```csharp
-StreamList streamList = OpenTok.ListStreams(sessionId);
+string sessionId = "SESSIONID";
+SignalProperties signalProperties = new SignalProperties("data", "type");
+OpenTok.Signal(sessionId, signalProperties);
 
-streamList.Count; // total count 
+string connectionId = "CONNECTIONID";
+OpenTok.Signal(sessionId, signalProperties, connectionId);
 ```
+
 # Samples
 
 There are two sample applications included with the SDK. To get going as fast as possible, clone the whole
