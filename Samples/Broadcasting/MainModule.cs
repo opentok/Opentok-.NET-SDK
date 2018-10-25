@@ -90,11 +90,10 @@ namespace Broadcasting
                         {
                             return Response.AsText("Broadcast not in progress.");
                         }
-                    }
-                        
+                    }   
                     catch (Exception ex)
                     {
-                        return Response.AsText("Could not get broadcast " + opentokService.broadcastId);
+                        return Response.AsText("Could not get broadcast " + opentokService.broadcastId + ". Exception Message: " + ex.Message);
                     }
                 } else {
                     return Response.AsText("There's no broadcast running right now.");
