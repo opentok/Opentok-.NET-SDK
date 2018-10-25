@@ -296,6 +296,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(data["create_time"]);
             Assert.NotNull(data["nonce"]);
             Assert.Equal(data["role"], Role.PUBLISHER.ToString());
+            Assert.Equal(data["initial_layout_class_list"], "focus");
         }
 
         [Fact]
