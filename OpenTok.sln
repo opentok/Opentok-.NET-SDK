@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTok", "OpenTok\OpenTok.csproj", "{5CA3CED1-4957-4968-900B-02F0493058E7}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "Samples\HelloWorld\HelloWorld.csproj", "{F8A5A9AD-F680-46F4-806F-653E7E51A030}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiving", "Samples\Archiving\Archiving.csproj", "{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcasting", "Samples\Broadcasting\Broadcasting.csproj", "{D593D74C-46D3-4947-9F57-B40D978C40B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,8 +46,15 @@ Global
 		{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {710D3B9A-19F7-4510-9A03-1295461158D6}
 	EndGlobalSection
 EndGlobal

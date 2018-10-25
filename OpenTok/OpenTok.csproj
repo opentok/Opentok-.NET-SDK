@@ -53,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Broadcast.cs" />
+    <Compile Include="BroadcastLayout.cs" />
+    <Compile Include="Rtmp.cs" />
     <Compile Include="Archive.cs" />
     <Compile Include="ArchiveList.cs" />
     <Compile Include="Constants\OpenTokVersion.cs" />
@@ -61,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Session.cs" />
+    <Compile Include="StreamProperties.cs" />
     <Compile Include="Stream.cs" />
     <Compile Include="StreamList.cs" />
     <Compile Include="Util\HttpClient.cs" />

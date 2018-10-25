@@ -134,12 +134,12 @@ namespace OpenTokSDK
          *
          * @return The token string.
          */
-        public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null)
+        public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List <string> initialLayoutClassList = null)
         {
             double createTime = OpenTokUtils.GetCurrentUnixTimeStamp();
             int nonce = OpenTokUtils.GetRandomNumber();
 
-            string dataString = BuildDataString(role, expireTime, data, createTime, nonce);
+            string dataString = BuildDataString(role, expireTime, data, createTime, nonce, initialLayoutClassList);
             return BuildTokenString(dataString);
         }
 
@@ -155,7 +155,7 @@ namespace OpenTokSDK
             return "T1==" + Convert.ToBase64String(innerBuilderBytes);
         }
 
-        private string BuildDataString(Role role, double expireTime, string connectionData, double createTime, int nonce)
+        private string BuildDataString(Role role, double expireTime, string connectionData, double createTime, int nonce, List<string> initialLayoutClassList)
         {
             StringBuilder dataStringBuilder = new StringBuilder();
 
@@ -163,6 +163,11 @@ namespace OpenTokSDK
             dataStringBuilder.Append(string.Format("&create_time={0}", (long)createTime));
             dataStringBuilder.Append(string.Format("&nonce={0}", nonce));
             dataStringBuilder.Append(string.Format("&role={0}", role.ToString()));
+
+            if (initialLayoutClassList != null)
+            {
+                dataStringBuilder.Append(string.Format("&initial_layout_class_list={0}", String.Join(" ", initialLayoutClassList)));
+            }
 
             if (CheckExpireTime(expireTime, createTime))
             {
