@@ -105,6 +105,7 @@ namespace OpenTokSDK
             this.HasVideo = archive.HasVideo;
             this.HasAudio = archive.HasAudio;
             this.OutputMode = archive.OutputMode;
+            this.Resolution = archive.Resolution;
         }
 
         /**
@@ -153,6 +154,10 @@ namespace OpenTokSDK
          */
         public bool HasAudio { get; set; }
 
+        /**
+         * The resolution of the archive.
+         */
+        public string Resolution { get; set; }
         /**
          * Whether all streams in the archive are recorded to a single file
          * (<code>OutputMode.COMPOSED</code>) or to individual files

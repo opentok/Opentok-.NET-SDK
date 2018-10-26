@@ -121,6 +121,19 @@ namespace OpenTokSDK.Util
             return archiveCopy;
         }
 
+        internal static Broadcast GenerateBroadcast(string response, int apiKey, string apiSecret, string apiUrl)
+        {
+            Broadcast broadcast = JsonConvert.DeserializeObject<Broadcast>(response);
+            Broadcast broadcastCopy = new Broadcast(new OpenTok(apiKey, apiSecret, apiUrl));
+            broadcastCopy.CopyBroadcast(broadcast);
+            return broadcastCopy;
+        }
+
+        public static string convertToCamelCase(string text)
+        {
+            return Char.ToLowerInvariant(text[0]) + text.Substring(1);
+        }
+
         public static int GetPartnerIdFromSessionId(string sessionId)
         {
             if (String.IsNullOrEmpty(sessionId))

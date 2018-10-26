@@ -102,7 +102,7 @@ string token = session.GenerateToken(role: Role.MODERATOR, expireTime: inOneWeek
 ## Working with Archives
 
 You can start the recording of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
-`StartArchive(sessionId, name, hasVideo, hasAudio, outputMode)` method. This will return an
+`StartArchive(sessionId, name, hasVideo, hasAudio, outputMode, resolution)` method. This will return an
 `OpenTokSDK.Archive` instance. The parameter `name` is optional and used to assign a name for the
 Archive. Note that you can only start an Archive on a Session that has clients connected.
 
@@ -118,6 +118,9 @@ the `OpenTok.StartArchive()` method.
 
 You can also disable audio or video recording by setting the `hasAudio` or `hasVideo` parameter of
 the `OpenTok.StartArchive()` method `false`.
+
+You can also set the resolution of the recording to high definition by setting the `resolution` parameter of
+the `OpenTok.StartArchive()` method to `"1280x720"`. Please note that you cannot specify the `resolution` when you set the `outputMode` parameter to `OutputMode.INDIVIDUAL`.
 
 By default, all streams are recorded to a single (composed) file. You can record the different
 streams in the session to individual files (instead of a single composed file) by setting the
@@ -169,6 +172,56 @@ Note that you can also create an automatically archived session, by passing in `
 as the `archiveMode` parameter when you call the `OpenTok.CreateSession()` method (see "Creating
 Sessions," above).
 
+## Working with Streams
+
+You can get information about a stream by calling the `GetStream(sessionId, streamId)` method of the `OpenTok` class.
+
+```csharp
+Stream stream = OpenTok.GetStream(sessionId, streamId);
+
+// Stream Properties
+stream.Id; // string with the stream ID
+stream.VideoType; // string with the video type
+stream.Name; // string with the name
+stream.LayoutClassList; // list with the layout class list
+```
+
+You can get information about all the streams in a session by calling the `ListStreams(sessionId)` method of the `OpenTok` class.
+
+
+```csharp
+StreamList streamList = OpenTok.ListStreams(sessionId);
+
+streamList.Count; // total count 
+```
+
+## Force Disconnecting
+
+Your application server can disconnect a client from an OpenTok session by calling the `ForceDisconnect(sessionId, connectionId)` method of the `OpenTok` class.
+
+```csharp
+// Force disconnect a client connection
+OpenTok.ForceDisconnect(sessionId, connectionId);
+```
+## Sending Signals
+Once a Session is created, you can send signals to everyone in the session or to a specific connection. You can send a signal by calling the `Signal(sessionId, signalProperties, connectionId)` method of the `OpenTok` class.
+
+The `sessionId` parameter is the session ID of the session.
+
+The `signalProperties` parameter is an instance of the `SignalProperties` class where you can set the `data` paramter and the `type` parameter.
+* `data` (string) -- The data string for the signal. You can send a maximum of 8kB.
+* `type` (string) -- (Optional) The type string for the signal. You can send a maximum of 128 charaacters, and only the following characters are allowed: A-Z, a-z, numbers (0-9), '-', '_', and '~'.
+
+The `connectionId` parameter is an optional string used to specify the connection ID of a client conencted to the session. If you specify this value, the signal is sent to the specified client. Otherwise, the signal is sent to all clients connected to the session.
+
+```csharp
+string sessionId = "SESSIONID";
+SignalProperties signalProperties = new SignalProperties("data", "type");
+OpenTok.Signal(sessionId, signalProperties);
+
+string connectionId = "CONNECTIONID";
+OpenTok.Signal(sessionId, signalProperties, connectionId);
+```
 
 # Samples
 

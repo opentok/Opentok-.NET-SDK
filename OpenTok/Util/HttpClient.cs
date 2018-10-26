@@ -63,10 +63,16 @@ namespace OpenTokSDK.Util
             return DoRequest(url, headers, data);
         }
 
-        public virtual string Delete(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        public virtual string Put(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "PUT");
+            return DoRequest(url, headers, data);
+        }
+
+        public virtual string Delete(string url, Dictionary<string, string> headers)
         {
             headers.Add("Method", "DELETE");
-            return DoRequest(url, headers, data);
+            return DoRequest(url, headers, null);
         }
 
         public string DoRequest(string url, Dictionary<string, string> specificHeaders,
