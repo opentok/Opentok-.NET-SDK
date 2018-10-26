@@ -804,8 +804,7 @@ namespace OpenTokSDKTest
             
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<Dictionary<string, object>>()));
+                It.IsAny<Dictionary<string, string>>()));
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -813,8 +812,7 @@ namespace OpenTokSDKTest
 
             mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
                 url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId)),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<Dictionary<string, object>>()), Times.Once());
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
         }
 
         [Fact]
@@ -973,8 +971,7 @@ namespace OpenTokSDKTest
 
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<Dictionary<string, object>>()));
+                It.IsAny<Dictionary<string, string>>()));
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -995,8 +992,7 @@ namespace OpenTokSDKTest
 
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<Dictionary<string, object>>()));
+                It.IsAny<Dictionary<string, string>>()));
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -1004,8 +1000,7 @@ namespace OpenTokSDKTest
 
             mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
                 url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/connection/" + connectionId)),
-                It.IsAny<Dictionary<string, string>>(),
-                It.IsAny<Dictionary<string, object>>()), Times.Once());
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
         }
 
         [Fact]

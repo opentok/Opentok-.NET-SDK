@@ -370,8 +370,8 @@ namespace OpenTokSDK
         public void DeleteArchive(string archiveId)
         {
             string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            Client.Delete(url, headers, new Dictionary<string, object>());
+            var headers = new Dictionary<string, string>();
+            Client.Delete(url, headers);
         }
 
         /**
@@ -439,8 +439,8 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid session Id");
             }
             string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", this.ApiKey, sessionId, connectionId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            Client.Delete(url, headers, new Dictionary<string, object>());
+            var headers = new Dictionary<string, string>();
+            Client.Delete(url, headers);
         }
 
         /**
