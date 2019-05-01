@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Broadcast.cs" />
     <Compile Include="BroadcastLayout.cs" />
+    <Compile Include="BroadcastList.cs" />
     <Compile Include="SignalProperties.cs" />
     <Compile Include="Rtmp.cs" />
     <Compile Include="Archive.cs" />

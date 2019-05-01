@@ -1340,6 +1340,52 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public void ListBroadcastTest()
+        {
+            string sessionId = "SESSIONID";
+
+            string returnString = "{\n" +
+                                " \"count\" : 2,\n" +
+                                " \"items\" : [ {\n" +
+                                " \"id\":\"6706b658-2eba-42cc-b4d2-7d01a104d182\",\n" +
+                                " \"sessionId\":\"1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwNDozODozMSBQU1QgMjAxNH4wLjI0NDgyMjI\",\n" +
+                                " \"projectId\":854511,\n" +
+                                " \"createdAt\":1472435660275,\n" +
+                                " \"broadcastUrls\":null,\n" +
+                                " \"updatedAt\":1472435660275,\n" +
+                                " \"status\":\"stopped\",\n" +
+                                " \"partnerId\":854511 +\n" +
+                                " }, {\n" +
+                                " \"id\":\"7706b658 - 2eba - 42cc - b4d2 - 7d01a104d102\",\n" +
+                                " \"sessionId\":\"1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwNDozODozMSBQU1QgMjAxNH4wLjI0NDgyMjI\",\n" +
+                                " \"projectId\":854511,\n" +
+                                " \"createdAt\":1472435660275,\n" +
+                                " \"broadcastUrls\":null,\n" +
+                                " \"updatedAt\":1472435660275,\n" +
+                                " \"status\":\"started\",\n" +
+                                " \"partnerId\":854511 +\n" +
+                                " } ]\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            BroadcastList broadcastList = opentok.ListBroadcasts(sessionId);
+            Broadcast broadcastOne = broadcastList[0];
+            Broadcast broadcastTwo = broadcastList[1];
+
+            Assert.NotNull(broadcastList);
+            Assert.Equal(2, broadcastList.Count);
+
+            Assert.Equal("7706b658 - 2eba - 42cc - b4d2 - 7d01a104d102", broadcastTwo.Id);
+            Assert.Equal(854511, broadcastTwo.ProjectId);
+            Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcastTwo.Status);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/broadcast"))), Times.Once());
+        }
+
+        [Fact]
         public void SetStreamClassListsTest()
         {
             string sessionId = "SESSIONID";

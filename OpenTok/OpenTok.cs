@@ -602,6 +602,57 @@ namespace OpenTokSDK
         }
 
         /**
+        * Returns a List of Broadcast objects, representing broadcasts that are both
+        * started and in-progress, for your API key. 
+        * Completed broadcasts are not included in the listing.
+        *
+        * @param offset The index offset of the first broadcast. 
+        *
+        * @param count The number of broadcasts to be returned. The maximum number of broadcasts
+        * returned is 1000.
+        *
+        * @return A List of Broadcast objects.
+        */
+        public BroadcastList ListBroadcasts(int offset, int count)
+        {
+            if (count < 0)
+            {
+                throw new OpenTokArgumentException("count cannot be smaller than 1");
+            }
+            string url = string.Format("v2/project/{0}/broadcast?offset={1}", this.ApiKey, offset);
+            if (count > 0)
+            {
+                url = string.Format("{0}&count={1}", url, count);
+            }
+            string response = Client.Get(url);
+            JObject broadcasts = JObject.Parse(response);
+            JArray broadcastsArray = (JArray)broadcasts["items"];
+            BroadcastList broadcastsList = new BroadcastList(broadcastsArray.ToObject<List<Broadcast>>(), (int)broadcasts["count"]);
+            return broadcastsList;
+        }
+
+        /**
+        * Returns a List of Broadcast objects.
+        *
+        * @param sessionId The session ID corresponding to the session.
+        * 
+        * @return A List of Broadcast objects.
+       */
+        public BroadcastList ListBroadcasts(string sessionId)
+        {
+            if (String.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty");
+            }
+            string url = string.Format("v2/project/{0}/session/{1}/broadcast", this.ApiKey, sessionId);
+            string response = Client.Get(url);
+            JObject broadcasts = JObject.Parse(response);
+            JArray broadcastsArray = (JArray)broadcasts["items"];
+            BroadcastList streamList = new BroadcastList(broadcastsArray.ToObject<List<Broadcast>>(), (int)broadcasts["count"]);
+            return streamList;
+        }
+
+        /**
         * Sets the layout class list for streams in a session. Layout classes are used in
         * the layout for composed archives and live streaming broadcasts. For more information, see
         * <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing
