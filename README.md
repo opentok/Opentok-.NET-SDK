@@ -241,6 +241,10 @@ You need an OpenTok API key and API secret, which you can obtain by logging into
 [TokBox account](https://tokbox.com/account).
 
 The OpenTok .NET SDK requires .NET Framework 4.5.2 or greater.
+> NOTE: When using on 4.5.2 TLS 1.2 is not enabled by default. You should use something like the following to force the runtime onto at least TLS 1.2
+```
+ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+```
 
 # Release Notes
 
