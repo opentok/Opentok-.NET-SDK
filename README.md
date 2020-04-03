@@ -1,6 +1,6 @@
 # OpenTok .NET SDK
 
-![https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg](https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg)
+<img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
 
 [![Build status](https://ci.appveyor.com/api/projects/status/tw2d8ufd3tpwkf5b?svg=true)](https://ci.appveyor.com/project/aoberoi/opentok-net-sdk) [![Build Status](https://travis-ci.org/opentok/Opentok-.NET-SDK.svg)](https://travis-ci.org/opentok/Opentok-.NET-SDK)
 
