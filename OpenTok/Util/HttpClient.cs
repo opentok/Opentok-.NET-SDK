@@ -140,7 +140,7 @@ namespace OpenTokSDK.Util
                             DebugLog("Response Body: " + stream.ReadToEnd());
                         }
                     }
-                }                
+                }
 
                 throw new OpenTokWebException("Error with request submission", e);
             }

@@ -228,6 +228,15 @@ string connectionId = "CONNECTIONID";
 OpenTok.Signal(sessionId, signalProperties, connectionId);
 ```
 
+### Changing the Timeout for Http Requests
+
+If you would like to adjust the timeouts for Http Requests sent by the client SDK you can by calling OpenTok.SetDefaultRequestTimeout(int timeout) - note timeout is in milliseconds
+
+```csharp
+this.OpenTok = new OpenTok(apiKey, apiSecret);
+this.OpenTok.SetDefaultRequestTimeout(2000);
+```
+
 ## Samples
 
 There are two sample applications included with the SDK. To get going as fast as possible, clone the whole
