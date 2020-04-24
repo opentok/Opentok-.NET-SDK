@@ -29,6 +29,11 @@ namespace OpenTokSDK.Util
         private string apiSecret;
         private string server;
         public bool debug = false;
+
+        /// <summary>
+        /// Timeout in milliseconds for the HttpWebRequests sent by the client.
+        /// </summary>
+        public int? RequestTimeout { get; set; }
         private readonly DateTime unixEpoch = new DateTime(
           1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
         );
@@ -122,17 +127,20 @@ namespace OpenTokSDK.Util
 
                 response = (HttpWebResponse)e.Response;
 
-                DebugLog("Response Status Code: " + response.StatusCode);
-                DebugLog("Response Status Description: " + response.StatusDescription);
-                DebugLogHeaders(response.Headers, "Response");
-
-                if (this.debug)
+                if (response != null)
                 {
-                    using (var stream = new StreamReader(response.GetResponseStream()))
+                    DebugLog("Response Status Code: " + response.StatusCode);
+                    DebugLog("Response Status Description: " + response.StatusDescription);
+                    DebugLogHeaders(response.Headers, "Response");
+
+                    if (this.debug)
                     {
-                        DebugLog("Response Body: " + stream.ReadToEnd());
+                        using (var stream = new StreamReader(response.GetResponseStream()))
+                        {
+                            DebugLog("Response Body: " + stream.ReadToEnd());
+                        }
                     }
-                }
+                }                
 
                 throw new OpenTokWebException("Error with request submission", e);
             }
@@ -158,6 +166,10 @@ namespace OpenTokSDK.Util
         {
             Uri uri = new Uri(string.Format("{0}/{1}", server, url));
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            if (RequestTimeout != null)
+            {
+                request.Timeout = (int)RequestTimeout;
+            }
             request.ContentLength = data.Length;
             request.UserAgent = userAgent;
 
