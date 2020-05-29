@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTok", "OpenTok\OpenTok.csproj", "{5CA3CED1-4957-4968-900B-02F0493058E7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC02B3EA-F1B3-4A39-A151-4FE61A39F209}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
@@ -24,16 +22,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiving", "Samples\Archiv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcasting", "Samples\Broadcasting\Broadcasting.csproj", "{D593D74C-46D3-4947-9F57-B40D978C40B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTok", "OpenTok\OpenTok.csproj", "{C770C266-B8E6-413A-B5AB-68EB218DC76C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A4E545A-4A4D-419F-A5B2-567586436764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A4E545A-4A4D-419F-A5B2-567586436764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A4E545A-4A4D-419F-A5B2-567586436764}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,6 +46,10 @@ Global
 		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
