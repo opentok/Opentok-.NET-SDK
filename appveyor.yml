@@ -6,8 +6,6 @@ configuration: Debug
 platform: Any CPU
 before_build:
 - ps: >-
-    where msbuild
-
     nuget restore
 build:
   project: OpenTok.sln
