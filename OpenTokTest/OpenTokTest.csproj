@@ -1,82 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A4E545A-4A4D-419F-A5B2-567586436764}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenTokSDKTest</RootNamespace>
-    <AssemblyName>OpenTokTest</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <Company>Vonage</Company>
+    <TargetFrameworks>net452;net46;net461;net462;netcoreapp2.0;netcoreapp2.1;netcoreapp2.2;net47;net471;net472;net48;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+    <Authors>Vonage</Authors>
+    <Copyright>Vonage 2020</Copyright>        
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Moq" Version="4.14.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpenTokTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <ProjectReference Include="..\OpenTok\OpenTok.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OpenTok\OpenTok.csproj">
-      <Project>{c770c266-b8e6-413a-b5ab-68eb218dc76c}</Project>
-      <Name>OpenTok</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Moq">
-      <Version>4.2.1402.2112</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="xunit">
-      <Version>1.9.2</Version>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio">
-      <Version>2.0.0-rc3-build1046</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  
 </Project>
