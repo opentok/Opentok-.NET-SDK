@@ -1,7 +1,6 @@
 language: csharp
 solution: OpenTok.sln
-dotnet: 1.0.1
-dist: trusty
+dotnet: 2.1.502
 sudo: required  
 script:
   - dotnet restore
