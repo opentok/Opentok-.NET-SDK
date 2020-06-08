@@ -12,5 +12,4 @@ build:
 test_script:
 - ps: >-
     $ErrorActionPreference = "stop"
-
     dotnet test C:\projects\opentok-net-sdk\OpenTokTest\OpenTokTest.csproj

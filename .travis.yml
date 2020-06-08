@@ -7,3 +7,4 @@ script:
   - dotnet restore
   - dotnet build
   - dotnet test ./OpenTokTest/OpenTokTest.csproj
+  
