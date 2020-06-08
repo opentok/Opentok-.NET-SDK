@@ -1,13 +1,10 @@
 language: csharp
 solution: OpenTok.sln
-dotnet: 3.1
+dotnet: 1.0.1
+dist: trusty
 sudo: required  
-install:
-  - nuget restore OpenTok.sln
-  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
 script:
   - dotnet restore
   - dotnet build
-  - dotnet test ./OpenTokTest/OpenTokTest.csproj -f netcoreapp3.1
-  - xbuild /p:Configuration=Release OpenTok.sln
-  - mono --runtime=v4.0 ./testrunner/xunit.runners.1.9.2/tools/xunit.console.exe ./OpenTokTest/bin/Release/OpenTokTest.dll
+  - dotnet test ./OpenTokTest/OpenTokTest.csproj
+  
