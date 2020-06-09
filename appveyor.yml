@@ -1,5 +1,16 @@
-install:
-  - NuGet.exe restore
-
+version: 1.0.{build}
+image:
+- Visual Studio 2019
+configuration: Debug
+platform: Any CPU
+before_build:
+- ps: >-
+    nuget restore
+build:
+  project: OpenTok.sln
+  verbosity: minimal
 test_script:
-  xunit.console.clr4 OpenTokTest\bin\Debug\OpenTokTest.dll /appveyor
+- ps: >-
+    $ErrorActionPreference = "stop"
+    
+    dotnet test C:\projects\opentok-net-sdk\OpenTokTest\OpenTokTest.csproj

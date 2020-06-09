@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTok", "OpenTok\OpenTok.csproj", "{5CA3CED1-4957-4968-900B-02F0493058E7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC02B3EA-F1B3-4A39-A151-4FE61A39F209}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
@@ -16,13 +14,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTokTest", "OpenTokTest\OpenTokTest.csproj", "{8A4E545A-4A4D-419F-A5B2-567586436764}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "Samples\HelloWorld\HelloWorld.csproj", "{F8A5A9AD-F680-46F4-806F-653E7E51A030}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiving", "Samples\Archiving\Archiving.csproj", "{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcasting", "Samples\Broadcasting\Broadcasting.csproj", "{D593D74C-46D3-4947-9F57-B40D978C40B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTok", "OpenTok\OpenTok.csproj", "{C770C266-B8E6-413A-B5AB-68EB218DC76C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTokTest", "OpenTokTest\OpenTokTest.csproj", "{034F54A8-74D7-4EA5-A923-DC45F709A826}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,14 +30,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5CA3CED1-4957-4968-900B-02F0493058E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8A4E545A-4A4D-419F-A5B2-567586436764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A4E545A-4A4D-419F-A5B2-567586436764}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A4E545A-4A4D-419F-A5B2-567586436764}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A4E545A-4A4D-419F-A5B2-567586436764}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8A5A9AD-F680-46F4-806F-653E7E51A030}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,6 +42,14 @@ Global
 		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D593D74C-46D3-4947-9F57-B40D978C40B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C770C266-B8E6-413A-B5AB-68EB218DC76C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{034F54A8-74D7-4EA5-A923-DC45F709A826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{034F54A8-74D7-4EA5-A923-DC45F709A826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{034F54A8-74D7-4EA5-A923-DC45F709A826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{034F54A8-74D7-4EA5-A923-DC45F709A826}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
