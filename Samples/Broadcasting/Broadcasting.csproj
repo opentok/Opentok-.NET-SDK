@@ -16,6 +16,42 @@
     <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Content\css\sample.css" />
+    <None Remove="Content\js\host.js" />
+    <None Remove="Content\js\participant.js" />
+    <None Remove="views\Host.cshtml" />
+    <None Remove="views\Index.cshtml" />
+    <None Remove="views\Participant.cshtml" />
+    <None Remove="views\Shared\Layout.cshtml" />
+    <None Remove="views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\css\sample.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\js\host.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\js\participant.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="views\Host.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="views\Index.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="views\Participant.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="views\Shared\Layout.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="views\_ViewStart.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\OpenTok\OpenTok.csproj" />
   </ItemGroup>
   <ItemGroup>

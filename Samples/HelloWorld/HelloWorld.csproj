@@ -16,6 +16,18 @@
     <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Content\js\helloworld.js" />
+    <None Remove="views\index.sshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\js\helloworld.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="views\index.sshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\OpenTok\OpenTok.csproj" />
   </ItemGroup>
   <ItemGroup>
