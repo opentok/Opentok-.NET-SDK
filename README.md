@@ -2,7 +2,7 @@
 
 <img src="https://assets.tokbox.com/img/vonage/Vonage_VideoAPI_black.svg" height="48px" alt="Tokbox is now known as Vonage" />
 
-[![Build status](https://ci.appveyor.com/api/projects/status/tw2d8ufd3tpwkf5b?svg=true)](https://ci.appveyor.com/project/aoberoi/opentok-net-sdk) [![Build Status](https://travis-ci.org/opentok/Opentok-.NET-SDK.svg)](https://travis-ci.org/opentok/Opentok-.NET-SDK)
+[![Build status](https://github.com/opentok/Opentok-.NET-SDK/workflows/.NET%20Core/badge.svg)](https://github.com/opentok/Opentok-.NET-SDK/actions?query=workflow%3A%22.NET+Core%22)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 The OpenTok .NET SDK lets you generate
