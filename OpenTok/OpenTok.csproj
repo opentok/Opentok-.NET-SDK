@@ -12,6 +12,7 @@
     <ProjectGuid>{C770C266-B8E6-413A-B5AB-68EB218DC76C}</ProjectGuid>
     <NuGetPackageImportStamp>671ed443</NuGetPackageImportStamp>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>Copyright © Vonage 2020</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
