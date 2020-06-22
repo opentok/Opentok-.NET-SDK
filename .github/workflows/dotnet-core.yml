@@ -1,0 +1,26 @@
+
+name: .NET Core
+
+on:
+  push:
+    branches: [ master, dev ]
+  pull_request:
+    branches: [ master, dev ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build OpenTok/OpenTok.csproj --configuration Release --no-restore
+    - name: Test
+      run: dotnet test OpenTokTest/OpenTokTest.csproj --no-restore
