@@ -672,5 +672,14 @@ namespace OpenTokSDK
             };
             Client.Post(url, headers, data);
         }
+
+        /// <summary>
+        /// Set's the default request timeout (in milliseconds) for all WebRequest's sent by the SDK
+        /// </summary>
+        /// <param name="timeout"></param>
+        public void SetDefaultRequestTimeout(int timeout)
+        {
+            Client.RequestTimeout = timeout;
+        }
     }
 }
