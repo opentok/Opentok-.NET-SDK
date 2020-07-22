@@ -123,7 +123,7 @@ namespace OpenTokSDK.Util
             }
             catch (WebException e)
             {
-                DebugLog("WebException Status: " + e.Status + ", Message: " + e.Message);                
+                DebugLog("WebException Status: " + e.Status + ", Message: " + e.Message);
 
                 response = (HttpWebResponse)e.Response;
 
