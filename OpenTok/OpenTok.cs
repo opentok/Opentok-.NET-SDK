@@ -298,20 +298,7 @@ namespace OpenTokSDK
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Archive>(response);
-        }
-
-        /**
-         * Returns a List of Archive objects, representing archives that are both
-         * both completed and in-progress, for your API key. This list is limited to 1000 archives
-         * starting with the first archive recorded. For a specific range of archives, call
-         * listArchives(int offset, int count).
-         *
-         * @return A List of Archive objects.
-         */
-        public ArchiveList ListArchives()
-        {
-            return ListArchives(0, 0);
-        }
+        }        
 
         /**
          * Returns a List of Archive objects, representing archives that are both
@@ -319,23 +306,36 @@ namespace OpenTokSDK
          *
          * @param offset The index offset of the first archive. 0 is offset of the most recently
          * started archive. 1 is the offset of the archive that started prior to the most recent
-         * archive.
+         * archive. Defaults to 0
          *
          * @param count The number of archives to be returned. The maximum number of archives
-         * returned is 1000.
+         * returned is 1000. Defaults to 0, which means the count will not be set
+         *
+         * @param sessionId The id of the session that you would like to search for. Defaults to empty
+         * if sessionId is set it must be validly formatted
+         * 
+         * @throws OpenTokArgumentException if count less than 0 or SessionId is set and is invalidly formatted
          *
          * @return A List of Archive objects.
-         */
-        public ArchiveList ListArchives(int offset, int count)
+         */        
+        public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
         {
             if (count < 0)
             {
-                throw new OpenTokArgumentException("count cannot be smaller than 1");
+                throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
             string url = string.Format("v2/project/{0}/archive?offset={1}", this.ApiKey, offset);
             if (count > 0)
             {
                 url = string.Format("{0}&count={1}", url, count);
+            }
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                if (!OpenTokUtils.ValidateSession(sessionId))
+                {
+                    throw new OpenTokArgumentException("Session Id is not valid");
+                }
+                url = $"{url}&sessionId={sessionId}";
             }
             string response = Client.Get(url);
             JObject archives = JObject.Parse(response);

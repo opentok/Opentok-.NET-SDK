@@ -161,7 +161,7 @@ paginate the Archives you receive using the offset and count parameters. This wi
 `OpenTokSDK.ArchiveList` object.
 
 ```csharp
-// Get a list with the first 1000 archives created by the API Key
+// Get a list with the first 50 archives created by the API Key
 var archives = OpenTok.ListArchives();
 
 // Get a list of the first 50 archives created by the API Key
@@ -169,6 +169,9 @@ var archives = OpenTok.ListArchives(0, 50);
 
 // Get a list of the next 50 archives
 var archives = OpenTok.ListArchives(50, 50);
+
+// Get a list of the first 50 archives created for the given sessionId
+var archives = OpenTok.ListArchives(sessionId:sessionId);
 ```
 
 Note that you can also create an automatically archived session, by passing in `ArchiveMode.ALWAYS`
