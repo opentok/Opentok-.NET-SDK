@@ -10,44 +10,44 @@ namespace OpenTokSDK.Exception
      */
     public class OpenTokException : System.Exception
     {
-        private System.Exception exception;
-        private string message;
-
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Construct opentok exception
+        /// </summary>
         public OpenTokException()
         {
         }
-
-        /**
-         * Constructor. Do not use.
-         */
+                
+        /// <summary>
+        /// Construct OpentTokException with a message
+        /// </summary>
+        /// <param name="message"></param>
         public OpenTokException(string message)
-            : base(message)
-        {
-            this.message = message;
-        }
-
-        /**
-         * Constructor. Do not use.
-         */
+            : base(message){}
+        
+        /// <summary>
+        /// Construct OpenTokException with a message and an inner exception
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
         public OpenTokException(string message, System.Exception exception)
-            : base(message, exception)
-        {
-            this.message = message;
-            this.exception = exception;
-        }
+            : base(message, exception){}
 
-        //GGB override Message property
+        /// <summary>
+        /// Get's the message of the exception
+        /// </summary>
+        /// <returns></returns>
         public string GetMessage()
         {
-            return message;
+            return Message;
         }
 
+        /// <summary>
+        /// Get's the inner exception
+        /// </summary>
+        /// <returns></returns>
         public System.Exception GetException()
         {
-            return exception;
+            return InnerException;
         }
     }
 
