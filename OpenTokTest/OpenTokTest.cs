@@ -1488,7 +1488,7 @@ namespace OpenTokSDKTest
             opentok.SetStreamClassLists(sessionId, streamPropertiesList);
             
             mockClient.Verify(httpClient => httpClient.Put(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/stream")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
-        }        
+        }
     }
 }
 

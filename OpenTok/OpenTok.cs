@@ -317,7 +317,7 @@ namespace OpenTokSDK
          * @throws OpenTokArgumentException if count less than 0 or SessionId is set and is invalidly formatted
          *
          * @return A List of Archive objects.
-         */        
+         */
         public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
         {
             if (count < 0)
