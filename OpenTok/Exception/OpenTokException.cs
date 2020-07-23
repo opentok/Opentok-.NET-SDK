@@ -33,7 +33,7 @@ namespace OpenTokSDK.Exception
          * Constructor. Do not use.
          */
         public OpenTokException(string message, System.Exception exception)
-            : base(message)
+            : base(message, exception)
         {
             this.message = message;
             this.exception = exception;
