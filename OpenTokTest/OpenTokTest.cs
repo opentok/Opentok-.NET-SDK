@@ -726,9 +726,6 @@ namespace OpenTokSDKTest
             {
                 Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", ex.Message);
             }
-            
-
-            
         }
 
         [Fact]
