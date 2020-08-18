@@ -728,6 +728,45 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public void StartArchiveVerticalLayoutWithStyleSheet()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "1280x720";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"outputMode\" : \"composed\",\n" +
+                                " \"resolution\" : \"1280x720\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"" + sessionId + "\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.verticalPresentation,
+                StyleSheet = "blah"
+            };            
+            try
+            {
+                Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+                Assert.True(false, "StartArchive should have thrown an exception");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+                Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", ex.Message);
+            }
+        }
+
+        [Fact]
         public void StartArchiveCustomLayoutMissingStylesheet()
         {
             string sessionId = "SESSIONID";
