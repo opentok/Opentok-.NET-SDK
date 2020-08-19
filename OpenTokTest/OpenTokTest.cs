@@ -649,13 +649,28 @@ namespace OpenTokSDKTest
             var expectedString = @"{""sessionId"":""abcd12345"",""name"":""an_archive_name"",""hasVideo"":true,""hasAudio"":true,""outputMode"":""composed"",""layout"":{""type"":""pip""}}";
             var httpClient = new HttpClient();
             var data = new Dictionary<string, object>() { { "sessionId", "abcd12345" }, { "name", "an_archive_name" }, { "hasVideo", true }, { "hasAudio", true }, { "outputMode", "composed" } };
-            var layout = new ArchiveLayout { Type = LayoutType.pip };
+            var layout = new ArchiveLayout { Type = LayoutType.pip};
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
             headers.Add("Content-type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expectedString, layoutString);            
+        }
+
+        [Fact]
+        public void TestArchiveNonCustomLayoutEmptyString()
+        {
+            var expectedString = @"{""sessionId"":""abcd12345"",""name"":""an_archive_name"",""hasVideo"":true,""hasAudio"":true,""outputMode"":""composed"",""layout"":{""type"":""pip""}}";
+            var httpClient = new HttpClient();
+            var data = new Dictionary<string, object>() { { "sessionId", "abcd12345" }, { "name", "an_archive_name" }, { "hasVideo", true }, { "hasAudio", true }, { "outputMode", "composed" } };
+            var layout = new ArchiveLayout { Type = LayoutType.pip, StyleSheet=string.Empty };
+            data.Add("layout", layout);
+            var headers = new Dictionary<string, string>();
+            headers.Add("Content-type", "application/json");
+            var clientType = typeof(HttpClient);
+            var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
+            Assert.Equal(expectedString, layoutString);
         }
 
         [Fact]

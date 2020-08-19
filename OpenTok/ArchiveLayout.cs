@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.ComponentModel;
 
 namespace OpenTokSDK
 {
@@ -18,7 +19,8 @@ namespace OpenTokSDK
         /// <summary>
         /// The stylesheet to use for the layout. Must be set if using custom.
         /// </summary>
-        [JsonProperty("stylesheet", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("stylesheet", DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
+        [DefaultValue("")]
         public string StyleSheet { get; set; }
     }
 }
