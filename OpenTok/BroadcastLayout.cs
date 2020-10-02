@@ -9,36 +9,35 @@ using System.Runtime.Serialization;
 
 namespace OpenTokSDK
 {
-    /**
-    * Represents a broadcast layout of an OpenTok session.
-    */
+    /// <summary>
+    /// Represents a broadcast layout of an OpenTok session.
+    /// </summary>
     public class BroadcastLayout
     {
-        /**
-        * Defines values for the role parameter of the GenerateToken method of the OpenTok class.
-        */
+        /// <summary>
+        /// Defines values for the role parameter of the GenerateToken method of the OpenTok class.
+        /// </summary>
         public enum LayoutType
         {
-
-            /**
-             * Picture-in-Picture
-             */
+            /// <summary>
+            /// Picture-in-Picture
+            /// </summary>
             Pip,
-            /**
-             * Best Fit
-             */
+            /// <summary>
+            /// /Best Fit
+            /// </summary>
             BestFit,
-            /**
-             * Vertical Presentation
-             */
+            /// <summary>
+            /// Vertical Presentation
+            /// </summary>
             VerticalPresentation,
-            /**
-             * Horizontal Presentation
-             */
+            /// <summary>
+            /// Horizontal Presentation
+            /// </summary>
             HorizontalPresentation,
-            /**
-             * Custom Layout
-             */
+            /// <summary>
+            /// Custom Layout
+            /// </summary>
             Custom
         }
 
@@ -53,16 +52,16 @@ namespace OpenTokSDK
             this.Stylesheet = Stylesheet;
         }
 
-        /**
-         * The Layout type
-        */
+        /// <summary>
+        /// The Layout type
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter), true)]
         [JsonProperty("type")]
         public LayoutType Type { get; set; }
 
-        /**
-         * The Stylesheet for the Custom Layout
-        */
+        /// <summary>
+        /// The Stylesheet for the Custom Layout
+        /// </summary>
         [JsonProperty("stylesheet")]
         public string Stylesheet { get; set; }
     }

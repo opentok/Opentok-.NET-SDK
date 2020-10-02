@@ -5,23 +5,23 @@ using Newtonsoft.Json.Linq;
 
 namespace OpenTokSDK
 {
-    /**
-    * Represents a broadcast of an OpenTok session.
-    */
+    /// <summary>
+    /// Represents a broadcast of an OpenTok session.
+    /// </summary>
     public class Broadcast
     {
-        /**
-        * Defines values returned by the Status property of a Broadcast object.
-        */
+        /// <summary>
+        /// Defines values returned by the Status property of a Broadcast object.
+        /// </summary>
         public enum BroadcastStatus
         {
-            /**
-             * The broadcast is stopped
-             */
+            /// <summary>
+            /// The broadcast is stopped.
+            /// </summary>
             STOPPED,
-            /**
-             * The broadcast is started
-             */
+            /// <summary>
+            /// The broadcast is started.
+            /// </summary>
             STARTED
         }
 
@@ -48,10 +48,11 @@ namespace OpenTokSDK
             MaxDuration = broadcast.MaxDuration;
             Status = broadcast.Status;
             BroadcastUrls = broadcast.BroadcastUrls;
-            
+
             if (BroadcastUrls != null)
             {
-                if (BroadcastUrls.ContainsKey("hls")) {
+                if (BroadcastUrls.ContainsKey("hls"))
+                {
                     Hls = BroadcastUrls["hls"].ToString();
                 }
 
@@ -68,76 +69,75 @@ namespace OpenTokSDK
                     }
                 }
             }
-         }
+        }
 
-        /**
-         * The broadcast ID.
-         */
+        /// <summary>
+        /// The broadcast ID.
+        /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        /**
-         * The session ID of the OpenTok session associated with this broadcast.
-         */
+        /// <summary>
+        /// The session ID of the OpenTok session associated with this broadcast.
+        /// </summary>
         [JsonProperty("sessionId")]
         public String SessionId { get; set; }
 
-        /**
-         * The OpenTok API key associated with the broadcast.
-         */
+        /// <summary>
+        /// The OpenTok API key associated with the broadcast.
+        /// </summary>
         [JsonProperty("projectId")]
         public int ProjectId { get; set; }
 
-        /**
-         * The time the broadcast started, expressed in milliseconds since the Unix epoch (January 1, 1970, 00:00:00 UTC).
-         */
+        /// <summary>
+        /// The time the broadcast started, expressed in milliseconds since the Unix epoch (January 1, 1970, 00:00:00 UTC).
+        /// </summary>
         [JsonProperty("createdAt")]
         public long CreatedAt { get; set; }
 
-        /**
-         * The time the broadcast was updated, in milliseconds since the Unix epoch  (January 1, 1970, 00:00:00 UTC).
-         */
+        /// <summary>
+        /// The time the broadcast was updated, in milliseconds since the Unix epoch  (January 1, 1970, 00:00:00 UTC).
+        /// </summary>
         [JsonProperty("updatedAt")]
         public long UpdatedAt { get; set; }
 
-        /**
-         * The resolution of the broadcast: either "640x480" (SD, the default) or "1280x720" (HD).
-         */
+        /// <summary>
+        /// The resolution of the broadcast: either "640x480" (SD, the default) or "1280x720" (HD).
+        /// </summary>
         [JsonProperty("resolution")]
         public string Resolution { get; set; }
 
-        /**
-         * The status of the broadcast: either "started" or "stopped".
-         */
+        /// <summary>
+        /// The status of the broadcast: either "started" or "stopped".
+        /// </summary>
         [JsonProperty("status")]
         public BroadcastStatus Status { get; set; }
 
-        /**
-         * The maximun duration of the broadcast
-         */
+        /// <summary>
+        /// The maximun duration of the broadcast.
+        /// </summary>
         [JsonProperty("maxDuration")]
         public int MaxDuration { get; set; }
 
-
-        /**
-         * The RTMP List
-         */
+        /// <summary>
+        /// The RTMP List.
+        /// </summary>
         public List<Rtmp> RtmpList { get; set; }
-   
-        /**
-         * HLS Url
-         */
+
+        /// <summary>
+        /// HLS Url.
+        /// </summary>
         public String Hls { get; set; }
 
-        /**
-         * The broadcast HLS and RTMP URLs
-         */
+        /// <summary>
+        /// The broadcast HLS and RTMP URLs.
+        /// </summary>
         [JsonProperty("broadcastUrls")]
         private Dictionary<string, object> BroadcastUrls { get; set; }
 
-        /**
-        * Stops the live broadcasting if it is started.
-        */
+        /// <summary>
+        /// Stops the live broadcasting if it is started.
+        /// </summary>
         public void Stop()
         {
             if (opentok != null)

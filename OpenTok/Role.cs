@@ -5,32 +5,31 @@ using System.Text;
 
 namespace OpenTokSDK
 {
-    /**
-    * Defines values for the role parameter of the GenerateToken method of the OpenTok class.
-    */
+    /// <summary>
+    /// Defines values for the role parameter of the GenerateToken method of the OpenTok class.
+    /// </summary>
     public enum Role
     {
-        /**
-         * A publisher can publish streams, subscribe to streams, and signal. (This is the default
-         * value if you do not set a role when calling GenerateToken method of the OpenTok class.
-         */
+        /// <summary>
+        /// A publisher can publish streams, subscribe to streams, and signal. (This is the default
+        /// value if you do not set a role when calling GenerateToken method of the OpenTok class.
+        /// </summary>
         PUBLISHER,
-        /**
-         *   A subscriber can only subscribe to streams.
-         */
+        /// <summary>
+        /// A subscriber can only subscribe to streams.
+        /// </summary>
         SUBSCRIBER,
-        /**
-         * In addition to the privileges granted to a publisher, in clients using the OpenTok.js
-         * library, a moderator can call the <code>forceUnpublish()</code> and
-         * <code>forceDisconnect()</code> methods of the Session object.
-         */
+        /// <summary>
+        /// In addition to the privileges granted to a publisher, in clients using the OpenTok.js
+        /// library, a moderator can call the forceUnpublish() and forceDisconnect() methods of the Session object.
+        /// </summary>
         MODERATOR
     }
 
-    /**
-     * For internal use.
-     */
-    static class RoleExtensions
+    /// <summary>
+    /// For internal use.
+    /// </summary>
+    internal static class RoleExtensions
     {
         public static string ToString(this Role role)
         {

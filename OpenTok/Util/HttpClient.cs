@@ -19,9 +19,9 @@ using OpenTokSDK.Exception;
 
 namespace OpenTokSDK.Util
 {
-    /**
-     * For internal use.
-     */
+    /// <summary>
+    /// For internal use.
+    /// </summary>
     public class HttpClient
     {
         private string userAgent;

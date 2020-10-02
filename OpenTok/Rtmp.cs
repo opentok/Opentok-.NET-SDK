@@ -2,27 +2,27 @@
 using Newtonsoft.Json;
 
 namespace OpenTokSDK
-{   
-    /**
-    * Represents a string in an OpenTok session.
-    */
+{
+    /// <summary>
+    /// Represents a string in an OpenTok session.
+    /// </summary>
     public class Rtmp
     {
-        /**
-        * The stream id.
-        */
+        /// <summary>
+        /// The stream id.
+        /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        /**
-        * The server URL.
-        */
+        /// <summary>
+        /// The server URL.
+        /// </summary>
         [JsonProperty("serverUrl")]
         public string ServerUrl { get; set; }
 
-        /**
-        * The stream name.
-        */
+        /// <summary>
+        /// The stream name.
+        /// </summary>
         [JsonProperty("streamName")]
         public string StreamName { get; set; }
 

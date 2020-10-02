@@ -33,15 +33,15 @@ namespace OpenTokSDK
             LayoutClassList.Add(layoutClass);
         }
 
-        /**
-         * The stream ID.
-         */
+        /// <summary>
+        /// The stream ID.
+        /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        /**
-         * The layout class list as a list of strings.
-         */
+        /// <summary>
+        /// The layout class list as a list of strings.
+        /// </summary>
         [JsonProperty("layoutClassList")]
         public List<string> LayoutClassList { get; set; }
         
