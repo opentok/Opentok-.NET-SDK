@@ -367,7 +367,7 @@ namespace OpenTokSDK
         {
             string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            string response = Client.Get(url); ;
+            string response = Client.Get(url);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
 
