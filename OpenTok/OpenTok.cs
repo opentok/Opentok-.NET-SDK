@@ -464,7 +464,7 @@ namespace OpenTokSDK
         * <p>
         * You can only have one active live streaming broadcast at a time for a session
         * (however, having more than one would not be useful).
-        * The live streaming broadcast can target one HLS endpoint and up to five RTMP servers simulteneously for a session.
+        * The live streaming broadcast can target one HLS endpoint and up to five RTMP servers simultaneously for a session.
         * You can only start live streaming for sessions that use the OpenTok Media Router (with the media mode set to routed);
         * you cannot use live streaming with sessions that have the media mode set to relayed OpenTok Media Router. See
         * <a href="https://tokbox.com/developer/guides/create-session/#media-mode">The OpenTok Media Router and media modes.</a>
