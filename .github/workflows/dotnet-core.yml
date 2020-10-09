@@ -23,4 +23,4 @@ jobs:
     - name: Build
       run: dotnet build OpenTok/OpenTok.csproj --configuration Release --no-restore
     - name: Test
-      run: dotnet test OpenTokTest/OpenTokTest.csproj --no-restore
+      run: dotnet test OpenTokTest/OpenTokTest.csproj --no-restore -f netcoreapp3.1
