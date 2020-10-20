@@ -17,10 +17,10 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 2.2.103
+        dotnet-version: '3.1.401'
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build OpenTok/OpenTok.csproj --configuration Release --no-restore
     - name: Test
-      run: dotnet test OpenTokTest/OpenTokTest.csproj --no-restore
+      run: dotnet test OpenTokTest/OpenTokTest.csproj --no-restore -f netcoreapp3.1
