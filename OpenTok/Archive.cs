@@ -43,7 +43,7 @@ namespace OpenTokSDK
         STOPPED,
         /// <summary>
         /// The archive is available for download from the the upload targetAmazon S3 bucket or Windows Azure container you set up for your
-        /// <see href="https://tokbox.com/account">OpenTok project</see>.
+        /// <a href="https://tokbox.com/account">OpenTok project</a>.
         /// </summary>
         UPLOADED,
         /// <summary>

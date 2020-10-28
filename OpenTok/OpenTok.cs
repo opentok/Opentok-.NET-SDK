@@ -12,7 +12,7 @@ namespace OpenTokSDK
     /// Contains methods for creating OpenTok sessions, generating tokens, and working with archives.
     /// <para>
     /// To create a new OpenTok object, call the OpenTok() constructor with your OpenTok API key
-    /// and the API secret for your <see href="https://tokbox.com/account">OpenTok project</see>.
+    /// and the API secret for your <a href="https://tokbox.com/account">OpenTok project</a>.
     /// Do not publicly share your API secret. You will use it with the OpenTok constructor
     /// (only on your web server) to create OpenTok sessions.
     /// </para>
@@ -51,8 +51,8 @@ namespace OpenTokSDK
         /// <summary>
         /// Creates an OpenTok object.
         /// </summary>
-        /// <param name="apiKey">Your OpenTok API key. (See the <see href="https://tokbox.com/account" > TokBox account page</see></param>
-        /// <param name="apiSecret">Your OpenTok API secret. (See the <see href="https://tokbox.com/account" > TokBox account page</see></param>
+        /// <param name="apiKey">Your OpenTok API key. (See the <a href="https://tokbox.com/account" > TokBox account page</a></param>
+        /// <param name="apiSecret">Your OpenTok API secret. (See the <a href="https://tokbox.com/account" > TokBox account page</a></param>
         public OpenTok(int apiKey, string apiSecret)
         {
             this.ApiKey = apiKey;
@@ -91,9 +91,9 @@ namespace OpenTokSDK
         /// Check the error message for details.
         /// 
         /// You can also create a session using the
-        /// <see href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok
-        /// REST API</see> or by logging in to your
-        /// <see href="https://tokbox.com/account">TokBox account</see>.
+        /// <a href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok
+        /// REST API</a> or by logging in to your
+        /// <a href="https://tokbox.com/account">TokBox account</a>.
         /// </para>
         /// </summary>
         /// <param name="location">
@@ -111,18 +111,18 @@ namespace OpenTokSDK
         /// due to firewall restrictions, the session uses the OpenTok TURN server to relay streams.
         /// </para>
         /// <para>
-        /// The <see href="https://tokbox.com/opentok/tutorials/create-session/#media-mode">
-        /// OpenTok Media Router</see> provides the following benefits:
+        /// The <a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode">
+        /// OpenTok Media Router</a> provides the following benefits:
         /// - The OpenTok Media Router can decrease bandwidth usage in multiparty sessions.
         ///   (When the <paramref name="mediaMode"/> parameter is set to <see cref="MediaMode.ROUTED"/>,
         ///   each client must send a separate audio-video stream to each client subscribing to it.)
         /// - The OpenTok Media Router can improve the quality of the user experience through
-        ///   <see href="https://tokbox.com/platform/fallback">audio fallback and video recovery</see>
+        ///   <a href="https://tokbox.com/platform/fallback">audio fallback and video recovery</a>
         ///   With these features, if a client's connectivity degrades to a degree that it does not
         ///   support video for a stream it's subscribing to, the video is dropped on that client
         ///   (without affecting other clients), and the client receives audio only. If the client's
         ///   connectivity improves, the video returns.
-        /// - The OpenTok Media Router supports the <see href="http://tokbox.com/opentok/tutorials/archiving">archiving</see>
+        /// - The OpenTok Media Router supports the <a href="http://tokbox.com/opentok/tutorials/archiving">archiving</a>
         ///   feature, which lets you record, save, and retrieve OpenTok sessions.
         /// </para>
         /// </param>
@@ -138,7 +138,7 @@ namespace OpenTokSDK
         /// <see cref="Session"/> is the session ID, which uniquely identifies the session. You will use
         /// this session ID in the client SDKs to identify the session. For example, when using the
         /// OpenTok.js library, use the session ID when calling the
-        /// <see href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</see>
+        /// <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a>
         /// method (to initialize an OpenTok session).
         /// </returns>
         public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
@@ -181,7 +181,7 @@ namespace OpenTokSDK
         /// connecting to an OpenTok session, the client passes a token when connecting to the session.
         /// <para>
         /// For testing, you can also generate test tokens by logging in to your
-        /// <see href="https://tokbox.com/account">TokBox account</see>.
+        /// <a href="https://tokbox.com/account">TokBox account</a>.
         /// </para>
         /// </summary>
         /// <param name="sessionId">
@@ -469,11 +469,11 @@ namespace OpenTokSDK
         /// The live streaming broadcast can target one HLS endpoint and up to five RTMP servers simultaneously for a session.
         /// You can only start live streaming for sessions that use the OpenTok Media Router (with the media mode set to routed);
         /// you cannot use live streaming with sessions that have the media mode set to relayed OpenTok Media Router. See
-        /// <see href="https://tokbox.com/developer/guides/create-session/#media-mode">The OpenTok Media Router and media modes.</see>
+        /// <a href="https://tokbox.com/developer/guides/create-session/#media-mode">The OpenTok Media Router and media modes.</a>
         /// </para>
         /// <para>
         /// For more information on broadcasting, see the
-        /// <see href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</see>
+        /// <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
         /// </para>
         /// </summary>
         /// <param name="sessionId">The session ID corresponding to the session.</param>
@@ -558,7 +558,7 @@ namespace OpenTokSDK
         /// Use this method to stop a live broadcast of an OpenTok session.
         /// Note that broadcasts automatically stop 120 minutes after they are started.
         /// <para>
-        /// For more information on broadcasting, see the <see href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</see>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
         /// </para>
         /// </summary>
         /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
@@ -579,7 +579,7 @@ namespace OpenTokSDK
         /// Use this method to get a live streaming broadcast object of an OpenTok session.
         /// </summary>
         /// <para>
-        /// For more information on broadcasting, see the <see href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</see>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
         /// </para>
         /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
         /// <returns>
@@ -595,7 +595,7 @@ namespace OpenTokSDK
 
         /// <summary>
         /// Sets the layout type for the broadcast. For a description of layout types, see
-        /// <see href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts">Configuring the video layout for OpenTok live streaming broadcasts</see>.
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts">Configuring the video layout for OpenTok live streaming broadcasts</a>.
         /// </summary>
         /// <param name="broadcastId">The broadcast ID of the broadcasting session.</param>
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
@@ -627,8 +627,8 @@ namespace OpenTokSDK
         /// <summary>
         /// Sets the layout class list for streams in a session. Layout classes are used in
         /// the layout for composed archives and live streaming broadcasts. For more information, see
-        /// <see href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</see> and
-        /// <see href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts" > Configuring video layout for OpenTok live streaming broadcasts</see>.
+        /// <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a> and
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts" > Configuring video layout for OpenTok live streaming broadcasts</a>.
         /// <para>
         /// You can set the initial layout class list for streams published by a client when you generate
         /// used by the client. See the <see cref="GenerateToken"/> method.
