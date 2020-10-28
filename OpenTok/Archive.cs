@@ -79,9 +79,11 @@ namespace OpenTokSDK
 
         private OpenTok opentok;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Archive"/> class.
+        /// </summary>
         protected Archive()
         {
-
         }
 
         internal Archive(OpenTok opentok)

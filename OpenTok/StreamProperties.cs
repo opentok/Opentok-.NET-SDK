@@ -15,6 +15,11 @@ namespace OpenTokSDK
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StreamProperties"/> class.
+        /// </summary>
+        /// <param name="Id">The stream ID.</param>
+        /// <param name="LayoutClassList">The layout class list as a list of strings.</param>
         public StreamProperties(string Id = null, List<string> LayoutClassList = null)
         {
             this.Id = Id;

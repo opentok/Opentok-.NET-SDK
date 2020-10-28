@@ -27,6 +27,9 @@ namespace OpenTokSDK
 
         private OpenTok opentok;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Broadcast"/> class.
+        /// </summary>
         protected Broadcast()
         {
 

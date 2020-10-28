@@ -26,11 +26,19 @@ namespace OpenTokSDK
         [JsonProperty("streamName")]
         public string StreamName { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Rtmp"/> class.
+        /// </summary>
         public Rtmp()
         {
-            
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Rtmp"/> class.
+        /// </summary>
+        /// <param name="id">The stream id.</param>
+        /// <param name="serverUrl">The server URL.</param>
+        /// <param name="streamName">The stream name.</param>
         public Rtmp(string id, string serverUrl, string streamName)
         {
             Id = id;
