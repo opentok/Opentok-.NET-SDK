@@ -10,6 +10,7 @@ using Moq;
 using OpenTokSDK;
 using OpenTokSDK.Util;
 using OpenTokSDK.Exception;
+using System.Net;
 
 namespace OpenTokSDKTest
 {
@@ -23,6 +24,28 @@ namespace OpenTokSDKTest
         {
             var opentok = new OpenTok(apiKey, apiSecret);
             Assert.IsType<OpenTok>(opentok);
+        }
+
+        [Theory]
+        [InlineData(SecurityProtocolType.Tls11)]
+        [InlineData(SecurityProtocolType.Tls12)]
+        [InlineData((SecurityProtocolType)0)]
+        public void CreateSessionFailedDueToTLS(SecurityProtocolType protocolType)
+        {            
+            ServicePointManager.SecurityProtocol = protocolType;
+            var e = new WebException("Test Exception");
+            try
+            {
+                OpenTokUtils.ValidateTlsVersion(e);                
+                Assert.NotEqual(SecurityProtocolType.Tls11, protocolType);
+            }
+            catch(OpenTokWebException ex)
+            {
+                Assert.Equal("Error with request submission.\nThis application appears to not support TLS1.2.\nPlease enable TLS 1.2 and try again.", ex.Message);
+                Assert.Equal(SecurityProtocolType.Tls11, protocolType);
+
+            }
+            
         }
         
         // TODO: all create session and archive tests should verify the HTTP request body

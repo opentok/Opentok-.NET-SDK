@@ -262,6 +262,12 @@ The OpenTok .NET SDK requires .NET Framework 4.5.2 or greater.
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 ```
 
+Alternatively, if your application is dependant on a different version of TLS for other APIs, you can alternatively add TLS to the list of supported methods with a bitwise OR:
+
+```
+ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+```
+
 ## Release Notes
 
 See the [Releases](https://github.com/opentok/opentok-.net-sdk/releases) page for details
