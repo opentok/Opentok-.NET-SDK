@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace OpenTokSDK
 {
-    /**
-     * Defines signal payload for the Signal API.
-    */
+    /// <summary>
+    /// Defines signal payload for the Signal API.
+    /// </summary>
     public class SignalProperties
     {
         internal SignalProperties()
