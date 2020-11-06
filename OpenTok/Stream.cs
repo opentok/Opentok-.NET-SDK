@@ -22,27 +22,28 @@ namespace OpenTokSDK
             this.LayoutClassList = stream.LayoutClassList;
             this.VideoType = stream.VideoType;
         }
-        /**
-         * The layout class list as a list of strings.
-         */
+
+        /// <summary>
+        /// The layout class list as a list of strings.
+        /// </summary>
         [JsonProperty("layoutClassList")]
         public List<string> LayoutClassList { get; set; }
 
-        /**
-         * The video type as a string.
-         */
+        /// <summary>
+        /// The video type as a string.
+        /// </summary>
         [JsonProperty("videoType")]
         public string VideoType { get; set; }
 
-        /**
-         * The stream ID.
-         */
+        /// <summary>
+        /// The stream ID.
+        /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        /**
-         * The name of the stream.
-         */
+        /// <summary>
+        /// The name of the stream.
+        /// </summary>
         [JsonProperty("name")]
         public string Name { get; set; }
 

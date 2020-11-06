@@ -14,7 +14,7 @@
         /// </summary>
         custom,
         /// <summary>
-        /// Presents participants horizantally
+        /// Presents participants horizontally
         /// </summary>
         horizontalPresentation,
         /// <summary>
