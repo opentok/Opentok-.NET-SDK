@@ -12,7 +12,7 @@ namespace OpenTokSDK
         /// The type of layout you'd like to use
         /// </summary>
         [JsonProperty("type")]
-        [JsonConverter(typeof(StringEnumConverter))]        
+        [JsonConverter(typeof(StringEnumConverter))]
         public LayoutType Type { get; set; }
 
         /// <summary>

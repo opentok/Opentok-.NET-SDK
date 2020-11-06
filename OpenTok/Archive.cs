@@ -5,84 +5,85 @@ using System.Text;
 
 namespace OpenTokSDK
 {
-    /**
-     * Defines values returned by the Status property of an Archive object. See the ListArchives()
-     * method of the OpenTok class.
-     */
+    /// <summary>
+    /// Defines values returned by the Status property of an Archive object. See the ListArchives()
+    /// method of the OpenTok class.
+    /// </summary>
     public enum ArchiveStatus
     {
-        /**
-         * The archive file is available for download from the OpenTok cloud. You can get the URL of
-         * the download file by getting the Url property of the Archive object.
-         */
+        /// <summary>
+        /// The archive file is available for download from the OpenTok cloud. You can get the URL of
+        /// the download file by getting the Url property of the Archive object.
+        /// </summary>
         AVAILABLE,
-        /**
-         * The archive file has been deleted.
-         */
+        /// <summary>
+        /// The archive file has been deleted.
+        /// </summary>
         DELETED,
-        /**
-         * The recording of the archive failed.
-         */
+        /// <summary>
+        /// The recording of the archive failed.
+        /// </summary>
         FAILED,
-        /**
-         * The archive is in progress and no clients are publishing streams to the session.
-         * When an archive is in progress and any client publishes a stream, the status is STARTED.
-         * When an archive is PAUSED, nothing is recorded. When a client starts publishing a stream,
-         * the recording starts (or resumes). If all clients disconnect from a session that is being
-         * archived, the status changes to PAUSED, and after 60 seconds the archive recording stops
-         * (and the status changes to STOPPED).
-         */
+        /// <summary>
+        /// The archive is in progress and no clients are publishing streams to the session.
+        /// When an archive is in progress and any client publishes a stream, the status is STARTED.
+        /// When an archive is PAUSED, nothing is recorded. When a client starts publishing a stream,
+        /// the recording starts (or resumes). If all clients disconnect from a session that is being
+        /// archived, the status changes to PAUSED, and after 60 seconds the archive recording stops
+        /// (and the status changes to STOPPED).
+        /// </summary>
         PAUSED,
-        /**
-         * The archive recording has started and is in progress.
-         */
+        /// <summary>
+        /// The archive recording has started and is in progress.
+        /// </summary>
         STARTED,
-        /**
-         * The archive recording has stopped, but the file is not available.
-         */
+        /// <summary>
+        /// The archive recording has stopped, but the file is not available.
+        /// </summary>
         STOPPED,
-        /**
-         * The archive is available for download from the the upload target
-         * Amazon S3 bucket or Windows Azure container you set up for your
-         * <a href="https://tokbox.com/account">OpenTok project</a>.
-         */
+        /// <summary>
+        /// The archive is available for download from the the upload targetAmazon S3 bucket or Windows Azure container you set up for your
+        /// <a href="https://tokbox.com/account">OpenTok project</a>.
+        /// </summary>
         UPLOADED,
-        /**
-         * The archive file is no longer available for download from the OpenTok cloud.
-         */
+        /// <summary>
+        /// The archive file is no longer available for download from the OpenTok cloud.
+        /// </summary>
         EXPIRED,
-        /**
-         * The status of the archive is unknown.
-         */
+        /// <summary>
+        /// The status of the archive is unknown.
+        /// </summary>
         UNKOWN
     }
 
-    /**
-     * Defines values for the OutputMode property of an Archive object.
-     */
+    /// <summary>
+    /// Defines values for the OutputMode property of an Archive object.
+    /// </summary>
     public enum OutputMode
     {
-        /**
-         * All streams in the archive are recorded to a single (composed) file.
-         */
+        /// <summary>
+        /// All streams in the archive are recorded to a single (composed) file.
+        /// </summary>
         COMPOSED,
-        /**
-         * Each stream in the archive is recorded to its own individual file.
-         */
+        /// <summary>
+        /// Each stream in the archive is recorded to its own individual file.
+        /// </summary>
         INDIVIDUAL
     }
 
-    /**
-    * Represents an archive of an OpenTok session.
-    */
+    /// <summary>
+    /// Represents an archive of an OpenTok session.
+    /// </summary>
     public class Archive
     {
 
         private OpenTok opentok;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Archive"/> class.
+        /// </summary>
         protected Archive()
         {
-
         }
 
         internal Archive(OpenTok opentok)
@@ -108,96 +109,98 @@ namespace OpenTokSDK
             this.Resolution = archive.Resolution;
         }
 
-        /**
-         * The time at which the archive was created, in milliseconds since the Unix epoch.
-         */
+        /// <summary>
+        /// The time at which the archive was created, in milliseconds since the Unix epoch.
+        /// </summary>
         public long CreatedAt { get; set; }
 
-        /**
-         * The duration of the archive, in milliseconds.
-         */
+        /// <summary>
+        /// The duration of the archive, in milliseconds.
+        /// </summary>
         public long Duration { get; set; }
 
-        /**
-         * The archive ID.
-         */
+        /// <summary>
+        /// The archive ID.
+        /// </summary>
         public Guid Id { get; set; }
 
-        /**
-         * The name of the archive.
-         */
+        /// <summary>
+        /// The name of the archive.
+        /// </summary>
         public string Name { get; set; }
 
-        /**
-         * The OpenTok API key associated with the archive.
-         */
+        /// <summary>
+        /// The OpenTok API key associated with the archive.
+        /// </summary>
         public int PartnerId { get; set; }
 
-        /**
-         * The session ID of the OpenTok session associated with this archive.
-         */
+        /// <summary>
+        /// The session ID of the OpenTok session associated with this archive.
+        /// </summary>
         public String SessionId { get; set; }
 
-        /**
-         * For archives with the status ArchiveStatus.STOPPED or ArchiveStatus.FAILED, this string
-         * describes the reason the archive stopped (such as "maximum duration exceeded") or failed.
-         */
+        /// <summary>
+        /// For archives with the status ArchiveStatus.STOPPED or ArchiveStatus.FAILED, this string
+        /// describes the reason the archive stopped (such as "maximum duration exceeded") or failed.
+        /// </summary>
         public String Reason { get; set; }
 
-        /**
-         * Whether the archive includes a video track (true) or not (false).
-         */
+        /// <summary>
+        /// Whether the archive includes a video track (true) or not (false).
+        /// </summary>
         public bool HasVideo { get; set; }
 
-        /**
-         * Whether the archive includes an audio track (true) or not (false).
-         */
+        /// <summary>
+        /// Whether the archive includes an audio track (true) or not (false).
+        /// </summary>
         public bool HasAudio { get; set; }
 
-        /**
-         * The resolution of the archive.
-         */
+        /// <summary>
+        /// The resolution of the archive.
+        /// </summary>
         public string Resolution { get; set; }
-        /**
-         * Whether all streams in the archive are recorded to a single file
-         * (<code>OutputMode.COMPOSED</code>) or to individual files
-         * (<code>OutputMode.INDIVIDUAL</code>). To record streams to individual
-         * files, pass <code>OutputMode.INDIVIDUAL</code> as the <code>outputMode</code>
-         * parameter when calling the <code>OpenTok.StartArchive()</code> method.
-         */
+
+        /// <summary>
+        /// Whether all streams in the archive are recorded to a single file
+        /// (<see cref="OutputMode.COMPOSED"/>) or to individual files
+        /// (<see cref="OutputMode.INDIVIDUAL"/>). To record streams to individual
+        /// files, pass <see cref="OutputMode.INDIVIDUAL"/> as the <see cref="OutputMode"/>
+        /// parameter when calling the <see cref="OpenTok.StartArchive"/> method.
+        /// </summary>
         public OutputMode OutputMode { get; set; }
 
-        /** 
-         * The size of the MP4 file. For archives that have not been generated, this value is set
-         * to 0. We use long instead of int to support archives larger than 2GB.
-         */
+        /// <summary>
+        /// The size of the MP4 file. For archives that have not been generated, this value is set
+        /// to 0. We use long instead of int to support archives larger than 2GB.
+        /// </summary>
         public long Size { get; set; }
 
-        /**
-         * The status of the archive, as defined by the ArchiveStatus enum.
-         */
+        /// <summary>
+        /// The status of the archive, as defined by the ArchiveStatus enum.
+        /// </summary>
         public ArchiveStatus Status { get; set; }
 
-        /**
-         * The download URL of the available MP4 file. This is only set for an archive with the
-         * status set to ArchiveStatus.AVAILABLE; for other archives, (including archives with the
-         * status of ArchiveStatus.UPLOADED) this method returns null. The download URL is
-         * obfuscated, and the file is only available from the URL for 10 minutes. To generate a
-         * new URL, call the ListArchives() or GetArchive() method of the OpenTok object.
-         */
+        /// <summary>
+        /// The download URL of the available MP4 file. This is only set for an archive with the
+        /// status set to ArchiveStatus.AVAILABLE; for other archives, (including archives with the
+        /// status of ArchiveStatus.UPLOADED) this method returns null. The download URL is
+        /// obfuscated, and the file is only available from the URL for 10 minutes. To generate a
+        /// new URL, call the ListArchives() or GetArchive() method of the OpenTok object.
+        /// </summary>
         public String Url { get; set; }
 
-        /**
-         * The encryption password of the archive. 
-         */
+        /// <summary>
+        /// The encryption password of the archive.
+        /// </summary>
         public String Password { get; set; }
 
-        /**
-         * Stops the OpenTok archive if it is being recorded.
-         * <p>
-         * Archives automatically stop recording after 120 minutes or when all clients have
-         * disconnected from the session being archived.
-         */
+        /// <summary>
+        /// Stops the OpenTok archive if it is being recorded.
+        /// <para>
+        /// Archives automatically stop recording after 120 minutes or when all clients have
+        /// disconnected from the session being archived.
+        /// </para>
+        /// </summary>
         public void Stop()
         {
             if (opentok != null)
@@ -207,13 +210,14 @@ namespace OpenTokSDK
             }
         }
 
-        /**
-         * Deletes the OpenTok archive.
-         * <p>
-         * You can only delete an archive which has a status of "available" or "uploaded". Deleting
-         * an archive removes its record from the list of archives. For an "available" archive, it
-         * also removes the archive file, making it unavailable for download.
-         */
+        /// <summary>
+        /// Deletes the OpenTok archive.
+        /// <para>
+        /// You can only delete an archive which has a status of "available" or "uploaded". Deleting
+        /// an archive removes its record from the list of archives. For an "available" archive, it
+        /// also removes the archive file, making it unavailable for download.
+        /// </para>
+        /// </summary>
         public void Delete()
         {
             if (opentok != null)

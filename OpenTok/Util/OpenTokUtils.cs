@@ -142,8 +142,8 @@ namespace OpenTokSDK.Util
                 throw new FormatException("SessionId can not be empty");
             }
 
-            string formatedSessionId = sessionId.Replace('-', '+');
-            string[] splittedSessionId = OpenTokUtils.SplitString(formatedSessionId, '_', 2);
+            string formattedSessionId = sessionId.Replace('-', '+');
+            string[] splittedSessionId = OpenTokUtils.SplitString(formattedSessionId, '_', 2);
             if (splittedSessionId == null)
             {
                 throw new FormatException("Session id could not be decoded");
