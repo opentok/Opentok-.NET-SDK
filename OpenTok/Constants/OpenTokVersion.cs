@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OpenTokSDK.Constants
+﻿namespace OpenTokSDK.Constants
 {
-    /**
-     * For internal use.
-     */
-    class OpenTokVersion
+    /// <summary>
+    /// For internal use.
+    /// </summary>
+    internal class OpenTokVersion
     {
         private static string Version = "Opentok-DotNet-SDK/" + typeof(OpenTokVersion).Assembly.GetName().Version;
 

@@ -5,33 +5,36 @@ using System.Text;
 
 namespace OpenTokSDK.Exception
 {
-    /**
-     * Defines exceptions in the OpenTok SDK.
-     */
+    /// <summary>
+    /// Defines exceptions in the OpenTok SDK.
+    /// </summary>
     public class OpenTokException : System.Exception
     {
         private System.Exception exception;
         private string message;
 
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
         public OpenTokException()
         {
         }
 
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
         public OpenTokException(string message)
             : base(message)
         {
             this.message = message;
         }
 
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
         public OpenTokException(string message, System.Exception exception)
             : base(message)
         {
@@ -51,36 +54,40 @@ namespace OpenTokSDK.Exception
         }
     }
 
-    /**
-     * Defines an exception object thrown when an invalid argument is passed into a method.
-     */
+    /// <summary>
+    /// Defines an exception object thrown when an invalid argument is passed into a method.
+    /// </summary>
     public class OpenTokArgumentException : OpenTokException
     {
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
         public OpenTokArgumentException(string message)
             : base(message)
         {
         }
     }
 
-    /**
-     * Defines an exception object thrown when a REST API call results in an error response.
-     */
+    /// <summary>
+    /// Defines an exception object thrown when a REST API call results in an error response.
+    /// </summary>
     public class OpenTokWebException : OpenTokException
     {
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
         public OpenTokWebException(string message, System.Exception exception)
             : base(message, exception)
         {
         }
 
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
         public OpenTokWebException(string message)
             : base(message)
         {
