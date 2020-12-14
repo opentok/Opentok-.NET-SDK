@@ -561,6 +561,137 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public void ListArchivesTestWithValidSessionId()
+        {
+            var sessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4";
+            string returnString = "{\n" +
+                                " \"count\" : 6,\n" +
+                                " \"items\" : [ {\n" +
+                                " \"createdAt\" : 1395187930000,\n" +
+                                " \"duration\" : 22,\n" +
+                                " \"id\" : \"ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 2909274,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Fef546c5" +
+                                "a-4fd7-4e59-ab3d-f1cfb4148d1d%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395187910000,\n" +
+                                " \"duration\" : 14,\n" +
+                                " \"id\" : \"5350f06f-0166-402e-bc27-09ba54948512\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 1952651,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F5350f06" +
+                                "f-0166-402e-bc27-09ba54948512%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395187836000,\n" +
+                                " \"duration\" : 62,\n" +
+                                " \"id\" : \"f6e7ee58-d6cf-4a59-896b-6d56b158ec71\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 8347554,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Ff6e7ee5" +
+                                "8-d6cf-4a59-896b-6d56b158ec71%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395183243000,\n" +
+                                " \"duration\" : 544,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 78499758,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F30b3ebf" +
+                                "1-ba36-4f5b-8def-6f70d9986fe9%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394396753000,\n" +
+                                " \"duration\" : 24,\n" +
+                                " \"id\" : \"b8f64de1-e218-4091-9544-4cbf369fc238\",\n" +
+                                " \"name\" : \"showtime again\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 2227849,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Fb8f64de" +
+                                "1-e218-4091-9544-4cbf369fc238%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394321113000,\n" +
+                                " \"duration\" : 1294,\n" +
+                                " \"id\" : \"832641bf-5dbf-41a1-ad94-fea213e59a92\",\n" +
+                                " \"name\" : \"showtime\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 42165242,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F832641b" +
+                                "f-5dbf-41a1-ad94-fea213e59a92%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " } ]\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            ArchiveList archives = opentok.ListArchives(sessionId:sessionId);
+
+            Assert.NotNull(archives);
+            Assert.Equal(6, archives.Count);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + apiKey + $"/archive?offset=0&sessionId={sessionId}"))), Times.Once());
+        }
+
+        [Fact]
+        public void TestListArchivesBadCount()
+        {
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            try
+            {
+                opentok.ListArchives(count: -5);
+                Assert.True(false, "TestListArchivesBadCount should not have reached here as the count passed in was negative");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+                Assert.Equal("count cannot be smaller than 0", ex.Message);
+            }            
+
+        }
+
+        [Fact]
+        public void TestListArchivesBadSessionId()
+        {
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            try
+            {
+                opentok.ListArchives(sessionId: "This-is-not-a-valid-session-id");
+                Assert.True(false, "TestListArchivesBadCount should not have reached here as the count passed in was negative");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+                Assert.Equal("Session Id is not valid", ex.Message);
+            }
+
+        }
+
+        [Fact]
         public void StartArchiveTest()
         {
             string sessionId = "SESSIONID";
