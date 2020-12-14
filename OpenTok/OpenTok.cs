@@ -326,17 +326,6 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Returns a List of Archive objects, representing archives that are both both completed and
-        /// in-progress, for your API key. This list is limited to 1000 archives starting with the first
-        /// archive recorded. For a specific range of archives, call listArchives(int offset, int count).
-        /// </summary>
-        /// <returns>A List of Archive objects.</returns>
-        public ArchiveList ListArchives()
-        {
-            return ListArchives(0, 0);
-        }
-
-        /// <summary>
         /// Returns a List of <see cref="Archive"/> objects, representing archives that are both
         /// both completed and in-progress, for your API key.
         /// </summary>
@@ -348,16 +337,24 @@ namespace OpenTokSDK
         /// The number of archives to be returned. The maximum number of archives returned is 1000.
         /// </param>
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
-        public ArchiveList ListArchives(int offset, int count)
+        public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
         {
             if (count < 0)
             {
-                throw new OpenTokArgumentException("count cannot be smaller than 1");
+                throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
             string url = string.Format("v2/project/{0}/archive?offset={1}", this.ApiKey, offset);
             if (count > 0)
             {
                 url = string.Format("{0}&count={1}", url, count);
+            }
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                if (!OpenTokUtils.ValidateSession(sessionId))
+                {
+                    throw new OpenTokArgumentException("Session Id is not valid");
+                }
+                url = $"{url}&sessionId={sessionId}";
             }
             string response = Client.Get(url);
             JObject archives = JObject.Parse(response);
