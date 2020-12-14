@@ -157,6 +157,11 @@ namespace OpenTokSDK.Util
                 throw new FormatException("Session id could not be decoded");
             }
 
+            if (sessionParameters.Count() < 2)
+            {
+                throw new FormatException("Session id could not be decoded");
+            }
+
             return Convert.ToInt32(sessionParameters[1]);
         }
 
