@@ -16,6 +16,7 @@ using JWT.Serializers;
 
 using OpenTokSDK.Constants;
 using OpenTokSDK.Exception;
+using System.Threading.Tasks;
 
 namespace OpenTokSDK.Util
 {
@@ -62,10 +63,27 @@ namespace OpenTokSDK.Util
             return DoRequest(url, headers, null);
         }
 
+        public virtual Task<string> GetAsync(string url)
+        {
+            return GetAsync(url, new Dictionary<string, string>());
+        }
+
+        public virtual Task<string> GetAsync(string url, Dictionary<string, string> headers)
+        {
+            headers.Add("Method", "GET");
+            return DoRequestAsync(url, headers, null);
+        }
+
         public virtual string Post(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
         {
             headers.Add("Method", "POST");
             return DoRequest(url, headers, data);
+        }
+
+        public virtual Task<string> PostAsync(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "POST");
+            return DoRequestAsync(url, headers, data);
         }
 
         public virtual string Put(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
@@ -74,13 +92,33 @@ namespace OpenTokSDK.Util
             return DoRequest(url, headers, data);
         }
 
+        public virtual Task<string> PutAsync(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "PUT");
+            return DoRequestAsync(url, headers, data);
+        }
+
         public virtual string Delete(string url, Dictionary<string, string> headers)
         {
             headers.Add("Method", "DELETE");
             return DoRequest(url, headers, null);
         }
 
+        public virtual Task<string> DeleteAsync(string url, Dictionary<string, string> headers)
+        {
+            headers.Add("Method", "DELETE");
+            return DoRequestAsync(url, headers, null);
+        }
+
         public string DoRequest(string url, Dictionary<string, string> specificHeaders,
+                                        Dictionary<string, object> bodyData)
+        {
+            var task = DoRequestAsync(url, specificHeaders, bodyData);
+            task.Wait();
+            return task.Result;
+        }
+
+        public async Task<string> DoRequestAsync(string url, Dictionary<string, string> specificHeaders,
                                         Dictionary<string, object> bodyData)
         {
             string data = GetRequestPostData(bodyData, specificHeaders);
@@ -98,9 +136,9 @@ namespace OpenTokSDK.Util
                 if (!String.IsNullOrEmpty(data))
                 {
                     DebugLog("Request Body: " + data);
-                    SendData(request, data);
+                    await SendDataAsync(request, data);
                 }
-                using (response = (HttpWebResponse) request.GetResponse())
+                using (response = await request.GetResponseAsync() as HttpWebResponse)
                 {
                     DebugLog("Response Status Code: " + response.StatusCode);
                     DebugLog("Response Status Description: " + response.StatusDescription);
@@ -111,10 +149,10 @@ namespace OpenTokSDK.Util
                         case HttpStatusCode.OK:
                             using (var stream = new StreamReader(response.GetResponseStream()))
                             {
-                                return stream.ReadToEnd();
+                                return await stream.ReadToEndAsync();
                             }
                         case HttpStatusCode.NoContent:
-                            return "";
+                            return string.Empty;
                         default:
                             throw new OpenTokWebException("Response returned with unexpected status code " +
                                                           response.StatusCode.ToString());
@@ -161,6 +199,15 @@ namespace OpenTokSDK.Util
             using (StreamWriter stream = new StreamWriter(request.GetRequestStream()))
             {
                 stream.Write(data);
+            }
+        }
+
+        private async Task SendDataAsync(HttpWebRequest request, object data)
+        {
+            using (StreamWriter stream = new StreamWriter(await request.GetRequestStreamAsync()))
+            {
+                stream.Write(data);
+                //await stream.WriteAsync(data);
             }
         }
 
