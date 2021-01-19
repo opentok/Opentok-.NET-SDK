@@ -199,13 +199,6 @@ namespace OpenTokSDKTest
                 session = opentok.CreateSession(location: "A location");
                 Assert.True(false);
             }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.True(true);
-                }
-            }
             catch (OpenTokArgumentException)
             {
                 Assert.True(true);
@@ -224,13 +217,6 @@ namespace OpenTokSDKTest
             {
                 session = opentok.CreateSession(mediaMode: MediaMode.RELAYED, archiveMode: ArchiveMode.ALWAYS);
                 Assert.True(false);
-            }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.True(true);
-                }
             }
             catch (OpenTokArgumentException)
             {
@@ -682,13 +668,6 @@ namespace OpenTokSDKTest
                 opentok.ListArchives(count: -5);
                 Assert.True(false, "TestListArchivesBadCount should not have reached here as the count passed in was negative");
             }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.Equal("count cannot be smaller than 0", aex.InnerException.Message);
-                }
-            }
             catch (OpenTokArgumentException ex)
             {
                 Assert.Equal("count cannot be smaller than 0", ex.Message);
@@ -704,13 +683,6 @@ namespace OpenTokSDKTest
             {
                 opentok.ListArchives(sessionId: "This-is-not-a-valid-session-id");
                 Assert.True(false, "TestListArchivesBadCount should not have reached here as the count passed in was negative");
-            }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.Equal("Session Id is not valid", aex.InnerException.Message);
-                }
             }
             catch (OpenTokArgumentException ex)
             {
@@ -958,13 +930,6 @@ namespace OpenTokSDKTest
                 Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
                 Assert.True(false, "StartArchive should have thrown an exception");
             }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", aex.InnerException.Message);
-                }
-            }
             catch (OpenTokArgumentException ex)
             {
                 Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", ex.Message);
@@ -1000,13 +965,6 @@ namespace OpenTokSDKTest
             {
                 Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
                 Assert.True(false, "StartArchive should have thrown an exception");
-            }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", aex.InnerException.Message);
-                }
             }
             catch (OpenTokArgumentException ex)
             {
@@ -1076,13 +1034,6 @@ namespace OpenTokSDKTest
             {
                 archive = opentok.StartArchive(sessionId, outputMode: OutputMode.INDIVIDUAL, resolution: resolution);
                 Assert.True(false);
-            }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.True(true);
-                }
             }
             catch (OpenTokArgumentException)
             {
@@ -1281,13 +1232,6 @@ namespace OpenTokSDKTest
                 Stream stream = opentok.GetStream(null, null);
 
             }
-            catch (AggregateException aex)
-            {
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.True(true);
-                }
-            }
             catch (OpenTokArgumentException)
             {
                 Assert.True(true);
@@ -1356,13 +1300,6 @@ namespace OpenTokSDKTest
             {
                 StreamList streamlist = opentok.ListStreams(null);
 
-            }
-            catch (AggregateException aex)
-            {                
-                if (aex.InnerException.GetType() == typeof(OpenTokArgumentException))
-                {
-                    Assert.True(true);
-                }
             }
             catch (OpenTokArgumentException)
             {

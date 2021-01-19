@@ -144,9 +144,16 @@ namespace OpenTokSDK
         /// </returns>
         public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
         {
-            var task = CreateSessionAsync(location, mediaMode, archiveMode);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = CreateSessionAsync(location, mediaMode, archiveMode);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -398,9 +405,16 @@ namespace OpenTokSDK
         /// </returns>
         public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null)
         {
-            var task = StartArchiveAsync(sessionId, name, hasVideo, hasAudio, outputMode, resolution, layout);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = StartArchiveAsync(sessionId, name, hasVideo, hasAudio, outputMode, resolution, layout);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -544,9 +558,16 @@ namespace OpenTokSDK
         /// <returns>The Archive object corresponding to the archive being STOPPED.</returns>
         public Archive StopArchive(string archiveId)
         {
-            var task = StopArchiveAsync(archiveId);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = StopArchiveAsync(archiveId);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -575,8 +596,15 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public void SetArchiveLayout(string archiveId, ArchiveLayout layout)
         {
-            var task = SetArchiveLayoutAsync(archiveId, layout);
-            task.Wait();
+            try
+            {
+                var task = SetArchiveLayoutAsync(archiveId, layout);
+                task.Wait();
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -624,9 +652,16 @@ namespace OpenTokSDK
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
         public ArchiveList ListArchives(int offset = 0, int count = 0, string sessionId = "")
         {
-            var task = ListArchivesAsync(offset, count, sessionId);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = ListArchivesAsync(offset, count, sessionId);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -674,9 +709,16 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Archive"/> object.</returns>
         public Archive GetArchive(string archiveId)
         {
-            var task = GetArchiveAsync(archiveId);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = GetArchiveAsync(archiveId);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -703,8 +745,15 @@ namespace OpenTokSDK
         /// <param name="archiveId">The archive ID of the archive you want to delete.</param>
         public void DeleteArchive(string archiveId)
         {
-            DeleteArchiveAsync(archiveId)
-                .Wait();
+            try
+            {
+                DeleteArchiveAsync(archiveId)
+                    .Wait();
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -731,9 +780,16 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Stream"/> object.</returns>
         public Stream GetStream(string sessionId, string streamId)
         {
-            var task = GetStreamAsync(sessionId, streamId);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = GetStreamAsync(sessionId, streamId);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -765,9 +821,16 @@ namespace OpenTokSDK
         /// <returns>A List of <see cref="Stream"/> objects.</returns>
         public StreamList ListStreams(string sessionId)
         {
-            var task = ListStreamsAsync(sessionId);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = ListStreamsAsync(sessionId);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -797,8 +860,15 @@ namespace OpenTokSDK
         /// <param name="connectionId">The connectionId of the connection in a session.</param>
         public void ForceDisconnect(string sessionId, string connectionId)
         {
-            ForceDisconnectAsync(sessionId, connectionId)
-                .Wait();
+            try
+            {
+                ForceDisconnectAsync(sessionId, connectionId)
+                    .Wait();
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -850,9 +920,16 @@ namespace OpenTokSDK
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, int maxDuration = 7200, BroadcastLayout layout = null)
         {
-            var task = StartBroadcastAsync(sessionId, hls, rtmpList, resolution, maxDuration, layout);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = StartBroadcastAsync(sessionId, hls, rtmpList, resolution, maxDuration, layout);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -966,9 +1043,16 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast StopBroadcast(string broadcastId)
         {
-            var task = StopBroadcastAsync(broadcastId);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = StopBroadcastAsync(broadcastId);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -1005,9 +1089,16 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast GetBroadcast(string broadcastId)
         {
-            var task = GetBroadcastAsync(broadcastId);
-            task.Wait();
-            return task.Result;
+            try
+            {
+                var task = GetBroadcastAsync(broadcastId);
+                task.Wait();
+                return task.Result;
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }            
         }
 
         /// <summary>
@@ -1036,8 +1127,15 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
-            SetBroadcastLayoutAsync(broadcastId, layout)
-                .Wait();
+            try
+            {
+                SetBroadcastLayoutAsync(broadcastId, layout)
+                    .Wait();
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }
         }
 
         /// <summary>
@@ -1085,8 +1183,15 @@ namespace OpenTokSDK
         /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
-            SetStreamClassListsAsync(sessionId, streams)
-                .Wait();
+            try
+            {
+                SetStreamClassListsAsync(sessionId, streams)
+                    .Wait();
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }
         }
 
         /// <summary>
@@ -1137,8 +1242,15 @@ namespace OpenTokSDK
         /// <param name="connectionId">An optional parameter used to send the signal to a specific connection in a session.</param>
         public void Signal(string sessionId, SignalProperties signalProperties, string connectionId = null)
         {
-            SignalAsync(sessionId, signalProperties, connectionId)
-                .Wait();
+            try
+            {
+                SignalAsync(sessionId, signalProperties, connectionId)
+                    .Wait();
+            }
+            catch (AggregateException aex)
+            {
+                throw aex.InnerException;
+            }
         }
 
         /// <summary>
