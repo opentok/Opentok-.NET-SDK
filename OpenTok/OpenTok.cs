@@ -620,15 +620,15 @@ namespace OpenTokSDK
             var data = new Dictionary<string, object>();
             if (layout != null)
             {
-                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.StyleSheet)) ||
-                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.StyleSheet)))
+                if ((layout.Type.Equals(LayoutType.custom) && String.IsNullOrEmpty(layout.StyleSheet)) ||
+                    (!layout.Type.Equals(LayoutType.custom) && !String.IsNullOrEmpty(layout.StyleSheet)))
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
                 }
                 else
                 {
                     data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
-                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                    if (layout.Type.Equals(LayoutType.custom))
                     {
                         data.Add("stylesheet", layout.StyleSheet);
                     }
