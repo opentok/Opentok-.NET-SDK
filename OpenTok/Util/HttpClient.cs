@@ -20,6 +20,13 @@ using System.Threading.Tasks;
 
 namespace OpenTokSDK.Util
 {
+    public class OpenTokRequest
+    {
+        public string Url { get; set; }
+        public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, object> Data { get; set; }
+    }
+
     /// <summary>
     /// For internal use.
     /// </summary>

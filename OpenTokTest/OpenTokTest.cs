@@ -60,13 +60,40 @@ namespace OpenTokSDKTest
             var expectedUrl = "session/create";
 
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
             
             HttpClient client = mockClient.Object;
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = client;
             Session session = opentok.CreateSession();
+
+            Assert.NotNull(session);
+            Assert.Equal(this.apiKey, session.ApiKey);
+            Assert.Equal(sessionId, session.Id);
+            Assert.Equal(MediaMode.RELAYED, session.MediaMode);
+            Assert.Equal("", session.Location);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task CreateSimpleSessionAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                                "session_id>" + sessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                                "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            var expectedUrl = "session/create";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            HttpClient client = mockClient.Object;
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = client;
+            Session session = await opentok.CreateSessionAsync();
 
             Assert.NotNull(session);
             Assert.Equal(this.apiKey, session.ApiKey);
@@ -87,13 +114,40 @@ namespace OpenTokSDKTest
             var expectedUrl = "session/create";
 
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             HttpClient client = mockClient.Object;
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = client;
             Session session = opentok.CreateSession(mediaMode: MediaMode.ROUTED);
+
+            Assert.NotNull(session);
+            Assert.Equal(this.apiKey, session.ApiKey);
+            Assert.Equal(sessionId, session.Id);
+            Assert.Equal(MediaMode.ROUTED, session.MediaMode);
+            Assert.Equal("", session.Location);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task CreateRoutedSessionAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                                "session_id>" + sessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                                "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            var expectedUrl = "session/create";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            HttpClient client = mockClient.Object;
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = client;
+            Session session = await opentok.CreateSessionAsync(mediaMode: MediaMode.ROUTED);
 
             Assert.NotNull(session);
             Assert.Equal(this.apiKey, session.ApiKey);
@@ -114,7 +168,7 @@ namespace OpenTokSDKTest
             var expectedUrl = "session/create";
 
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             HttpClient client = mockClient.Object;
 
@@ -128,12 +182,12 @@ namespace OpenTokSDKTest
             Assert.Equal(MediaMode.RELAYED, session.MediaMode);
             Assert.Equal("0.0.0.0", session.Location);
 
-            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), 
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), 
                             It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
-   
+
         [Fact]
-        public void CreateRoutedSessionWithLocationTest()
+        public async Task CreateSessionWithLocationAsyncTest()
         {
             string sessionId = "SESSIONID";
             string returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
@@ -148,7 +202,62 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = client;
+            Session session = await opentok.CreateSessionAsync(location: "0.0.0.0");
+
+            Assert.NotNull(session);
+            Assert.Equal(this.apiKey, session.ApiKey);
+            Assert.Equal(sessionId, session.Id);
+            Assert.Equal(MediaMode.RELAYED, session.MediaMode);
+            Assert.Equal("0.0.0.0", session.Location);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(),
+                            It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public void CreateRoutedSessionWithLocationTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                                "session_id>" + sessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                                "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            var expectedUrl = "session/create";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+
+            HttpClient client = mockClient.Object;
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = client;
             Session session = opentok.CreateSession(location: "0.0.0.0", mediaMode: MediaMode.ROUTED);
+
+            Assert.NotNull(session);
+            Assert.Equal(this.apiKey, session.ApiKey);
+            Assert.Equal(sessionId, session.Id);
+            Assert.Equal(MediaMode.ROUTED, session.MediaMode);
+            Assert.Equal("0.0.0.0", session.Location);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task CreateRoutedSessionWithLocationAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                                "session_id>" + sessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                                "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            var expectedUrl = "session/create";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            HttpClient client = mockClient.Object;
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = client;
+            Session session = await opentok.CreateSessionAsync(location: "0.0.0.0", mediaMode: MediaMode.ROUTED);
 
             Assert.NotNull(session);
             Assert.Equal(this.apiKey, session.ApiKey);
@@ -169,13 +278,40 @@ namespace OpenTokSDKTest
             var expectedUrl = "session/create";
 
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             HttpClient client = mockClient.Object;
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = client;
             Session session = opentok.CreateSession(mediaMode: MediaMode.ROUTED, archiveMode: ArchiveMode.ALWAYS);
+
+            Assert.NotNull(session);
+            Assert.Equal(this.apiKey, session.ApiKey);
+            Assert.Equal(sessionId, session.Id);
+            Assert.Equal(MediaMode.ROUTED, session.MediaMode);
+            Assert.Equal(ArchiveMode.ALWAYS, session.ArchiveMode);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task CreateAlwaysArchivedSessionAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                                "session_id>" + sessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                                "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            var expectedUrl = "session/create";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            HttpClient client = mockClient.Object;
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = client;
+            Session session = await opentok.CreateSessionAsync(mediaMode: MediaMode.ROUTED, archiveMode: ArchiveMode.ALWAYS);
 
             Assert.NotNull(session);
             Assert.Equal(this.apiKey, session.ApiKey);
@@ -384,7 +520,7 @@ namespace OpenTokSDKTest
                                     archiveId + "%2Farchive.mp4?Expires=1395194362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Si" +
                                     "gnature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" + " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
             
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -402,7 +538,46 @@ namespace OpenTokSDKTest
             Assert.Equal("http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" + archiveId + "%2Farchive.mp4?Expires=13951" +
                     "94362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", archive.Url);
 
-            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/"+this.apiKey+"/archive/"+archiveId))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/"+this.apiKey+"/archive/"+archiveId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetArchiveAsyncTest()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = "{\n" +
+                                    " \"createdAt\" : 1395187836000,\n" +
+                                    " \"duration\" : 62,\n" +
+                                    " \"id\" : \"" + archiveId + "\",\n" +
+                                    " \"name\" : \"\",\n" +
+                                    " \"partnerId\" : 123456,\n" +
+                                    " \"reason\" : \"\",\n" +
+                                    " \"sessionId\" : \"SESSIONID\",\n" +
+                                    " \"size\" : 8347554,\n" +
+                                    " \"status\" : \"available\",\n" +
+                                    " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" +
+                                    archiveId + "%2Farchive.mp4?Expires=1395194362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Si" +
+                                    "gnature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" + " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.GetArchiveAsync(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(this.apiKey, archive.PartnerId);
+            Assert.Equal(archiveId, archive.Id.ToString());
+            Assert.Equal(1395187836000L, archive.CreatedAt);
+            Assert.Equal(62, archive.Duration);
+            Assert.Equal("", archive.Name);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(8347554, archive.Size);
+            Assert.Equal(ArchiveStatus.AVAILABLE, archive.Status);
+            Assert.Equal("http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" + archiveId + "%2Farchive.mp4?Expires=13951" +
+                    "94362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", archive.Url);
+
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
         }
 
         [Fact]
@@ -421,11 +596,39 @@ namespace OpenTokSDKTest
                                     " \"status\" : \"expired\",\n" +
                                     " \"url\" : null\n" + " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             Archive archive = opentok.GetArchive(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetExpiredArchiveAsyncTest()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = "{\n" +
+                                    " \"createdAt\" : 1395187836000,\n" +
+                                    " \"duration\" : 62,\n" +
+                                    " \"id\" : \"" + archiveId + "\",\n" +
+                                    " \"name\" : \"\",\n" +
+                                    " \"partnerId\" : 123456,\n" +
+                                    " \"reason\" : \"\",\n" +
+                                    " \"sessionId\" : \"SESSIONID\",\n" +
+                                    " \"size\" : 8347554,\n" +
+                                    " \"status\" : \"expired\",\n" +
+                                    " \"url\" : null\n" + " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.GetArchiveAsync(archiveId);
 
             Assert.NotNull(archive);
             Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
@@ -450,7 +653,7 @@ namespace OpenTokSDKTest
                                     " \"notarealproperty\" : \"not a real value\",\n" +
                                     " \"url\" : null\n" + " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -458,12 +661,138 @@ namespace OpenTokSDKTest
 
             Assert.NotNull(archive);
 
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetArchiveWithUnknownPropertiesAsyncTest()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = "{\n" +
+                                    " \"createdAt\" : 1395187836000,\n" +
+                                    " \"duration\" : 62,\n" +
+                                    " \"id\" : \"" + archiveId + "\",\n" +
+                                    " \"name\" : \"\",\n" +
+                                    " \"partnerId\" : 123456,\n" +
+                                    " \"reason\" : \"\",\n" +
+                                    " \"sessionId\" : \"SESSIONID\",\n" +
+                                    " \"size\" : 8347554,\n" +
+                                    " \"status\" : \"expired\",\n" +
+                                    " \"notarealproperty\" : \"not a real value\",\n" +
+                                    " \"url\" : null\n" + " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.GetArchiveAsync(archiveId);
+
+            Assert.NotNull(archive);
+
             mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
         }
 
-        
+
         [Fact]
         public void ListArchivesTest()
+        {
+            string returnString = "{\n" +
+                                " \"count\" : 6,\n" +
+                                " \"items\" : [ {\n" +
+                                " \"createdAt\" : 1395187930000,\n" +
+                                " \"duration\" : 22,\n" +
+                                " \"id\" : \"ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 2909274,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Fef546c5" +
+                                "a-4fd7-4e59-ab3d-f1cfb4148d1d%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395187910000,\n" +
+                                " \"duration\" : 14,\n" +
+                                " \"id\" : \"5350f06f-0166-402e-bc27-09ba54948512\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 1952651,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F5350f06" +
+                                "f-0166-402e-bc27-09ba54948512%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395187836000,\n" +
+                                " \"duration\" : 62,\n" +
+                                " \"id\" : \"f6e7ee58-d6cf-4a59-896b-6d56b158ec71\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 8347554,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Ff6e7ee5" +
+                                "8-d6cf-4a59-896b-6d56b158ec71%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395183243000,\n" +
+                                " \"duration\" : 544,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 78499758,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F30b3ebf" +
+                                "1-ba36-4f5b-8def-6f70d9986fe9%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394396753000,\n" +
+                                " \"duration\" : 24,\n" +
+                                " \"id\" : \"b8f64de1-e218-4091-9544-4cbf369fc238\",\n" +
+                                " \"name\" : \"showtime again\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 2227849,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Fb8f64de" +
+                                "1-e218-4091-9544-4cbf369fc238%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394321113000,\n" +
+                                " \"duration\" : 1294,\n" +
+                                " \"id\" : \"832641bf-5dbf-41a1-ad94-fea213e59a92\",\n" +
+                                " \"name\" : \"showtime\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 42165242,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F832641b" +
+                                "f-5dbf-41a1-ad94-fea213e59a92%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " } ]\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            ArchiveList archives = opentok.ListArchives();
+
+            Assert.NotNull(archives);
+            Assert.Equal(6, archives.Count);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/"+apiKey + "/archive?offset=0"))), Times.Once());
+        }
+
+        [Fact]
+        public async Task ListArchivesAsyncTest()
         {
             string returnString = "{\n" +
                                 " \"count\" : 6,\n" +
@@ -552,12 +881,12 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            ArchiveList archives = opentok.ListArchives();
+            ArchiveList archives = await opentok.ListArchivesAsync();
 
             Assert.NotNull(archives);
             Assert.Equal(6, archives.Count);
 
-            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/"+apiKey + "/archive?offset=0"))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive?offset=0"))), Times.Once());
         }
 
         [Fact]
@@ -647,11 +976,110 @@ namespace OpenTokSDKTest
                                 " } ]\n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             ArchiveList archives = opentok.ListArchives(sessionId:sessionId);
+
+            Assert.NotNull(archives);
+            Assert.Equal(6, archives.Count);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + apiKey + $"/archive?offset=0&sessionId={sessionId}"))), Times.Once());
+        }
+
+        [Fact]
+        public async Task ListArchivesAsyncTestWithValidSessionId()
+        {
+            var sessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4";
+            string returnString = "{\n" +
+                                " \"count\" : 6,\n" +
+                                " \"items\" : [ {\n" +
+                                " \"createdAt\" : 1395187930000,\n" +
+                                " \"duration\" : 22,\n" +
+                                " \"id\" : \"ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 2909274,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Fef546c5" +
+                                "a-4fd7-4e59-ab3d-f1cfb4148d1d%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395187910000,\n" +
+                                " \"duration\" : 14,\n" +
+                                " \"id\" : \"5350f06f-0166-402e-bc27-09ba54948512\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 1952651,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F5350f06" +
+                                "f-0166-402e-bc27-09ba54948512%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395187836000,\n" +
+                                " \"duration\" : 62,\n" +
+                                " \"id\" : \"f6e7ee58-d6cf-4a59-896b-6d56b158ec71\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 8347554,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Ff6e7ee5" +
+                                "8-d6cf-4a59-896b-6d56b158ec71%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1395183243000,\n" +
+                                " \"duration\" : 544,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 78499758,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F30b3ebf" +
+                                "1-ba36-4f5b-8def-6f70d9986fe9%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394396753000,\n" +
+                                " \"duration\" : 24,\n" +
+                                " \"id\" : \"b8f64de1-e218-4091-9544-4cbf369fc238\",\n" +
+                                " \"name\" : \"showtime again\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 2227849,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2Fb8f64de" +
+                                "1-e218-4091-9544-4cbf369fc238%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394321113000,\n" +
+                                " \"duration\" : 1294,\n" +
+                                " \"id\" : \"832641bf-5dbf-41a1-ad94-fea213e59a92\",\n" +
+                                " \"name\" : \"showtime\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 42165242,\n" +
+                                " \"status\" : \"available\",\n" +
+                                " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F832641b" +
+                                "f-5dbf-41a1-ad94-fea213e59a92%2Farchive.mp4?Expires=1395188695&AWSAccessKeyId=AKIAI6" +
+                                "LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" +
+                                " } ]\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            ArchiveList archives = await opentok.ListArchivesAsync(sessionId: sessionId);
 
             Assert.NotNull(archives);
             Assert.Equal(6, archives.Count);
@@ -708,7 +1136,7 @@ namespace OpenTokSDKTest
                                 " \"url\" : null\n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
             
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -718,7 +1146,37 @@ namespace OpenTokSDKTest
             Assert.Equal(sessionId, archive.SessionId);
             Assert.NotEqual(Guid.Empty, archive.Id);
 
-            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/"+ apiKey +"/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/"+ apiKey +"/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(sessionId, null);
+
+            Assert.NotNull(archive);
+            Assert.Equal(sessionId, archive.SessionId);
+            Assert.NotEqual(Guid.Empty, archive.Id);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -739,7 +1197,7 @@ namespace OpenTokSDKTest
                                 " \"url\" : null\n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -748,10 +1206,41 @@ namespace OpenTokSDKTest
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
 
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveIndividualAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"outputMode\" : \"individual\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"" + sessionId + "\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.INDIVIDUAL);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
+
             mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
+
         [Fact]
-        public void StartArchiveWithSDResolutionTest()
+        public async Task StartArchiveWithSDResolutionAsyncTest()
         {
             string sessionId = "SESSIONID";
             string resolution = "640x480";
@@ -774,7 +1263,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
 
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
@@ -848,7 +1337,7 @@ namespace OpenTokSDKTest
                                 " \"url\" : null\n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -859,11 +1348,45 @@ namespace OpenTokSDKTest
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
             Assert.Equal(resolution, archive.Resolution);
 
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveCustomLayoutAsync()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "1280x720";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"outputMode\" : \"composed\",\n" +
+                                " \"resolution\" : \"1280x720\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"" + sessionId + "\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            var layout = new ArchiveLayout { Type = LayoutType.custom, StyleSheet = "stream.instructor {position: absolute; width: 100%;  height:50%;}" };
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
+            Assert.Equal(resolution, archive.Resolution);
+
             mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
-        public void StartArchiveVerticalLayout()
+        public async Task StartArchiveVerticalLayout()
         {
             string sessionId = "SESSIONID";
             string resolution = "1280x720";
@@ -890,7 +1413,7 @@ namespace OpenTokSDKTest
                 Type = LayoutType.verticalPresentation,
                 StyleSheet = ""
             };
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
             Assert.Equal(resolution, archive.Resolution);
@@ -973,7 +1496,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveWithHDResolutionTest()
+        public async Task StartArchiveWithHDResolutionAsyncTest()
         {
             string sessionId = "SESSIONID";
             string resolution = "1280x720";
@@ -996,7 +1519,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
 
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
@@ -1042,7 +1565,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveNoResolutionTest()
+        public async Task StartArchiveNoResolutionAsyncTest()
         {
             string sessionId = "SESSIONID";
             string resolution = "640x480";
@@ -1064,7 +1587,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId);
+            Archive archive = await opentok.StartArchiveAsync(sessionId);
 
             Assert.NotNull(archive);
             Assert.Equal(sessionId, archive.SessionId);
@@ -1075,7 +1598,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveVoiceOnlyTest()
+        public async Task StartArchiveVoiceOnlyAsyncTest()
         {
             string sessionId = "SESSIONID";
             string returnString = "{\n" +
@@ -1097,7 +1620,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, hasVideo: false);
+            Archive archive = await opentok.StartArchiveAsync(sessionId, hasVideo: false);
 
             Assert.NotNull(archive);
             Assert.Equal(sessionId, archive.SessionId);
@@ -1123,9 +1646,9 @@ namespace OpenTokSDKTest
                                 " \"url\" : null\n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), 
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), 
                 It.IsAny<Dictionary<string, string>>(), 
-                It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+                It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -1135,9 +1658,44 @@ namespace OpenTokSDKTest
             Assert.Equal("SESSIONID", archive.SessionId);
             Assert.Equal(archiveId, archive.Id.ToString());
 
-            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(
                 url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId +"/stop")), 
                 It.IsAny<Dictionary<string, string>>(), 
+                It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StopArchiveAsyncTest()
+        {
+            string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = "{\n" +
+                                " \"createdAt\" : 1395183243556,\n" +
+                                " \"duration\" : 0,\n" +
+                                " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                " \"name\" : \"\",\n" +
+                                " \"partnerId\" : 123456,\n" +
+                                " \"reason\" : \"\",\n" +
+                                " \"sessionId\" : \"SESSIONID\",\n" +
+                                " \"size\" : 0,\n" +
+                                " \"status\" : \"started\",\n" +
+                                " \"url\" : null\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StopArchiveAsync(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(archiveId, archive.Id.ToString());
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(
+                url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId + "/stop")),
+                It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
@@ -1147,12 +1705,30 @@ namespace OpenTokSDKTest
             string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
             
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.DeleteAsync(It.IsAny<string>(),
+            mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>()));
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             opentok.DeleteArchive(archiveId);
+
+            mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
+                url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId)),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task DeleteArchiveAsyncTest()
+        {
+            string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.DeleteAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            await opentok.DeleteArchiveAsync(archiveId);
 
             mockClient.Verify(httpClient => httpClient.DeleteAsync(It.Is<string>(
                 url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId)),
@@ -1171,7 +1747,7 @@ namespace OpenTokSDKTest
                                     " \"videoType\" : \"screen\",\n" +
                                    " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -1186,7 +1762,37 @@ namespace OpenTokSDKTest
             Assert.Equal("screen", stream.VideoType);
             Assert.Equal(LayoutClassList, stream.LayoutClassList);
 
-            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId +"/stream/" + streamId))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId +"/stream/" + streamId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetStreamAsyncTestFromOpenTokInstance()
+        {
+            string sessionId = "SESSIONID";
+            string streamId = "be8f21f4-a133-43ae-a20a-bb29a1caaa46";
+            string returnString = "{\n" +
+                                    " \"id\" : \"" + streamId + "\",\n" +
+                                    " \"name\" : \"johndoe\",\n" +
+                                    " \"layoutClassList\" : [\"asdf\"],\n" +
+                                    " \"videoType\" : \"screen\",\n" +
+                                   " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Stream stream = await opentok.GetStreamAsync(sessionId, streamId);
+
+            List<string> LayoutClassList = new List<string>();
+            LayoutClassList.Add("asdf");
+
+            Assert.NotNull(stream);
+            Assert.Equal(streamId, stream.Id);
+            Assert.Equal("johndoe", stream.Name);
+            Assert.Equal("screen", stream.VideoType);
+            Assert.Equal(LayoutClassList, stream.LayoutClassList);
+
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream/" + streamId))), Times.Once());
         }
 
         [Fact]
@@ -1201,7 +1807,7 @@ namespace OpenTokSDKTest
                                     " \"videoType\" : \"screen\",\n" +
                                    " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -1215,7 +1821,36 @@ namespace OpenTokSDKTest
             Assert.Equal("screen", stream.VideoType);
             Assert.Equal(LayoutClassList, stream.LayoutClassList);
 
-            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId +"/stream/" + streamId))), Times.Once());
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId +"/stream/" + streamId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetStreamEmptyAsyncTestFromOpenTokInstance()
+        {
+            string sessionId = "SESSIONID";
+            string streamId = "be8f21f4-a133-43ae-a20a-bb29a1caaa46";
+            string returnString = "{\n" +
+                                    " \"id\" : \"" + streamId + "\",\n" +
+                                    " \"name\" : \"johndoe\",\n" +
+                                    " \"layoutClassList\" : [],\n" +
+                                    " \"videoType\" : \"screen\",\n" +
+                                   " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Stream stream = await opentok.GetStreamAsync(sessionId, streamId);
+
+            List<string> LayoutClassList = new List<string>();
+
+            Assert.NotNull(stream);
+            Assert.Equal(streamId, stream.Id);
+            Assert.Equal("johndoe", stream.Name);
+            Assert.Equal("screen", stream.VideoType);
+            Assert.Equal(LayoutClassList, stream.LayoutClassList);
+
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream/" + streamId))), Times.Once());
         }
 
         [Fact]
@@ -1264,11 +1899,60 @@ namespace OpenTokSDKTest
                                 " } ]\n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             StreamList streamList = opentok.ListStreams(sessionId);
+            Stream streamOne = streamList[0];
+            Stream streamTwo = streamList[1];
+
+            Assert.NotNull(streamList);
+            Assert.Equal(2, streamList.Count);
+            Assert.Equal("ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d", streamOne.Id);
+            Assert.Equal("johndoe", streamOne.Name);
+            Assert.Equal(LayoutClassListOne, streamOne.LayoutClassList);
+            Assert.Equal("screen", streamOne.VideoType);
+
+            Assert.Equal("1f546c5a-4fd7-4e59-ab3d-f1cfb4148d1d", streamTwo.Id);
+            Assert.Equal("janedoe", streamTwo.Name);
+            Assert.Equal(LayoutClassListTwo, streamTwo.LayoutClassList);
+            Assert.Equal("camera", streamTwo.VideoType);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/session/" + sessionId + "/stream"))), Times.Once());
+        }
+
+        [Fact]
+        public async Task ListStreamAsyncTestFromOpenTokInstance()
+        {
+            string sessionId = "SESSIONID";
+            List<string> LayoutClassListOne = new List<string>();
+            List<string> LayoutClassListTwo = new List<string>();
+            LayoutClassListOne.Add("layout1");
+            LayoutClassListTwo.Add("layout2");
+
+            string returnString = "{\n" +
+                                " \"count\" : 2,\n" +
+                                " \"items\" : [ {\n" +
+                                " \"id\" : \"ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
+                                " \"name\" : \"johndoe\",\n" +
+                                " \"layoutClassList\" : [\"layout1\"],\n" +
+                                " \"videoType\" : \"screen\",\n" +
+                                " }, {\n" +
+                                " \"createdAt\" : 1394321113000,\n" +
+                                " \"duration\" : 1294,\n" +
+                                " \"id\" : \"1f546c5a-4fd7-4e59-ab3d-f1cfb4148d1d\",\n" +
+                                " \"name\" : \"janedoe\",\n" +
+                                " \"layoutClassList\" : [\"layout2\"],\n" +
+                                " \"videoType\" : \"camera\",\n" +
+                                " } ]\n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            StreamList streamList = await opentok.ListStreamsAsync(sessionId);
             Stream streamOne = streamList[0];
             Stream streamTwo = streamList[1];
 
@@ -1336,12 +2020,31 @@ namespace OpenTokSDKTest
             string sessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX";
 
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.DeleteAsync(It.IsAny<string>(),
+            mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
                 It.IsAny<Dictionary<string, string>>()));
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             opentok.ForceDisconnect(sessionId, connectionId);
+
+            mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
+                url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/connection/" + connectionId)),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task ForceDisconnectAsyncTest()
+        {
+            string connectionId = "3b0c260e-801e-47e9-a245-4ee3ffd9bd6f";
+            string sessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.DeleteAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            await opentok.ForceDisconnectAsync(sessionId, connectionId);
 
             mockClient.Verify(httpClient => httpClient.DeleteAsync(It.Is<string>(
                 url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/connection/" + connectionId)),
@@ -1443,7 +2146,7 @@ namespace OpenTokSDKTest
                                   " } \n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -1454,11 +2157,42 @@ namespace OpenTokSDKTest
             Assert.NotNull(broadcast.Id);
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
 
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartBroadcastAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                  " \"sessionId\" : \"SESSIONID\",\n" +
+                                  " \"projectId\" : 123456,\n" +
+                                  " \"createdAt\" : 1395183243556,\n" +
+                                  " \"updatedAt\" : 1395183243556,\n" +
+                                  " \"resolution\" : \"640x480\",\n" +
+                                  " \"status\" : \"started\",\n" +
+                                  " \"broadcastUrls\": { \n" +
+                                    " \"hls\": \"http://server/fakepath/playlist.m3u8\", \n" +
+                                  " } \n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = await opentok.StartBroadcastAsync(sessionId);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(sessionId, broadcast.SessionId);
+            Assert.NotNull(broadcast.Id);
+            Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+
             mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
-        public void StartBroadcastWithHDResolutionTest()
+        public async Task StartBroadcastWithHDResolutionTest()
         {
             string sessionId = "SESSIONID";
             string resolution = "1280x720";
@@ -1479,7 +2213,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Broadcast broadcast = opentok.StartBroadcast(sessionId, resolution: resolution);
+            Broadcast broadcast = await opentok.StartBroadcastAsync(sessionId, resolution: resolution);
 
             Assert.NotNull(broadcast);
             Assert.Equal(sessionId, broadcast.SessionId);
@@ -1491,7 +2225,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartBroadcastWithSDResolutionTest()
+        public async Task StartBroadcastWithSDResolutionAsyncTest()
         {
             string sessionId = "SESSIONID";
             string resolution = "640x480";
@@ -1512,7 +2246,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Broadcast broadcast = opentok.StartBroadcast(sessionId, resolution: resolution);
+            Broadcast broadcast = await opentok.StartBroadcastAsync(sessionId, resolution: resolution);
 
             Assert.NotNull(broadcast);
             Assert.Equal(sessionId, broadcast.SessionId);
@@ -1524,7 +2258,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartBroadcastOnlyWithRTMPTest()
+        public async Task StartBroadcastOnlyWithRTMPAsyncTest()
         {
             string sessionId = "SESSIONID";
             List<Rtmp> rtmpList = new List<Rtmp>();
@@ -1561,7 +2295,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Broadcast broadcast = opentok.StartBroadcast(sessionId, hls: false, rtmpList: rtmpList);
+            Broadcast broadcast = await opentok.StartBroadcastAsync(sessionId, hls: false, rtmpList: rtmpList);
 
             Assert.NotNull(broadcast);
             Assert.Equal(sessionId, broadcast.SessionId);
@@ -1575,7 +2309,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartBroadcastWithRTMPandHLSTest()
+        public async Task StartBroadcastWithRTMPandHLSAsyncTest()
         {
             string sessionId = "SESSIONID";
             List<Rtmp> rtmpList = new List<Rtmp>();
@@ -1613,7 +2347,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Broadcast broadcast = opentok.StartBroadcast(sessionId, rtmpList: rtmpList);
+            Broadcast broadcast = await opentok.StartBroadcastAsync(sessionId, rtmpList: rtmpList);
 
             Assert.NotNull(broadcast);
             Assert.Equal(sessionId, broadcast.SessionId);
@@ -1640,7 +2374,7 @@ namespace OpenTokSDKTest
                                   " \"broadcastUrls\": null \n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -1650,6 +2384,34 @@ namespace OpenTokSDKTest
             Assert.Equal(broadcastId, broadcast.Id.ToString());
             Assert.NotNull(broadcast.Id);
             
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast/" + broadcastId + "/stop")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StopBroadcastAsyncTest()
+        {
+            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = "{\n" +
+                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                  " \"sessionId\" : \"SESSIONID\",\n" +
+                                  " \"projectId\" : 123456,\n" +
+                                  " \"createdAt\" : 1395183243556,\n" +
+                                  " \"updatedAt\" : 1395183243556,\n" +
+                                  " \"resolution\" : \"640x480\",\n" +
+                                  " \"broadcastUrls\": null \n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = await opentok.StopBroadcastAsync(broadcastId);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(broadcastId, broadcast.Id.ToString());
+            Assert.NotNull(broadcast.Id);
+
 
             mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast/" + broadcastId + "/stop")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
@@ -1671,7 +2433,7 @@ namespace OpenTokSDKTest
                                   " } \n" +
                                 " }";
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
@@ -1681,6 +2443,36 @@ namespace OpenTokSDKTest
             Assert.Equal(broadcastId, broadcast.Id.ToString());
             Assert.NotNull(broadcast.Id);
             
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/broadcast/" + broadcastId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetBroadcastAsyncTest()
+        {
+            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = "{\n" +
+                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                  " \"sessionId\" : \"SESSIONID\",\n" +
+                                  " \"projectId\" : 123456,\n" +
+                                  " \"createdAt\" : 1395183243556,\n" +
+                                  " \"updatedAt\" : 1395183243556,\n" +
+                                  " \"resolution\" : \"640x480\",\n" +
+                                  " \"status\" : \"started\",\n" +
+                                  " \"broadcastUrls\": { \n" +
+                                    " \"hls\": \"http://server/fakepath/playlist.m3u8\", \n" +
+                                  " } \n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>())).Returns(Task.FromResult(returnString));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = await opentok.GetBroadcastAsync(broadcastId);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(broadcastId, broadcast.Id.ToString());
+            Assert.NotNull(broadcast.Id);
+
             mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/broadcast/" + broadcastId))), Times.Once());
         }
 
@@ -1695,12 +2487,32 @@ namespace OpenTokSDKTest
             streamPropertiesList.Add(streamProperties);
 
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.PutAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult("This function should not return anything"));
+            mockClient.Setup(httpClient => httpClient.Put(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns("This function should not return anything");
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             opentok.SetStreamClassLists(sessionId, streamPropertiesList);
             
+            mockClient.Verify(httpClient => httpClient.Put(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/stream")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task SetStreamClassListsAsyncTest()
+        {
+            string sessionId = "SESSIONID";
+            string streamId = "STREAMID";
+            List<StreamProperties> streamPropertiesList = new List<StreamProperties>();
+            StreamProperties streamProperties = new StreamProperties(streamId);
+            streamProperties.addLayoutClass("focus");
+            streamPropertiesList.Add(streamProperties);
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PutAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(Task.FromResult("This function should not return anything"));
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            await opentok.SetStreamClassListsAsync(sessionId, streamPropertiesList);
+
             mockClient.Verify(httpClient => httpClient.PutAsync(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/stream")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
     }
