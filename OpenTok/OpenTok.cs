@@ -550,7 +550,7 @@ namespace OpenTokSDK
                     }
                     else
                     {
-                        data.Add("layout", new { type = OpenTokUtils.convertToCamelCase(layout.Type.ToString()) });
+                        data.Add("layout", layout);
                     }
                 }
             }

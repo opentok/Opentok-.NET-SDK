@@ -1490,6 +1490,47 @@ namespace OpenTokSDKTest
         [Fact]
         public void TestStartBroadcastWithScreenShareType()
         {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                  " \"sessionId\" : \"SESSIONID\",\n" +
+                                  " \"projectId\" : 123456,\n" +
+                                  " \"createdAt\" : 1395183243556,\n" +
+                                  " \"updatedAt\" : 1395183243556,\n" +
+                                  " \"resolution\" : \"640x480\",\n" +
+                                  " \"status\" : \"started\",\n" +
+                                  " \"broadcastUrls\": { \n" +
+                                    " \"hls\": \"http://server/fakepath/playlist.m3u8\", \n" +
+                                  " } \n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            var expectedUrl = $"v2/project/{apiKey}/broadcast";
+
+            var data = new Dictionary<string, object>() {
+                { "sessionId", sessionId },
+                { "maxDuration", 7200 },
+                { "outputs", new Dictionary<string, object>() {{"hls", new Object()}} }
+            };
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit);
+            data.Add("layout",layout);
+            mockClient.Setup(httpClient => httpClient.Post(
+                expectedUrl,
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is< Dictionary<string, object>>(x=>                
+                    (string)x["sessionId"] == sessionId && x["layout"]==layout && (int)x["maxDuration"] == 7200
+                ))).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            
+            Broadcast broadcast = opentok.StartBroadcast(sessionId, layout: layout);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(sessionId, broadcast.SessionId);
+            Assert.NotNull(broadcast.Id);
+            Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
 
         }
 

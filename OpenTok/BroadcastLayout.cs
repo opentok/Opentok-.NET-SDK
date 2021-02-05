@@ -83,7 +83,7 @@ namespace OpenTokSDK
         /// The Stylesheet for the Custom Layout
         /// </summary>
         [JsonProperty("stylesheet")]
-        public string Stylesheet { get; set; }
+        public string Stylesheet { get; set; } = null;
 
         /// <summary>
         /// The <see cref="LayoutType"/>to use when there is a screen-sharing 
