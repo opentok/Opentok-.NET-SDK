@@ -300,6 +300,10 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
+                else if(layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was {layout.ScreenShareType}");
+                }
                 data.Add("layout", layout);
             }
 
@@ -534,6 +538,10 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
                 }
+                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was {layout.ScreenShareType}");
+                }
                 else
                 {
                     if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
@@ -607,6 +615,10 @@ namespace OpenTokSDK
                     (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet)))
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
+                }
+                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was {layout.ScreenShareType}");
                 }
                 else
                 {
