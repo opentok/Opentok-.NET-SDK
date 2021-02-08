@@ -208,7 +208,7 @@ namespace OpenTokSDK.Util
             {
                 if (headers["Content-type"] == "application/json")
                 {
-                    return JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                    return JsonConvert.SerializeObject(data);
                 }
                 else if (headers["Content-type"] == "application/x-www-form-urlencoded")
                 {
