@@ -811,7 +811,7 @@ namespace OpenTokSDKTest
             catch (OpenTokArgumentException ex)
             {
 
-                Assert.Equal($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was BestFit", ex.Message);
+                Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
             }            
         }        
 
@@ -1597,7 +1597,7 @@ namespace OpenTokSDKTest
             }
             catch (OpenTokArgumentException ex)
             {
-                Assert.Equal($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was {layout.ScreenShareType}", ex.Message);
+                Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
             }
         }
 
@@ -1614,7 +1614,7 @@ namespace OpenTokSDKTest
             catch (OpenTokArgumentException ex)
             {
 
-                Assert.Equal($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was BestFit", ex.Message);
+                Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
             }
         }
 

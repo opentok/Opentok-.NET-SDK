@@ -302,7 +302,7 @@ namespace OpenTokSDK
                 }
                 else if(layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
-                    throw new OpenTokArgumentException($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was {layout.ScreenShareType}");
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
             }
@@ -540,7 +540,7 @@ namespace OpenTokSDK
                 }
                 else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
-                    throw new OpenTokArgumentException($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was {layout.ScreenShareType}");
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 else
                 {
@@ -618,7 +618,7 @@ namespace OpenTokSDK
                 }
                 else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
-                    throw new OpenTokArgumentException($"Could not set screenShareLayout, when screenShareType is set, layout.Type must be bestFit, was {layout.ScreenShareType}");
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 else
                 {
