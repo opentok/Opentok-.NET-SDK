@@ -41,11 +41,31 @@ namespace OpenTokSDK
             Custom
         }
 
+        /// <summary>
+        /// Initalizes a Broadcast layout with the given <see cref="ScreenShareLayoutType"/>, automatically
+        /// sets the Type to bestFit
+        /// </summary>
+        /// <param name="type"></param>
+        public BroadcastLayout(ScreenShareLayoutType type)
+        {
+            Type = LayoutType.BestFit;
+            ScreenShareType = type;
+        }
+
+        /// <summary>
+        /// Initalizes a BroadcastLayout with the given <see cref="LayoutType"/>
+        /// </summary>
+        /// <param name="Type"></param>
         public BroadcastLayout(LayoutType Type)
         {
             this.Type = Type;
         }
 
+        /// <summary>
+        /// Initalizes a BroadcastLayout with the given <see cref="LayoutType"/> and stylesheet - note Type must be <see cref="LayoutType.Custom"/>
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="Stylesheet"></param>
         public BroadcastLayout(LayoutType Type, string Stylesheet)
         {
             this.Type = Type;
@@ -63,6 +83,18 @@ namespace OpenTokSDK
         /// The Stylesheet for the Custom Layout
         /// </summary>
         [JsonProperty("stylesheet")]
-        public string Stylesheet { get; set; }
+        public string Stylesheet { get; set; } = null;
+
+        /// <summary>
+        /// The <see cref="LayoutType"/>to use when there is a screen-sharing 
+        /// stream in the session. Note that to use this property, 
+        /// you must set the <see cref="Type"/> property to <see cref="LayoutType.BestFit"/> 
+        /// and leave the <see cref="Stylesheet"/> property unset. 
+        /// For more information, see Layout types for screen sharing.
+        /// NOTE: <see cref="LayoutType.Custom"/> is not valid for this property
+        /// </summary>
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        [JsonProperty("screenSharetype", NullValueHandling = NullValueHandling.Ignore)]
+        public ScreenShareLayoutType? ScreenShareType { get; set; }
     }
 }

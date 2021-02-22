@@ -300,6 +300,10 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
+                else if(layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
                 data.Add("layout", layout);
             }
 
@@ -534,6 +538,10 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
                 }
+                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
                 else
                 {
                     if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
@@ -542,7 +550,7 @@ namespace OpenTokSDK
                     }
                     else
                     {
-                        data.Add("layout", new { type = OpenTokUtils.convertToCamelCase(layout.Type.ToString()) });
+                        data.Add("layout", layout);
                     }
                 }
             }
@@ -608,17 +616,68 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
                 }
+                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
                 else
                 {
                     data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
                     if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
                     {
                         data.Add("stylesheet", layout.Stylesheet);
+                    }      
+                    if (layout.ScreenShareType != null)
+                    {
+                        data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
                     }
                 }
             }
 
             Client.Put(url, headers, data);
+        }
+
+
+        /// <summary>
+        /// Allows you to Dynamically change the layout of a composed archive while it's being recorded
+        /// see <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a>
+        /// for details regarding customizing a layout.
+        /// </summary>
+        /// <param name="archiveId"></param>
+        /// <param name="layout"></param>
+        /// <returns></returns>
+        public bool SetArchiveLayout(string archiveId, ArchiveLayout layout)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var data = new Dictionary<string, object>();
+            if(layout != null)
+            {
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
+                }
+                else if(layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
+                }
+
+                data.Add("type", layout.Type.ToString());
+                if (!string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    data.Add("stylesheet", layout.StyleSheet);
+                }
+                if (layout.ScreenShareType != null)
+                {
+                    if(layout.Type != LayoutType.bestFit)
+                    {
+                        throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit");
+                    }
+                    data.Add("screenshareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
+                }
+            }
+            Client.Put(url, headers, data);
+            return true;
         }
 
         /// <summary>

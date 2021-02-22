@@ -784,6 +784,68 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public void TestArchiveScreenShareLayout()
+        {
+            var expected = @"{""sessionId"":""abcd12345"",""name"":""an_archive_name"",""hasVideo"":true,""hasAudio"":true,""outputMode"":""composed"",""layout"":{""type"":""bestFit"",""screenSharetype"":""bestFit""}}";
+            var httpClient = new HttpClient();
+            var data = new Dictionary<string, object>() { { "sessionId", "abcd12345" }, { "name", "an_archive_name" }, { "hasVideo", true }, { "hasAudio", true }, { "outputMode", "composed" } };
+            var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType=ScreenShareLayoutType.BestFit };
+            data.Add("layout", layout);
+            var headers = new Dictionary<string, string>();
+            headers.Add("Content-type", "application/json");
+            var clientType = typeof(HttpClient);
+            var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
+            Assert.Equal(expected, layoutString);
+        }
+
+        [Fact]
+        public void TestArchiveScreenShareInvalidType()
+        {
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            ArchiveLayout layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.BestFit };
+            try
+            {
+                opentok.StartArchive("abcd", layout: layout);
+                Assert.True(false, "Should have seen an exception");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+
+                Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
+            }            
+        }        
+
+        [Fact]
+        public void TestSetArchiveScreenShareType()
+        {
+            var opentok = new OpenTok(apiKey, apiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType = ScreenShareLayoutType.Pip };
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var archiveId = "123456789";
+            var expectedUrl = $"v2/project/{apiKey}/archive/{archiveId}/layout";
+            var mockClient = new Mock<HttpClient>();
+            opentok.Client = mockClient.Object;
+            mockClient.Setup(c => c.Put(expectedUrl, headers, It.Is<Dictionary<string, object>>(x => (string)x["type"] == "bestFit" && (string)x["screenshareType"] == "pip")));
+            Assert.True(opentok.SetArchiveLayout(archiveId, layout));
+        }
+
+        [Fact]
+        public void TestSetArchiveScreenShareTypeInvalid()
+        {
+            var opentok = new OpenTok(apiKey, apiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.Pip };
+            try
+            {
+                opentok.SetArchiveLayout("12345", layout);
+                Assert.True(false, "Failing because we should have had an exception");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+                Assert.Equal("Invalid layout, when ScreenShareType is set, Type must be bestFit", ex.Message);
+            }
+        }
+
+        [Fact]
         public void TestArchiveCustomLayout()
         {
             var expected = @"{""sessionId"":""abcd12345"",""name"":""an_archive_name"",""hasVideo"":true,""hasAudio"":true,""outputMode"":""composed"",""layout"":{""type"":""custom"",""stylesheet"":""stream.instructor {position: absolute; width: 100%;  height:50%;}""}}";
@@ -1454,6 +1516,106 @@ namespace OpenTokSDKTest
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public void TestStartBroadcastWithScreenShareType()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = "{\n" +
+                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
+                                  " \"sessionId\" : \"SESSIONID\",\n" +
+                                  " \"projectId\" : 123456,\n" +
+                                  " \"createdAt\" : 1395183243556,\n" +
+                                  " \"updatedAt\" : 1395183243556,\n" +
+                                  " \"resolution\" : \"640x480\",\n" +
+                                  " \"status\" : \"started\",\n" +
+                                  " \"broadcastUrls\": { \n" +
+                                    " \"hls\": \"http://server/fakepath/playlist.m3u8\", \n" +
+                                  " } \n" +
+                                " }";
+            var mockClient = new Mock<HttpClient>();
+            var expectedUrl = $"v2/project/{apiKey}/broadcast";
+            var outputs = new Dictionary<string, object>() { { "hls", new Object() } };
+            var data = new Dictionary<string, object>() {
+                { "sessionId", sessionId },
+                { "maxDuration", 7200 },
+                { "outputs", outputs }
+            };
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit);
+            data.Add("layout",layout);
+            mockClient.Setup(httpClient => httpClient.Post(
+                expectedUrl,
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is< Dictionary<string, object>>(x=>                
+                    (string)x["sessionId"] == sessionId && x["layout"]==layout && (int)x["maxDuration"] == 7200 && ((Dictionary<string, object>)x["outputs"]).ContainsKey("hls")
+                ))).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+            
+            Broadcast broadcast = opentok.StartBroadcast(sessionId, layout: layout);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(sessionId, broadcast.SessionId);
+            Assert.NotNull(broadcast.Id);
+            Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+        }
+
+        [Fact]
+        public void TestSetBroadcastLayoutScreenShareType()
+        {
+            var broadcastId = "12345";
+            var mockClient = new Mock<HttpClient>();
+            var expectedUrl = $"v2/project/{apiKey}/broadcast/{broadcastId}/layout";
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit);
+            var expectedContent = new Dictionary<string, object>()
+            {
+                {"layout",layout }
+            };
+            var expectedHeaders = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            opentok.Client = mockClient.Object;
+
+            opentok.SetBroadcastLayout(broadcastId, layout);
+
+            mockClient.Verify(c => c.Put(expectedUrl, expectedHeaders, It.Is<Dictionary<string,object>>(
+                x=>(string)x["type"] == "bestFit" 
+                && (string)x["screenShareType"] == "bestFit"))
+            );
+        }
+
+        [Fact]
+        public void TestSEtBroadcastLayoutScreenShareTypeInvalid()
+        {
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit) { Type = BroadcastLayout.LayoutType.Pip };
+            var opentok = new OpenTok(apiKey, apiSecret);
+            try
+            {
+                opentok.SetBroadcastLayout("12345", layout);
+                Assert.True(false, "Failed due to missing exception");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+                Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
+            }
+        }
+
+        [Fact]
+        public void TestStartBroadcastScreenShareInvalidType()
+        {
+            OpenTok opentok = new OpenTok(apiKey, apiSecret);
+            BroadcastLayout layout = new BroadcastLayout(BroadcastLayout.LayoutType.Pip) { ScreenShareType = ScreenShareLayoutType.BestFit };
+            try
+            {
+                opentok.StartBroadcast("abcd", layout: layout);
+                Assert.True(false, "Should have seen an exception");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+
+                Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
+            }
         }
 
         [Fact]
