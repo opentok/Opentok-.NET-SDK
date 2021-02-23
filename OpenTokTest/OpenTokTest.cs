@@ -786,7 +786,7 @@ namespace OpenTokSDKTest
         [Fact]
         public void TestArchiveScreenShareLayout()
         {
-            var expected = @"{""sessionId"":""abcd12345"",""name"":""an_archive_name"",""hasVideo"":true,""hasAudio"":true,""outputMode"":""composed"",""layout"":{""type"":""bestFit"",""screenSharetype"":""bestFit""}}";
+            var expected = @"{""sessionId"":""abcd12345"",""name"":""an_archive_name"",""hasVideo"":true,""hasAudio"":true,""outputMode"":""composed"",""layout"":{""type"":""bestFit"",""screensharetype"":""bestFit""}}";
             var httpClient = new HttpClient();
             var data = new Dictionary<string, object>() { { "sessionId", "abcd12345" }, { "name", "an_archive_name" }, { "hasVideo", true }, { "hasAudio", true }, { "outputMode", "composed" } };
             var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType=ScreenShareLayoutType.BestFit };

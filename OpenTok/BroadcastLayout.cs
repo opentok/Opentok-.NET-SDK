@@ -94,7 +94,7 @@ namespace OpenTokSDK
         /// NOTE: <see cref="LayoutType.Custom"/> is not valid for this property
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter), true)]
-        [JsonProperty("screenSharetype", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("screensharetype", NullValueHandling = NullValueHandling.Ignore)]
         public ScreenShareLayoutType? ScreenShareType { get; set; }
     }
 }
