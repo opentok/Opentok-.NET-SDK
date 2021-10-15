@@ -8,6 +8,10 @@ using Newtonsoft.Json;
 
 namespace OpenTokSDK
 {
+    /// <summary>
+    /// Defines class lists for one or more streams in the session. Used by the
+    /// OpenTok.SetStreamClassLists() method.
+    /// </summary>
     public class StreamProperties
     {
 
