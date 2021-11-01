@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OpenTokSDK.Exception
+﻿namespace OpenTokSDK.Exception
 {
     /// <summary>
     /// Defines exceptions in the OpenTok SDK.
@@ -49,46 +44,6 @@ namespace OpenTokSDK.Exception
         public System.Exception GetException()
         {
             return InnerException;
-        }
-    }
-
-    /// <summary>
-    /// Defines an exception object thrown when an invalid argument is passed into a method.
-    /// </summary>
-    public class OpenTokArgumentException : OpenTokException
-    {
-        /// <summary>
-        /// Constructor. Do not use.
-        /// </summary>
-        /// <param name="message"></param>
-        public OpenTokArgumentException(string message)
-            : base(message)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Defines an exception object thrown when a REST API call results in an error response.
-    /// </summary>
-    public class OpenTokWebException : OpenTokException
-    {
-        /// <summary>
-        /// Constructor. Do not use.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="exception"></param>
-        public OpenTokWebException(string message, System.Exception exception)
-            : base(message, exception)
-        {
-        }
-
-        /// <summary>
-        /// Constructor. Do not use.
-        /// </summary>
-        /// <param name="message"></param>
-        public OpenTokWebException(string message)
-            : base(message)
-        {
         }
     }
 }
