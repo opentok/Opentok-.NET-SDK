@@ -1,23 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Company>Vonage</Company>
-    <TargetFrameworks>net452;net46;net461;net462;net47;net471;net472;net48;netcoreapp3.1</TargetFrameworks>
-    <Authors>Vonage</Authors>
-    <Copyright>Vonage 2020</Copyright>        
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Moq" Version="4.14.1" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OpenTok\OpenTok.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  
+	<PropertyGroup>
+		<Company>Vonage</Company>
+		<TargetFrameworks>net452;net46;net461;net462;net47;net471;net472;net48;netcoreapp3.1</TargetFrameworks>
+		<Authors>Vonage</Authors>
+		<Copyright>Vonage 2020</Copyright>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Moq" Version="4.14.1" />
+		<PackageReference Include="xunit" Version="2.4.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\OpenTok\OpenTok.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp3.0' And '$(TargetFramework)' != 'netcoreapp3.1' ">
+		<Reference Include="System.Web" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
+
 </Project>
