@@ -775,5 +775,27 @@ namespace OpenTokSDK
             var data = new Dictionary<string, object> { { "digits", digits } };
             Client.Post(url, headers, data);
         }
+
+        /// <summary>
+        /// Send DTMF digits to all participants in an active OpenTok session or to a specific client connected to that session.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session that will receive the DTMF string.</param>
+        /// <param name="connectionId">The connection connection ID of the client you are sending the DTMF signal to. Leave this empty to send a DTMF signal to all clients connected to the session.</param>
+        /// <param name="digits">This is the string of DTMF digits to send. This can include 0-9, '*', '#', and 'p'. A p indicates a pause of 500ms (if you need to add a delay in sending the digits).</param>
+        public Task PlayDTMFAsync(string sessionId, string digits, string connectionId = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            string url = string.IsNullOrEmpty(connectionId)
+                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
+                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "digits", digits } };
+            return Client.PostAsync(url, headers, data);
+        }
     }
 }
