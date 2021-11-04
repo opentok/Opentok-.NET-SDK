@@ -17,6 +17,7 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Utils\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   

@@ -31,7 +31,7 @@ namespace OpenTokSDK
         /// <summary>
         /// For internal use
         /// </summary>
-        public HttpClient Client { private get; set; }
+        public HttpClient Client { internal get; set; }
 
         private bool _debug;
         /// <summary>
@@ -300,7 +300,7 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                else if(layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                else if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
@@ -341,7 +341,7 @@ namespace OpenTokSDK
         /// The number of archives to be returned. The maximum number of archives returned is 1000.
         /// </param>
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
-        public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
+        public ArchiveList ListArchives(int offset = 0, int count = 0, string sessionId = "")
         {
             if (count < 0)
             {
@@ -626,7 +626,7 @@ namespace OpenTokSDK
                     if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
                     {
                         data.Add("stylesheet", layout.Stylesheet);
-                    }      
+                    }
                     if (layout.ScreenShareType != null)
                     {
                         data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
@@ -651,13 +651,13 @@ namespace OpenTokSDK
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var data = new Dictionary<string, object>();
-            if(layout != null)
+            if (layout != null)
             {
                 if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
                 }
-                else if(layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                else if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
                 }
@@ -669,7 +669,7 @@ namespace OpenTokSDK
                 }
                 if (layout.ScreenShareType != null)
                 {
-                    if(layout.Type != LayoutType.bestFit)
+                    if (layout.Type != LayoutType.bestFit)
                     {
                         throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit");
                     }
@@ -751,6 +751,40 @@ namespace OpenTokSDK
         public void SetDefaultRequestTimeout(int timeout)
         {
             Client.RequestTimeout = timeout;
+        }
+
+        /// <summary>
+        /// Dials a SIP gateway to input an audio-only stream into your OpenTok Session. Part of the SIP feature.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session to which the user will connect.</param>
+        /// <param name="token">The token for the session ID with which the SIP user will use to connect.</param>
+        /// <param name="sipUri">The sip URI the SIP Interconnect feature will dial.</param>
+        public void Dial(string sessionId, string token, string sipUri, DialOptions options = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            string url = $"/v2/project/{this.ApiKey}/dial";
+
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId },
+                { "token", token },
+                { "spi", new { 
+                        uri = sipUri,
+                        from = options?.From,
+                        headers = options?.Headers,
+                        auth = options?.Auth,
+                        secure = options?.Secure,
+                        video = options?.Video,
+                        observeForceMute = options?.ObserveForceMute
+                    } 
+                }
+            };
+            Client.Post(url, headers, data);
         }
     }
 }

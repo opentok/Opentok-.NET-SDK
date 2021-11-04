@@ -13,6 +13,7 @@
     <NuGetPackageImportStamp>671ed443</NuGetPackageImportStamp>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright © Vonage 2020</Copyright>
+    <RootNamespace>OpenTokSDK</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
@@ -39,5 +40,15 @@
   <ItemGroup>    
     <Reference Include="System.Web" />
   </ItemGroup>
+
+  <ItemGroup>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>OpenTokTest</_Parameter1>
+	</AssemblyAttribute>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+	  <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+	</AssemblyAttribute>
+  </ItemGroup>
+
 
 </Project>
