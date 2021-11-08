@@ -1,24 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31825.309
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC02B3EA-F1B3-4A39-A151-4FE61A39F209}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		.travis.yml = .travis.yml
-		appveyor.yml = appveyor.yml
 		CONTRIBUTING.md = CONTRIBUTING.md
 		DEVELOPING.md = DEVELOPING.md
+		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "Samples\HelloWorld\HelloWorld.csproj", "{F8A5A9AD-F680-46F4-806F-653E7E51A030}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorld", "Samples\HelloWorld\HelloWorld.csproj", "{F8A5A9AD-F680-46F4-806F-653E7E51A030}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiving", "Samples\Archiving\Archiving.csproj", "{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Archiving", "Samples\Archiving\Archiving.csproj", "{B6EFF9BA-20CD-4BDE-B67B-C8E22F00E640}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broadcasting", "Samples\Broadcasting\Broadcasting.csproj", "{D593D74C-46D3-4947-9F57-B40D978C40B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Broadcasting", "Samples\Broadcasting\Broadcasting.csproj", "{D593D74C-46D3-4947-9F57-B40D978C40B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTok", "OpenTok\OpenTok.csproj", "{C770C266-B8E6-413A-B5AB-68EB218DC76C}"
 EndProject
