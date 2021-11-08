@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+env:
+  CONFIGURATION: "Release"
+
 jobs:
   build:
 
@@ -18,10 +21,10 @@ jobs:
       with:
         dotnet-version: '3.1.401'
     - name: Clean
-      run: dotnet clean OpenTok.sln --configuration Release && dotnet nuget locals all --clear
+      run: dotnet clean OpenTok.sln --configuration ${{ env.CONFIGURATION }} && dotnet nuget locals all --clear
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build OpenTok.sln --configuration Release --no-restore
+      run: dotnet build OpenTok.sln --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Test
-      run: dotnet test OpenTokTest/OpenTokTest.csproj --no-build -f netcoreapp3.1
+      run: dotnet test OpenTokTest/OpenTokTest.csproj --configuration ${{ env.CONFIGURATION }} --no-build -f netcoreapp3.1
