@@ -341,6 +341,7 @@ namespace OpenTokSDK
         /// <param name="count">
         /// The number of archives to be returned. The maximum number of archives returned is 1000.
         /// </param>
+        /// <param name="sessionId">The session ID of the OpenTok session that was archived</param>
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
         public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
         {

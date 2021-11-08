@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 
 namespace OpenTokSDK
 {
+    /// <summary>
+    /// Represents a stream in an OpenTok session.
+    /// </summary>
     public class Stream
     {
 
@@ -17,10 +16,10 @@ namespace OpenTokSDK
 
         internal void CopyStream(Stream stream)
         {
-            this.Id = stream.Id;
-            this.Name = stream.Name;
-            this.LayoutClassList = stream.LayoutClassList;
-            this.VideoType = stream.VideoType;
+            Id = stream.Id;
+            Name = stream.Name;
+            LayoutClassList = stream.LayoutClassList;
+            VideoType = stream.VideoType;
         }
 
         /// <summary>

@@ -24,6 +24,10 @@ namespace OpenTokSDK.Util
         private int apiKey;
         private string apiSecret;
         private string server;
+
+        /// <summary>
+        /// Writes debugging information to the console when set to true
+        /// </summary>
         public bool debug = false;
 
         /// <summary>
@@ -39,6 +43,12 @@ namespace OpenTokSDK.Util
             // This is only for testing purposes
         }
 
+        /// <summary>
+        /// HttpClient
+        /// </summary>
+        /// <param name="apiKey">OpenTok API key</param>
+        /// <param name="apiSecret">OpenTok API secret.</param>
+        /// <param name="apiUrl">Root Url of OpenTok servers</param>
         public HttpClient(int apiKey, string apiSecret, string apiUrl = "")
         {
             this.apiKey = apiKey;

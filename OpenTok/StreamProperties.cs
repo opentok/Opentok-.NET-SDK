@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 
 namespace OpenTokSDK
 {
+    /// <summary>
+    /// Use for setting the layout class list for streams in a session
+    /// </summary>
     public class StreamProperties
     {
 
@@ -33,6 +32,10 @@ namespace OpenTokSDK
             
         }
 
+        /// <summary>
+        /// Adds layout class
+        /// </summary>
+        /// <param name="layoutClass">Name of layout class</param>
         public void addLayoutClass(string layoutClass)
         {
             LayoutClassList.Add(layoutClass);
