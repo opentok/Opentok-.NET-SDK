@@ -115,7 +115,7 @@ namespace OpenTokSDK
         public long CreatedAt { get; set; }
 
         /// <summary>
-        /// The duration of the archive, in milliseconds.
+        /// The duration of the archive, in seconds.
         /// </summary>
         public long Duration { get; set; }
 
