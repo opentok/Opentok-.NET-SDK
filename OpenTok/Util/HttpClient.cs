@@ -171,7 +171,7 @@ namespace OpenTokSDK.Util
                     DebugLog("Request Body: " + data);
                     await SendDataAsync(request, data);
                 }
-                using (response = (HttpWebResponse)request.GetResponse())
+                using (response = await request.GetResponseAsync() as HttpWebResponse)
                 {
                     DebugLog("Response Status Code: " + response.StatusCode);
                     DebugLog("Response Status Description: " + response.StatusDescription);
@@ -236,7 +236,7 @@ namespace OpenTokSDK.Util
 
         private async Task SendDataAsync(HttpWebRequest request, string data)
         {
-            using (StreamWriter stream = new StreamWriter(request.GetRequestStream()))
+            using (StreamWriter stream = new StreamWriter(await request.GetRequestStreamAsync()))
             {
                 await stream.WriteAsync(data);
             }
