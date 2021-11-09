@@ -2,8 +2,8 @@
 {
 
     /// <summary>
-    /// For archive and broadcast layouts, the layout type to use with screen shares
-    /// If this enum is being used, the Type property should be set to BestFit
+    /// For archive and broadcast layouts, the layout type to use with screen shares.
+    /// If this enum is used, the Type property should be set to BestFit.
     /// </summary>
     public enum ScreenShareLayoutType
     {
@@ -12,7 +12,7 @@
         /// </summary>
         Pip,
         /// <summary>
-        /// /Best Fit
+        /// Best Fit
         /// </summary>
         BestFit,
         /// <summary>

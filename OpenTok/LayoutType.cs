@@ -1,28 +1,28 @@
 ﻿namespace OpenTokSDK
 {
     /// <summary>
-    /// The Layout Type for the an Archive
+    /// The Layout Type for the an Archive.
     /// </summary>
     public enum LayoutType
     {
         /// <summary>
-        /// Use best fit layout
+        /// Best fit layout.
         /// </summary>
         bestFit,
         /// <summary>
-        /// Use a Custom layout (stylesheet property must be set)
+        /// Use a Custom layout (stylesheet property must be set).
         /// </summary>
         custom,
         /// <summary>
-        /// Presents participants horizontally
+        /// Horizontal presentation.
         /// </summary>
         horizontalPresentation,
         /// <summary>
-        /// Presents as picture in picture
+        /// Picture-in-picture.
         /// </summary>
         pip,
         /// <summary>
-        /// presents participants vertically
+        /// Vertical presentation.
         /// </summary>
         verticalPresentation
     }

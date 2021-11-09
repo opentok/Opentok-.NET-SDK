@@ -15,7 +15,7 @@ namespace OpenTokSDK
     public class BroadcastLayout
     {
         /// <summary>
-        /// Defines values for the role parameter of the GenerateToken method of the OpenTok class.
+        /// Defines values for the layout parameter of the StartBroadcast method of the OpenTok class.
         /// </summary>
         public enum LayoutType
         {
@@ -24,7 +24,7 @@ namespace OpenTokSDK
             /// </summary>
             Pip,
             /// <summary>
-            /// /Best Fit
+            /// Best Fit
             /// </summary>
             BestFit,
             /// <summary>
@@ -43,7 +43,7 @@ namespace OpenTokSDK
 
         /// <summary>
         /// Initalizes a Broadcast layout with the given <see cref="ScreenShareLayoutType"/>, automatically
-        /// sets the Type to bestFit
+        /// setting the Type to BestFit.
         /// </summary>
         /// <param name="type"></param>
         public BroadcastLayout(ScreenShareLayoutType type)
@@ -65,7 +65,7 @@ namespace OpenTokSDK
         /// Initalizes a BroadcastLayout with the given <see cref="LayoutType"/> and stylesheet - note Type must be <see cref="LayoutType.Custom"/>
         /// </summary>
         /// <param name="Type"></param>
-        /// <param name="Stylesheet"></param>
+        /// <param name="Stylesheet">A string de</param>
         public BroadcastLayout(LayoutType Type, string Stylesheet)
         {
             this.Type = Type;
