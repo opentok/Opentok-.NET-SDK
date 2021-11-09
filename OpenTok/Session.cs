@@ -10,79 +10,80 @@ using OpenTokSDK.Exception;
 
 namespace OpenTokSDK
 {
-    /**
-     * Defines values for the mediaMode parameter of the CreateSession() method of the
-     * OpenTok class.
-     */
+    /// <summary>
+    /// Defines values for the mediaMode parameter of the <see cref="OpenTok.CreateSession"/> method of the 
+    /// <see cref="OpenTok"/> class.
+    /// </summary>
     public enum MediaMode
     {
-        /**
-         * The session will transmit streams using the OpenTok Media Router.
-         */
+        /// <summary>
+        /// The session will transmit streams using the OpenTok Media Router.
+        /// </summary>
         ROUTED,
-        /**
-         * The session will attempt to transmit streams directly between clients. If two clients
-         * cannot send and receive each others' streams, due to firewalls on the clients' networks,
-         * their streams will be relayed using the OpenTok TURN Server.
-         */
+        /// <summary>
+        /// The session will attempt to transmit streams directly between clients. If two clients
+        /// cannot send and receive each others' streams, due to firewalls on the clients' networks,
+        /// their streams will be relayed using the OpenTok TURN Server.
+        /// </summary>
         RELAYED
     }
 
-    /**
-     * Defines values for the archiveMode property of the Session object. You also use these values
-     * for the archiveMode parameter of the OpenTok.CreateSession() method.
-     */
+    /// <summary>
+    /// Defines values for the archiveMode property of the <see cref="Session"/> object.
+    /// You also use these values for the archiveMode parameter of the <see cref="OpenTok.CreateSession"/> method.
+    /// </summary>
     public enum ArchiveMode
     {
-        /**
-         * The session is not archived automatically. To archive the session, you can call the
-         * OpenTok.StartArchive() method.
-         */
+        /// <summary>
+        /// The session is not archived automatically. To archive the session, you can call the
+        /// <see cref="OpenTok.StartArchive"/> method.
+        /// </summary>
         MANUAL,
-        /**
-         * The session is archived automatically (as soon as there are clients connected
-         * to the session).
-         */
+        /// <summary>
+        /// The session is archived automatically (as soon as there are clients publishing streams
+        /// to the session).
+        /// </summary>
         ALWAYS
     }
 
-    /**
-    * Represents an OpenTok session. Use the CreateSession() method of the OpenTok class to create
-    * an OpenTok session. Use the Id property of the Session object to get the session ID.
-    */
+    /// <summary>
+    /// Represents an OpenTok session. Use the <see cref="OpenTok.CreateSession"/> method of the
+    /// <see cref="OpenTok"/> class to create an OpenTok session. Use the Id property of the
+    /// <see cref="Session"/> object to get the session ID.
+    /// </summary>
     public class Session
     {
-        /**
-         * The session ID, which uniquely identifies the session.
-         */
+        /// <summary>
+        /// The session ID, which uniquely identifies the session.
+        /// </summary>
         public string Id { get; set; }
 
-        /**
-         * Your OpenTok API key.
-         */
+        /// <summary>
+        /// Your OpenTok API key.
+        /// </summary>
         public int ApiKey { get; private set; }
 
-        /**
-         * Your OpenTok API secret.
-         */
+        /// <summary>
+        /// Your OpenTok API secret.
+        /// </summary>
         public string ApiSecret { get; private set; }
 
-        /**
-         * The location hint IP address.
-         */
+        /// <summary>
+        /// The location hint IP address.
+        /// </summary>
         public string Location { get; set; }
 
-        /**
-         * Defines whether the session will transmit streams using the OpenTok Media Router
-         * (<code>MediaMode.ROUTED</code>) or attempt to transmit streams directly between clients
-         * (<code>MediaMode.RELAYED</code>).
-         */
+        /// <summary>
+        /// Defines whether the session will transmit streams using the OpenTok Media Router
+        /// (<see cref="MediaMode.ROUTED"/>) or attempt to transmit streams directly between clients
+        /// (<see cref="MediaMode.RELAYED"/>).
+        /// </summary>
         public MediaMode MediaMode { get; private set; }
 
-        /**
-         * Defines whether the session is automatically archived (<code>ArchiveMode.ALWAYS</code>)
-         * or not (<code>ArchiveMode.MANUAL</code>).
-         */
+        /// <summary>
+        /// Defines whether the session is automatically archived (<see cref="ArchiveMode.ALWAYS"/>)
+        /// or not (<see cref="ArchiveMode.MANUAL"/>).
+        /// </summary>
         public ArchiveMode ArchiveMode { get; private set; }
 
         private const int MAX_CONNECTION_DATA_LENGTH = 1000;
@@ -104,37 +105,33 @@ namespace OpenTokSDK
             this.ArchiveMode = archiveMode;
         }
 
-
-        /**
-         * Creates a token for connecting to an OpenTok session. In order to authenticate a user
-         * connecting to an OpenTok session that user must pass an authentication token along with
-         * the API key.
-         *
-         * @param role The role for the token. Valid values are defined in the Role enum:
-         * <ul>
-         *   <li> <code>Role.SUBSCRIBER</code> &mdash; A subscriber can only subscribe to
-         *     streams.</li>
-         *
-         *   <li> <code>Role.PUBLISHER</code> &mdash; A publisher can publish streams, subscribe to
-         *      streams, and signal. (This is the default value if you do not specify a role.)</li>
-         *
-         *   <li> <code>Role.MODERATOR</code> &mdash; In addition to the privileges granted to a
-         *     publisher, in clients using the OpenTok.js library, a moderator can call the
-         *     <code>forceUnpublish()</code> and <code>forceDisconnect()</code> method of the
-         *     Session object.</li>
-         * </ul>
-         *
-         * @param expireTime The expiration time of the token, in seconds since the UNIX epoch.
-         * Pass in 0 to use the default expiration time of 24 hours after the token creation time.
-         * The maximum expiration time is 30 days after the creation time.
-         *
-         * @param data A string containing connection metadata describing the end-user. For example,
-         * you can pass the user ID, name, or other data describing the end-user. The length of the
-         * string is limited to 1000 characters. This data cannot be updated once it is set.
-         *
-         * @return The token string.
-         */
-        public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List <string> initialLayoutClassList = null)
+        /// <summary>
+        /// Creates a token for connecting to an OpenTok session. In order to authenticate a user
+        /// connecting to an OpenTok session that user must pass an authentication token along with
+        /// the API key.
+        /// </summary>
+        /// <param name="role">
+        /// The role for the token. Valid values are defined in the Role enum:
+        /// - <see cref="Role.SUBSCRIBER"/> A subscriber can only subscribe to streams.
+        /// - <see cref="Role.PUBLISHER"/> A publisher can publish streams, subscribe to
+        ///   streams, and signal. (This is the default value if you do not specify a role.)
+        /// - <see cref="Role.MODERATOR"/> In addition to the privileges granted to a
+        ///   publisher, in clients using the OpenTok.js library, a moderator can call the
+        ///   forceUnpublish() and forceDisconnect() method of the Session object.
+        /// </param>
+        /// <param name="expireTime">
+        /// The expiration time of the token, in seconds since the UNIX epoch.
+        /// Pass in 0 to use the default expiration time of 24 hours after the token creation time.
+        /// The maximum expiration time is 30 days after the creation time.
+        /// </param>
+        /// <param name="data">
+        /// A string containing connection metadata describing the end-user. For example,
+        /// you can pass the user ID, name, or other data describing the end-user. The length of the
+        /// string is limited to 1000 characters. This data cannot be updated once it is set.
+        /// </param>
+        /// <param name="initialLayoutClassList"></param>
+        /// <returns>The token string.</returns>
+        public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null)
         {
             double createTime = OpenTokUtils.GetCurrentUnixTimeStamp();
             int nonce = OpenTokUtils.GetRandomNumber();

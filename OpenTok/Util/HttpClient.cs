@@ -19,9 +19,9 @@ using OpenTokSDK.Exception;
 
 namespace OpenTokSDK.Util
 {
-    /**
-     * For internal use.
-     */
+    /// <summary>
+    /// For internal use.
+    /// </summary>
     public class HttpClient
     {
         private string userAgent;
@@ -141,6 +141,12 @@ namespace OpenTokSDK.Util
                         }
                     }
                 }
+                else if (e.Status == WebExceptionStatus.SendFailure)
+                {
+                    throw new OpenTokWebException("Error with request submission (TLS1.1 or other network/protocol issue)", e);
+                }
+
+                OpenTokUtils.ValidateTlsVersion(e);
 
                 throw new OpenTokWebException("Error with request submission", e);
             }

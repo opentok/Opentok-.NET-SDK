@@ -9,61 +9,92 @@ using System.Runtime.Serialization;
 
 namespace OpenTokSDK
 {
-    /**
-    * Represents a broadcast layout of an OpenTok session.
-    */
+    /// <summary>
+    /// Represents a broadcast layout of an OpenTok session.
+    /// </summary>
     public class BroadcastLayout
     {
-        /**
-        * Defines values for the role parameter of the GenerateToken method of the OpenTok class.
-        */
+        /// <summary>
+        /// Defines values for the layout parameter of the StartBroadcast method of the OpenTok class.
+        /// </summary>
         public enum LayoutType
         {
-
-            /**
-             * Picture-in-Picture
-             */
+            /// <summary>
+            /// Picture-in-Picture
+            /// </summary>
             Pip,
-            /**
-             * Best Fit
-             */
+            /// <summary>
+            /// Best Fit
+            /// </summary>
             BestFit,
-            /**
-             * Vertical Presentation
-             */
+            /// <summary>
+            /// Vertical Presentation
+            /// </summary>
             VerticalPresentation,
-            /**
-             * Horizontal Presentation
-             */
+            /// <summary>
+            /// Horizontal Presentation
+            /// </summary>
             HorizontalPresentation,
-            /**
-             * Custom Layout
-             */
+            /// <summary>
+            /// Custom Layout
+            /// </summary>
             Custom
         }
 
+        /// <summary>
+        /// Initalizes a Broadcast layout with the given <see cref="ScreenShareLayoutType"/>, automatically
+        /// setting the Type to BestFit.
+        /// </summary>
+        /// <param name="type"></param>
+        public BroadcastLayout(ScreenShareLayoutType type)
+        {
+            Type = LayoutType.BestFit;
+            ScreenShareType = type;
+        }
+
+        /// <summary>
+        /// Initalizes a BroadcastLayout with the given <see cref="LayoutType"/>
+        /// </summary>
+        /// <param name="Type"></param>
         public BroadcastLayout(LayoutType Type)
         {
             this.Type = Type;
         }
 
+        /// <summary>
+        /// Initalizes a BroadcastLayout with the given <see cref="LayoutType"/> and stylesheet - note Type must be <see cref="LayoutType.Custom"/>
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="Stylesheet">A string de</param>
         public BroadcastLayout(LayoutType Type, string Stylesheet)
         {
             this.Type = Type;
             this.Stylesheet = Stylesheet;
         }
 
-        /**
-         * The Layout type
-        */
+        /// <summary>
+        /// The Layout type
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter), true)]
         [JsonProperty("type")]
         public LayoutType Type { get; set; }
 
-        /**
-         * The Stylesheet for the Custom Layout
-        */
+        /// <summary>
+        /// The Stylesheet for the Custom Layout
+        /// </summary>
         [JsonProperty("stylesheet")]
-        public string Stylesheet { get; set; }
+        public string Stylesheet { get; set; } = null;
+
+        /// <summary>
+        /// The <see cref="LayoutType"/>to use when there is a screen-sharing 
+        /// stream in the session. Note that to use this property, 
+        /// you must set the <see cref="Type"/> property to <see cref="LayoutType.BestFit"/> 
+        /// and leave the <see cref="Stylesheet"/> property unset. 
+        /// For more information, see Layout types for screen sharing.
+        /// NOTE: <see cref="LayoutType.Custom"/> is not valid for this property
+        /// </summary>
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        [JsonProperty("screensharetype", NullValueHandling = NullValueHandling.Ignore)]
+        public ScreenShareLayoutType? ScreenShareType { get; set; }
     }
 }

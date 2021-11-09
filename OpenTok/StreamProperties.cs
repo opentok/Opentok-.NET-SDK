@@ -8,6 +8,10 @@ using Newtonsoft.Json;
 
 namespace OpenTokSDK
 {
+    /// <summary>
+    /// Defines class lists for one or more streams in the session. Used by the
+    /// OpenTok.SetStreamClassLists() method.
+    /// </summary>
     public class StreamProperties
     {
 
@@ -15,6 +19,11 @@ namespace OpenTokSDK
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StreamProperties"/> class.
+        /// </summary>
+        /// <param name="Id">The stream ID.</param>
+        /// <param name="LayoutClassList">The layout class list as a list of strings.</param>
         public StreamProperties(string Id = null, List<string> LayoutClassList = null)
         {
             this.Id = Id;
@@ -33,15 +42,15 @@ namespace OpenTokSDK
             LayoutClassList.Add(layoutClass);
         }
 
-        /**
-         * The stream ID.
-         */
+        /// <summary>
+        /// The stream ID.
+        /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        /**
-         * The layout class list as a list of strings.
-         */
+        /// <summary>
+        /// The layout class list as a list of strings.
+        /// </summary>
         [JsonProperty("layoutClassList")]
         public List<string> LayoutClassList { get; set; }
         
