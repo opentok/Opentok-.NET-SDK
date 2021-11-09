@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>Archiving</AssemblyName>
+    <AssemblyName>Broadcasting</AssemblyName>
     <Version>1.0.0</Version>
     <TargetFramework>net452</TargetFramework>
     <Authors>Vonage</Authors>
@@ -17,13 +17,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Content\css\sample.css" />
-    <None Remove="Content\img\archiving-off.png" />
-    <None Remove="Content\img\archiving-on-idle.png" />
-    <None Remove="Content\img\archiving-on-message.png" />
     <None Remove="Content\js\host.js" />
     <None Remove="Content\js\participant.js" />
-    <None Remove="views\History.cshtml" />
-    <None Remove="views\history.sshtml" />
     <None Remove="views\Host.cshtml" />
     <None Remove="views\Index.cshtml" />
     <None Remove="views\Participant.cshtml" />
@@ -31,35 +26,13 @@
     <None Remove="views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OpenTok\OpenTok.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Content\css\sample.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\img\archiving-off.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\img\archiving-on-idle.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\img\archiving-on-message.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\js\host.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\js\participant.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="views\History.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="views\history.sshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="views\Host.cshtml">
@@ -77,5 +50,12 @@
     <Content Include="views\_ViewStart.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>  
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenTok\OpenTok.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
 </Project>

@@ -1,14 +1,18 @@
-﻿using OpenTokSDK;
-using System;
-using System.Configuration;
+﻿using System;
 using System.Net;
 
-namespace Archiving
+using System.Configuration;
+using OpenTokSDK;
+
+namespace Broadcasting
 {
     public class OpenTokService
     {
         public Session Session { get; protected set; }
         public OpenTok OpenTok { get; protected set; }
+        public BroadcastLayout.LayoutType layout = BroadcastLayout.LayoutType.HorizontalPresentation;
+        public string broadcastId = "";
+        public string focusStreamId = "";
 
         public OpenTokService()
         {
@@ -40,6 +44,7 @@ namespace Archiving
                     Environment.Exit(-1);
                 }
             }
+
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             this.OpenTok = new OpenTok(apiKey, apiSecret);

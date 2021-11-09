@@ -1,5 +1,0 @@
-install:
-  - NuGet.exe restore
-
-test_script:
-  xunit.console.clr4 OpenTokTest\bin\Debug\OpenTokTest.dll /appveyor

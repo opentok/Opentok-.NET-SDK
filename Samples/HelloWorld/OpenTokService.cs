@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using OpenTokSDK;
+using System;
 using System.Configuration;
-using OpenTokSDK;
+using System.Net;
 
 namespace HelloWorld
 {
@@ -43,6 +40,8 @@ namespace HelloWorld
                     Environment.Exit(-1);
                 }
             }
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             this.OpenTok = new OpenTok(apiKey, apiSecret);
 

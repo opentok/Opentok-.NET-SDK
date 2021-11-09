@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Net;
 
 using Newtonsoft.Json;
+using OpenTokSDK.Exception;
 
 namespace OpenTokSDK.Util
 {
@@ -121,6 +122,19 @@ namespace OpenTokSDK.Util
             return archiveCopy;
         }
 
+        internal static Broadcast GenerateBroadcast(string response, int apiKey, string apiSecret, string apiUrl)
+        {
+            Broadcast broadcast = JsonConvert.DeserializeObject<Broadcast>(response);
+            Broadcast broadcastCopy = new Broadcast(new OpenTok(apiKey, apiSecret, apiUrl));
+            broadcastCopy.CopyBroadcast(broadcast);
+            return broadcastCopy;
+        }
+
+        public static string convertToCamelCase(string text)
+        {
+            return Char.ToLowerInvariant(text[0]) + text.Substring(1);
+        }
+
         public static int GetPartnerIdFromSessionId(string sessionId)
         {
             if (String.IsNullOrEmpty(sessionId))
@@ -128,8 +142,8 @@ namespace OpenTokSDK.Util
                 throw new FormatException("SessionId can not be empty");
             }
 
-            string formatedSessionId = sessionId.Replace('-', '+');
-            string[] splittedSessionId = OpenTokUtils.SplitString(formatedSessionId, '_', 2);
+            string formattedSessionId = sessionId.Replace('-', '+');
+            string[] splittedSessionId = OpenTokUtils.SplitString(formattedSessionId, '_', 2);
             if (splittedSessionId == null)
             {
                 throw new FormatException("Session id could not be decoded");
@@ -143,7 +157,28 @@ namespace OpenTokSDK.Util
                 throw new FormatException("Session id could not be decoded");
             }
 
+            if (sessionParameters.Count() < 2)
+            {
+                throw new FormatException("Session id could not be decoded");
+            }
+
             return Convert.ToInt32(sessionParameters[1]);
+        }
+
+        /// <summary>
+        /// Used if a WebException is caught to check that the TLS version makes sense
+        /// If the TLS version is less than 1.2 and not the System Default (0) this method
+        /// throws an exception
+        /// </summary>
+        /// <param name="e"></param>
+        public static void ValidateTlsVersion(WebException e)
+        {
+            if (ServicePointManager.SecurityProtocol > 0 && ServicePointManager.SecurityProtocol < SecurityProtocolType.Tls12)
+            {
+                throw new OpenTokWebException("Error with request submission.\n" +
+                    "This application appears to not support TLS1.2.\n" +
+                    "Please enable TLS 1.2 and try again.", e);
+            }
         }
     }
 }

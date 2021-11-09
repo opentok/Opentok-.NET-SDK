@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <appSettings>
-    <add key="API_KEY" value="YOUR_API_KEY" />
-    <add key="API_SECRET" value="YOUR_API_SECRET" />
+    <add key="API_KEY" value="854511" />
+    <add key="API_SECRET" value="93936990b97ffede04378028766bdc1755562cce" />
     <add key="ClientSettingsProvider.ServiceUri" value="" />
   </appSettings>
   <system.web>

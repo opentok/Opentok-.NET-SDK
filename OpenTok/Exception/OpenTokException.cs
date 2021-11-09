@@ -5,82 +5,87 @@ using System.Text;
 
 namespace OpenTokSDK.Exception
 {
-    /**
-     * Defines exceptions in the OpenTok SDK.
-     */
+    /// <summary>
+    /// Defines exceptions in the OpenTok SDK.
+    /// </summary>
     public class OpenTokException : System.Exception
     {
-        private System.Exception exception;
-        private string message;
-
-        /**
-         * Constructor. Do not use.
-         */
+    
+        /// <summary>
+        /// Construct opentok exception
+        /// </summary>
         public OpenTokException()
         {
         }
 
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Construct OpentTokException with a message
+        /// </summary>
+        /// <param name="message"></param>
         public OpenTokException(string message)
-            : base(message)
-        {
-            this.message = message;
-        }
-
-        /**
-         * Constructor. Do not use.
-         */
+            : base(message){}
+        
+        /// <summary>
+        /// Construct OpenTokException with a message and an inner exception
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
         public OpenTokException(string message, System.Exception exception)
-            : base(message)
-        {
-            this.message = message;
-            this.exception = exception;
-        }
+            : base(message, exception){}
 
-        //GGB override Message property
+        /// <summary>
+        /// Get's the message of the exception
+        /// </summary>
+        /// <returns></returns>
         public string GetMessage()
         {
-            return message;
+            return Message;
         }
 
+        /// <summary>
+        /// Get's the inner exception
+        /// </summary>
+        /// <returns></returns>
         public System.Exception GetException()
         {
-            return exception;
+            return InnerException;
         }
     }
 
-    /**
-     * Defines an exception object thrown when an invalid argument is passed into a method.
-     */
+    /// <summary>
+    /// Defines an exception object thrown when an invalid argument is passed into a method.
+    /// </summary>
     public class OpenTokArgumentException : OpenTokException
     {
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
         public OpenTokArgumentException(string message)
             : base(message)
         {
         }
     }
 
-    /**
-     * Defines an exception object thrown when a REST API call results in an error response.
-     */
+    /// <summary>
+    /// Defines an exception object thrown when a REST API call results in an error response.
+    /// </summary>
     public class OpenTokWebException : OpenTokException
     {
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
         public OpenTokWebException(string message, System.Exception exception)
             : base(message, exception)
         {
         }
 
-        /**
-         * Constructor. Do not use.
-         */
+        /// <summary>
+        /// Constructor. Do not use.
+        /// </summary>
+        /// <param name="message"></param>
         public OpenTokWebException(string message)
             : base(message)
         {
