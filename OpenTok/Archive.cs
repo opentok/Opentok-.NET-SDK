@@ -72,6 +72,21 @@ namespace OpenTokSDK
     }
 
     /// <summary>
+    /// Whether streams included in the archive are selected automatically or manually.
+    /// </summary>
+    public enum StreamMode
+    {
+        /// <summary>
+        /// All streams in the session can be included in the archive.
+        /// </summary>
+        Auto,
+        /// <summary>
+        /// Specify which streams to be included.
+        /// </summary>
+        Manual
+    }
+
+    /// <summary>
     /// Represents an archive of an OpenTok session.
     /// </summary>
     public class Archive

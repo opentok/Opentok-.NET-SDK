@@ -144,7 +144,6 @@ namespace OpenTokSDK
         /// </returns>
         public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
         {
-
             if (!OpenTokUtils.TestIpAddress(location))
             {
                 throw new OpenTokArgumentException(string.Format("Location {0} is not a valid IP address", location));
@@ -274,24 +273,33 @@ namespace OpenTokSDK
         /// The layout that you want to use for your archive. If type is set to <see cref="LayoutType.custom"/>
         /// you must provide a StyleSheet string to Vonage how to layout your archive.
         /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the archive are selected automatically ("auto", the default) or manually.
+        /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
-            string url = string.Format("v2/project/{0}/archive", this.ApiKey);
+            string url = $"v2/project/{this.ApiKey}/archive";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
+            var data = new Dictionary<string, object>() { 
+                { "sessionId", sessionId }, 
+                { "name", name }, 
+                { "hasVideo", hasVideo }, 
+                { "hasAudio", hasAudio }, 
+                { "outputMode", outputMode.ToString().ToLowerInvariant() } 
+            };
 
-            if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
             {
                 throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
             }
-            else if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+            else if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
             {
                 data.Add("resolution", resolution);
             }
@@ -307,6 +315,11 @@ namespace OpenTokSDK
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
+            }
+
+            if(streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
 
             string response = Client.Post(url, headers, data);
