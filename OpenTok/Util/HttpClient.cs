@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using System.Net;
 using System.IO;
 using System.Xml;
@@ -10,9 +9,9 @@ using Newtonsoft.Json;
 using JWT;
 using JWT.Algorithms;
 using JWT.Serializers;
-using OpenTokSDK.Exception;
-using System.Text;
 using OpenTokSDK.Constants;
+using OpenTokSDK.Exception;
+using System.Threading.Tasks;
 
 namespace OpenTokSDK.Util
 {
@@ -70,6 +69,12 @@ namespace OpenTokSDK.Util
             return DoRequest(url, headers, data);
         }
 
+        public virtual Task<string> PostAsync(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "POST");
+            return DoRequestAsync(url, headers, data);
+        }
+
         public virtual string Put(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
         {
             headers.Add("Method", "PUT");
@@ -97,7 +102,7 @@ namespace OpenTokSDK.Util
 
             try
             {
-                if (!String.IsNullOrEmpty(data))
+                if (!string.IsNullOrEmpty(data))
                 {
                     DebugLog("Request Body: " + data);
                     SendData(request, data);
@@ -143,12 +148,86 @@ namespace OpenTokSDK.Util
                         }
                     }
                 }
+                else if (e.Status == WebExceptionStatus.SendFailure)
+                {
+                    throw new OpenTokWebException("Error with request submission (TLS1.1 or other network/protocol issue)", e);
+                }
+
+                OpenTokUtils.ValidateTlsVersion(e);
 
                 OpenTokUtils.ValidateTlsVersion(e);
 
                 throw new OpenTokWebException("Error with request submission", e);
             }
 
+        }
+
+        public async Task<string> DoRequestAsync(string url, Dictionary<string, string> specificHeaders,
+                                        Dictionary<string, object> bodyData)
+        {
+            string data = GetRequestPostData(bodyData, specificHeaders);
+            var headers = GetRequestHeaders(specificHeaders);
+            HttpWebRequest request = CreateRequest(url, headers, data);
+
+            DebugLog("Request Method: " + request.Method);
+            DebugLog("Request URI: " + request.RequestUri);
+            DebugLogHeaders(request.Headers, "Request");
+
+            HttpWebResponse response;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(data))
+                {
+                    DebugLog("Request Body: " + data);
+                    await SendDataAsync(request, data);
+                }
+                using (response = await request.GetResponseAsync() as HttpWebResponse)
+                {
+                    DebugLog("Response Status Code: " + response.StatusCode);
+                    DebugLog("Response Status Description: " + response.StatusDescription);
+                    DebugLogHeaders(response.Headers, "Response");
+
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.OK:
+                            using (var stream = new StreamReader(response.GetResponseStream()))
+                            {
+                                return await stream.ReadToEndAsync();
+                            }
+                        case HttpStatusCode.NoContent:
+                            return "";
+                        default:
+                            throw new OpenTokWebException($"Response returned with unexpected status code {response.StatusCode}");
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                DebugLog("WebException Status: " + e.Status + ", Message: " + e.Message);
+
+                response = (HttpWebResponse)e.Response;
+
+                if (response != null)
+                {
+                    DebugLog("Response Status Code: " + response.StatusCode);
+                    DebugLog("Response Status Description: " + response.StatusDescription);
+                    DebugLogHeaders(response.Headers, "Response");
+
+                    if (this.debug)
+                    {
+                        using (var stream = new StreamReader(response.GetResponseStream()))
+                        {
+                            var body = await stream.ReadToEndAsync();
+                            DebugLog($"Response Body: {body}");
+                        }
+                    }
+                }
+
+                OpenTokUtils.ValidateTlsVersion(e);
+
+                throw new OpenTokWebException("Error with request submission", e);
+            }
         }
 
         public XmlDocument ReadXmlResponse(string xml)
@@ -165,6 +244,14 @@ namespace OpenTokSDK.Util
             using (StreamWriter stream = new StreamWriter(request.GetRequestStream()))
             {
                 stream.Write(data);
+            }
+        }
+
+        private async Task SendDataAsync(HttpWebRequest request, string data)
+        {
+            using (StreamWriter stream = new StreamWriter(await request.GetRequestStreamAsync()))
+            {
+                await stream.WriteAsync(data);
             }
         }
 

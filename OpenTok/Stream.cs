@@ -8,6 +8,9 @@ using Newtonsoft.Json;
 
 namespace OpenTokSDK
 {
+    /// <summary>
+    /// Represents a stream in an OpenTok session.
+    /// </summary>
     public class Stream
     {
 

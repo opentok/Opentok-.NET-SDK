@@ -5,6 +5,7 @@ using OpenTokSDK.Exception;
 using OpenTokSDK.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace OpenTokSDK
 {
@@ -192,9 +193,10 @@ namespace OpenTokSDK
         /// - <see cref="Role.SUBSCRIBER"/> (A subscriber can only subscribe to streams)
         /// - <see cref="Role.PUBLISHER"/> (A publisher can publish streams, subscribe to streams, and signal.
         ///   (This is the default value if you do not specify a role.))
-        /// - <see cref="Role.MODERATOR"/> (In addition to the privileges granted to a publisher, in clients
-        ///   using the OpenTok.js library, a moderator can call the forceUnpublish() and forceDisconnect()
-        ///   method of the <see cref="Session"/> object.
+        /// - <see cref="Role.MODERATOR"/> (In addition to the privileges granted to a publisher, 
+        ///   a moderator can perform moderation functions, such as forcing clients
+        ///   to disconnect, to stop publishing streams, or to mute audio in published streams. See the
+        ///   <a href="https://tokbox.com/developer/guides/moderation/">Moderation developer guide</a>.
         /// </param>
         /// <param name="expireTime">
         /// The expiration time of the token, in seconds since the UNIX epoch. Pass in 0 to use the default
@@ -340,6 +342,9 @@ namespace OpenTokSDK
         /// <param name="count">
         /// The number of archives to be returned. The maximum number of archives returned is 1000.
         /// </param>
+        /// <param name="sessionId">
+        /// The session ID.
+        /// </param>
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
         public ArchiveList ListArchives(int offset = 0, int count = 0, string sessionId = "")
         {
@@ -478,11 +483,23 @@ namespace OpenTokSDK
         /// </para>
         /// </summary>
         /// <param name="sessionId">The session ID corresponding to the session.</param>
-        /// <param name="hls"></param>
-        /// <param name="rtmpList"></param>
-        /// <param name="resolution"></param>
-        /// <param name="maxDuration"></param>
-        /// <param name="layout"></param>
+        /// <param name="hls">Whether to include an HLS broadcast.</param>
+        /// <param name="rtmpList">
+        /// A list of <see cref="Rtmp"/> objects, defining RTMP streams to be broadcast (up to five).
+        /// </param>
+        /// <param name="resolution">
+        /// The resolution of the broadcast video. This can be set to either "640x480" or "1280x720".
+        /// </param>
+        /// <param name="maxDuration">
+        /// The maximum duration for the broadcast, in seconds. The broadcast will automatically
+        /// stop when the maximum duration is reached. You can set the maximum duration to a value
+        /// from 60 (60 seconds) to 36000 (10 hours). The default maximum duration is 2 hours
+        /// (7,200 seconds).
+        /// </param>
+        /// <param name="layout">
+        /// Specify this BroadcastLayout object to assign the initial layout type for
+        /// the broadcast.
+        /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, int maxDuration = 7200, BroadcastLayout layout = null)
         {
@@ -751,6 +768,50 @@ namespace OpenTokSDK
         public void SetDefaultRequestTimeout(int timeout)
         {
             Client.RequestTimeout = timeout;
+        }
+
+        /// <summary>
+        /// Send DTMF digits to all participants in an active OpenTok session or to a specific client connected to that session.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session that will receive the DTMF string.</param>
+        /// <param name="connectionId">The connection connection ID of the client you are sending the DTMF signal to. Leave this empty to send a DTMF signal to all clients connected to the session.</param>
+        /// <param name="digits">This is the string of DTMF digits to send. This can include 0-9, '*', '#', and 'p'. A p indicates a pause of 500ms (if you need to add a delay in sending the digits).</param>
+        public void PlayDTMF(string sessionId, string digits, string connectionId = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            string url = string.IsNullOrEmpty(connectionId)
+                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
+                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "digits", digits } };
+            Client.Post(url, headers, data);
+        }
+
+        /// <summary>
+        /// Send DTMF digits to all participants in an active OpenTok session or to a specific client connected to that session.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session that will receive the DTMF string.</param>
+        /// <param name="connectionId">The connection connection ID of the client you are sending the DTMF signal to. Leave this empty to send a DTMF signal to all clients connected to the session.</param>
+        /// <param name="digits">This is the string of DTMF digits to send. This can include 0-9, '*', '#', and 'p'. A p indicates a pause of 500ms (if you need to add a delay in sending the digits).</param>
+        public Task PlayDTMFAsync(string sessionId, string digits, string connectionId = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            string url = string.IsNullOrEmpty(connectionId)
+                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
+                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "digits", digits } };
+            return Client.PostAsync(url, headers, data);
         }
 
         /// <summary>

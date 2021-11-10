@@ -1,0 +1,30 @@
+name: "Build & Test"
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+env:
+  CONFIGURATION: "Release"
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.401'
+    - name: Clean
+      run: dotnet clean OpenTok.sln --configuration ${{ env.CONFIGURATION }} && dotnet nuget locals all --clear
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build OpenTok.sln --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Test
+      run: dotnet test OpenTokTest/OpenTokTest.csproj --configuration ${{ env.CONFIGURATION }} --no-build -f netcoreapp3.1
