@@ -14,15 +14,10 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenTok\OpenTok.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utils\" />
-    <Folder Include="Properties\" />
 	
   <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp3.1' ">
 	<Reference Include="System.Web" />
+	<Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   
 </Project>

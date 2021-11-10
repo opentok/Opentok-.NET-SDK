@@ -820,6 +820,7 @@ namespace OpenTokSDK
         /// <param name="sessionId">The session ID corresponding to the session to which the user will connect.</param>
         /// <param name="token">The token for the session ID with which the SIP user will use to connect.</param>
         /// <param name="sipUri">The sip URI the SIP Interconnect feature will dial.</param>
+        /// <param name="options">Optional parameters for SIP dialing.</param>
         public void Dial(string sessionId, string token, string sipUri, DialOptions options = null)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -827,9 +828,9 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.");
             }
 
-            string url = $"/v2/project/{this.ApiKey}/dial";
+            string url = $"v2/project/{this.ApiKey}/dial";
 
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
                 { "sessionId", sessionId },
@@ -846,6 +847,41 @@ namespace OpenTokSDK
                 }
             };
             Client.Post(url, headers, data);
+        }
+
+        /// <summary>
+        /// Dials a SIP gateway to input an audio-only stream into your OpenTok Session. Part of the SIP feature.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session to which the user will connect.</param>
+        /// <param name="token">The token for the session ID with which the SIP user will use to connect.</param>
+        /// <param name="sipUri">The sip URI the SIP Interconnect feature will dial.</param>
+        /// <param name="options">Optional parameters for SIP dialing.</param>
+        public Task DialAsync(string sessionId, string token, string sipUri, DialOptions options = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            string url = $"v2/project/{this.ApiKey}/dial";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId },
+                { "token", token },
+                { "spi", new {
+                        uri = sipUri,
+                        from = options?.From,
+                        headers = options?.Headers,
+                        auth = options?.Auth,
+                        secure = options?.Secure,
+                        video = options?.Video,
+                        observeForceMute = options?.ObserveForceMute
+                    }
+                }
+            };
+            return Client.PostAsync(url, headers, data);
         }
     }
 }
