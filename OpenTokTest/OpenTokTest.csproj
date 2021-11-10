@@ -3,7 +3,8 @@
     <Company>Vonage</Company>
     <TargetFrameworks>net452;net46;net461;net462;net47;net471;net472;net48;netcoreapp3.1</TargetFrameworks>
     <Authors>Vonage</Authors>
-    <Copyright>Vonage 2020</Copyright>        
+    <Copyright>Vonage 2020</Copyright>
+    <RootNamespace>OpenTokSDKTest</RootNamespace>        
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Moq" Version="4.14.1" />
@@ -13,11 +14,9 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenTok\OpenTok.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
+	
+  <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp3.1' ">
+	<Reference Include="System.Web" />
   </ItemGroup>
   
 </Project>

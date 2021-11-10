@@ -14,6 +14,7 @@
     <NuGetPackageImportStamp>671ed443</NuGetPackageImportStamp>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright © Vonage 2020</Copyright>
+    <RootNamespace>OpenTokSDK</RootNamespace>
 	<IncludeSymbols>true</IncludeSymbols>
 	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	<EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -41,9 +42,13 @@
     <PackageReference Include="JWT" Version="7.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
-  
-  <ItemGroup>    
-    <Reference Include="System.Web" />
+
+  <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
+	<Reference Include="System.Web" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
