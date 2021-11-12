@@ -828,6 +828,11 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.");
             }
 
+            if (!OpenTokUtils.ValidateSession(sessionId))
+            {
+                throw new OpenTokArgumentException("Session Id is not valid");
+            }
+
             string url = $"v2/project/{this.ApiKey}/dial";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
@@ -861,6 +866,11 @@ namespace OpenTokSDK
             if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            if (!OpenTokUtils.ValidateSession(sessionId))
+            {
+                throw new OpenTokArgumentException("Session Id is not valid");
             }
 
             string url = $"v2/project/{this.ApiKey}/dial";
