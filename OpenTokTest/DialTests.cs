@@ -38,7 +38,6 @@ namespace OpenTokSDKTest
         public void DialCorrectUrl()
         {
             // arrange
-            string sessionId = "SESSIONID";
             string token = "1234567890";
             string sipUri = "SIPURI";
 
@@ -55,7 +54,7 @@ namespace OpenTokSDKTest
             opentok.Client = mockClient.Object;
 
             // act
-            opentok.Dial(sessionId, token, sipUri);
+            opentok.Dial(SessionId, token, sipUri);
 
             // assert
             mockClient.Verify();
@@ -65,7 +64,6 @@ namespace OpenTokSDKTest
         public async Task DialAsyncCorrectUrl()
         {
             // arrange
-            string sessionId = "SESSIONID";
             string token = "1234567890";
             string sipUri = "SIPURI";
 
@@ -81,7 +79,7 @@ namespace OpenTokSDKTest
             opentok.Client = mockClient.Object;
 
             // act
-            await opentok.DialAsync(sessionId, token, sipUri);
+            await opentok.DialAsync(SessionId, token, sipUri);
 
             // assert
             mockClient.Verify();
@@ -91,7 +89,6 @@ namespace OpenTokSDKTest
         public void DialCorrectHeaders()
         {
             // arrange
-            string sessionId = "SESSIONID";
             string token = "1234567890";
             string sipUri = "SIPURI";
 
@@ -109,7 +106,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.Dial(sessionId, token, sipUri);
+            opentok.Dial(SessionId, token, sipUri);
 
             // assert
             Assert.NotNull(headersSent);
@@ -120,7 +117,6 @@ namespace OpenTokSDKTest
         public async Task DialAsyncCorrectHeaders()
         {
             // arrange
-            string sessionId = "SESSIONID";
             string token = "1234567890";
             string sipUri = "SIPURI";
 
@@ -138,7 +134,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.DialAsync(sessionId, token, sipUri);
+            await opentok.DialAsync(SessionId, token, sipUri);
 
             // assert
             Assert.NotNull(headersSent);
@@ -149,7 +145,6 @@ namespace OpenTokSDKTest
         public void DialCorrectData()
         {
             // arrange
-            string sessionId = "SESSIONID";
             string token = "1234567890";
             string sipUri = "SIPURI";
 
@@ -177,11 +172,11 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.Dial(sessionId, token, sipUri, dialOptions);
+            opentok.Dial(SessionId, token, sipUri, dialOptions);
 
             // assert
             Assert.NotNull(dataSent);
-            Assert.Equal(sessionId, dataSent["sessionId"]);
+            Assert.Equal(SessionId, dataSent["sessionId"]);
             Assert.Equal(token, dataSent["token"]);
 
             Assert.True(dataSent.ContainsKey("spi"));
@@ -200,7 +195,6 @@ namespace OpenTokSDKTest
         public async Task DialAsyncCorrectData()
         {
             // arrange
-            string sessionId = "SESSIONID";
             string token = "1234567890";
             string sipUri = "SIPURI";
 
@@ -229,11 +223,11 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.DialAsync(sessionId, token, sipUri, dialOptions);
+            await opentok.DialAsync(SessionId, token, sipUri, dialOptions);
 
             // assert
             Assert.NotNull(dataSent);
-            Assert.Equal(sessionId, dataSent["sessionId"]);
+            Assert.Equal(SessionId, dataSent["sessionId"]);
             Assert.Equal(token, dataSent["token"]);
 
             Assert.True(dataSent.ContainsKey("spi"));
