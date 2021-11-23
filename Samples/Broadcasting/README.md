@@ -226,7 +226,7 @@ First, we're getting a list of the streams in a session using the OpenTok.ListSt
 For each one of these streams, we create a new StreamProperties object where we set the stream Id and the stream layout class, and we're adding it to a List of StreamProperties objects. 
 In this case, we're adding the layout class `focus` only to the stream with the Id equals to `opentokService.focusStreamId` which causes it to be the large stream displayed in the broadcast. 
 
-Finally we pass the complete list of streams properties to the method OpenTok.SetStreamClassLists() that receives the session Id and the streamPropertiesList.
+Finally we pass the complete list of streams properties to the method OpenTok.SetStreamClassLists() that receives the session ID and the streamPropertiesList.
 
 To see this effect, you should open the host and participant pages on different computers (using different cameras). Or, if you have multiple cameras connected to your machine, you can use one camera for publishing from the host, and use another for the participant. Or, if you are using a laptop with an external monitor, you can load the host page with the laptop closed (no camera) and open the participant page with the laptop open.
 
