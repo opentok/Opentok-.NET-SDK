@@ -20,10 +20,10 @@ namespace OpenTokSDK.Util
     /// </summary>
     public class HttpClient
     {
-        private string userAgent;
         private int apiKey;
         private string apiSecret;
-        private string server;
+        private string apiUrl;
+
         public bool debug = false;
 
         /// <summary>
@@ -34,17 +34,22 @@ namespace OpenTokSDK.Util
           1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
         );
 
-        public HttpClient()
+       
+        internal string LastRequest { get; private set; }
+
+        internal HttpClient() {}
+
+        internal HttpClient(int apiKey, string apiSecret)
         {
-            // This is only for testing purposes
+            this.apiKey = apiKey;
+            this.apiSecret = apiSecret;
         }
 
         public HttpClient(int apiKey, string apiSecret, string apiUrl = "")
         {
             this.apiKey = apiKey;
             this.apiSecret = apiSecret;
-            this.server = apiUrl;
-            this.userAgent = OpenTokVersion.GetVersion();
+            this.apiUrl = apiUrl;
         }
 
         public virtual string Get(string url)
@@ -102,7 +107,7 @@ namespace OpenTokSDK.Util
                     DebugLog("Request Body: " + data);
                     SendData(request, data);
                 }
-                using (response = (HttpWebResponse) request.GetResponse())
+                using (response = (HttpWebResponse)request.GetResponse())
                 {
                     DebugLog("Response Status Code: " + response.StatusCode);
                     DebugLog("Response Status Description: " + response.StatusDescription);
@@ -232,8 +237,10 @@ namespace OpenTokSDK.Util
             return xmlDoc;
         }
 
-        private void SendData(HttpWebRequest request, object data)
+        private void SendData(HttpWebRequest request, string data)
         {
+            LastRequest = data.ToString();
+
             using (StreamWriter stream = new StreamWriter(request.GetRequestStream()))
             {
                 stream.Write(data);
@@ -250,14 +257,14 @@ namespace OpenTokSDK.Util
 
         private HttpWebRequest CreateRequest(string url, Dictionary<string, string> headers, string data)
         {
-            Uri uri = new Uri(string.Format("{0}/{1}", server, url));
+            Uri uri = new Uri(string.Format("{0}/{1}", apiUrl, url));
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             if (RequestTimeout != null)
             {
                 request.Timeout = (int)RequestTimeout;
             }
             request.ContentLength = data.Length;
-            request.UserAgent = userAgent;
+            request.UserAgent = OpenTokVersion.GetVersion();
 
             if (headers.ContainsKey("Content-type"))
             {
@@ -278,6 +285,7 @@ namespace OpenTokSDK.Util
 
             return request;
         }
+
         private Dictionary<string, string> GetRequestHeaders(Dictionary<string, string> headers)
         {
             var requestHeaders = GetCommonHeaders();
@@ -292,7 +300,7 @@ namespace OpenTokSDK.Util
             {
                 if (headers["Content-type"] == "application/json")
                 {
-                    return JsonConvert.SerializeObject(data);
+                    return JsonConvert.SerializeObject(data, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
                 }
                 else if (headers["Content-type"] == "application/x-www-form-urlencoded")
                 {
@@ -322,7 +330,7 @@ namespace OpenTokSDK.Util
             IDateTimeProvider provider = new UtcDateTimeProvider();
             var now = provider.GetNow();
 
-            int secondsSinceEpoch = (int) Math.Round((now - unixEpoch).TotalSeconds);
+            int secondsSinceEpoch = (int)Math.Round((now - unixEpoch).TotalSeconds);
             return secondsSinceEpoch;
         }
 
@@ -369,10 +377,10 @@ namespace OpenTokSDK.Util
         {
             if (this.debug)
             {
-                for(int i = 0; i < headers.Count; ++i)
+                for (int i = 0; i < headers.Count; ++i)
                 {
                     string header = headers.GetKey(i);
-                    foreach(string value in headers.GetValues(i))
+                    foreach (string value in headers.GetValues(i))
                     {
                         DebugLog(label + " Header: " + header + " = " + value);
                     }

@@ -51,4 +51,14 @@
 	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>OpenTokTest</_Parameter1>
+	</AssemblyAttribute>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+	  <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+	</AssemblyAttribute>
+  </ItemGroup>
+
+
 </Project>
