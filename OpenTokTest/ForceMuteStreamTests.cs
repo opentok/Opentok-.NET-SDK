@@ -1,33 +1,49 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Moq;
 using OpenTokSDK;
 using OpenTokSDK.Exception;
 using OpenTokSDK.Util;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace OpenTokSDKTest
 {
-    public class PlayDtmfTests : TestBase
+    public class ForceMuteStreamTests : TestBase
     {
+
         [Fact]
-        public void PlayDfmtThrowsExceptionWithEmptySession()
+        public void ForceMuteStreamExceptionWithEmptySessionId()
         {
             string sessionId = "";
-            string digits = "1234567890";
+            string streamId = "1234567890";
 
-            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            OpenTok openTok = new OpenTok(ApiKey, ApiSecret);
 
-            Assert.Throws<OpenTokArgumentException>(() => opentok.PlayDTMF(sessionId, digits));
+            var exception = Assert.Throws<OpenTokArgumentException>(() => openTok.ForceMuteStream(sessionId, streamId));
+            Assert.Contains("The sessionId cannot be empty.", exception.Message);
+            Assert.Equal("sessionId", exception.ParamName);
         }
 
         [Fact]
-        public void PlayDfmtNoConnectionIdCorrectUrl()
+        public void ForceMuteStreamExceptionWithEmptyStreamId()
+        {
+            string sessionId = "1234567890";
+            string streamId = "";
+
+            OpenTok openTok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => openTok.ForceMuteStream(sessionId, streamId));
+            Assert.Contains("The streamId cannot be empty.", exception.Message);
+            Assert.Equal("streamId", exception.ParamName);
+        }
+
+        [Fact]
+        public void ForceMuteStreamCorrectUrl()
         {
             string sessionId = "SESSIONID";
-            string digits = "1234567890";
-
-            var expectedUrl = $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf";
+            string streamId = "1234567890";
+            
+            string expectedUrl = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
 
             var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
             mockClient
@@ -37,17 +53,16 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.PlayDTMF(sessionId, digits);
+            opentok.ForceMuteStream(sessionId, streamId);
 
             mockClient.Verify();
         }
 
         [Fact]
-        public void PlayDfmtHeaderAndDataCorrect()
+        public void ForceMuteSteamHeaderAndDataCorrect()
         {
             string sessionId = "SESSIONID";
-            string digits = "1234567890";
-            string connectionId = "CONNECTIONID";
+            string streamId = "1234567890";
 
             Dictionary<string, string> headersSent = null;
             Dictionary<string, object> dataSent = null;
@@ -63,33 +78,47 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.PlayDTMF(sessionId, digits, connectionId);
+            opentok.ForceMuteStream(sessionId, streamId);
 
             Assert.NotNull(headersSent);
             Assert.Equal(new Dictionary<string, string> { { "Content-Type", "application/json" } }, headersSent);
 
-            Assert.NotNull(dataSent);
-            Assert.Equal(new Dictionary<string, object> { { "digits", digits } }, dataSent);
+            Assert.Null(dataSent);
         }
 
         [Fact]
-        public void PlayDfmtAsyncThrowsExceptionWithEmptySession()
+        public async Task ForceMuteStreamAsyncExceptionWithEmptySessionId()
         {
             string sessionId = "";
-            string digits = "1234567890";
+            string streamId = "1234567890";
 
-            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            OpenTok openTok = new OpenTok(ApiKey, ApiSecret);
 
-            Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.PlayDTMFAsync(sessionId, digits));
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await openTok.ForceMuteStreamAsync(sessionId, streamId));
+            Assert.Contains("The sessionId cannot be empty.", exception.Message);
+            Assert.Equal("sessionId", exception.ParamName);
         }
 
         [Fact]
-        public async Task PlayDfmtAsyncNoConnectionIdCorrectUrl()
+        public async Task ForceMuteStreamAsyncExceptionWithEmptyStreamId()
+        {
+            string sessionId = "1234567890";
+            string streamId = "";
+
+            OpenTok openTok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await openTok.ForceMuteStreamAsync(sessionId, streamId));
+            Assert.Contains("The streamId cannot be empty.", exception.Message);
+            Assert.Equal("streamId", exception.ParamName);
+        }
+
+        [Fact]
+        public async Task ForceMuteStreamAsyncCorrectUrl()
         {
             string sessionId = "SESSIONID";
-            string digits = "1234567890";
+            string streamId = "1234567890";
 
-            var expectedUrl = $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf";
+            string expectedUrl = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
 
             var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
             mockClient
@@ -99,17 +128,16 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.PlayDTMFAsync(sessionId, digits);
+            await opentok.ForceMuteStreamAsync(sessionId, streamId);
 
             mockClient.Verify();
         }
 
         [Fact]
-        public async Task PlayDfmtAsyncHeaderAndDataCorrect()
+        public async Task ForceMuteSteamAsyncHeaderAndDataCorrect()
         {
             string sessionId = "SESSIONID";
-            string digits = "1234567890";
-            string connectionId = "CONNECTIONID";
+            string streamId = "1234567890";
 
             Dictionary<string, string> headersSent = null;
             Dictionary<string, object> dataSent = null;
@@ -121,19 +149,16 @@ namespace OpenTokSDKTest
                 {
                     headersSent = headers;
                     dataSent = data;
-                })
-                .ReturnsAsync("")
-                .Verifiable();
+                });
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.PlayDTMFAsync(sessionId, digits, connectionId);
+            await opentok.ForceMuteStreamAsync(sessionId, streamId);
 
             Assert.NotNull(headersSent);
             Assert.Equal(new Dictionary<string, string> { { "Content-Type", "application/json" } }, headersSent);
 
-            Assert.NotNull(dataSent);
-            Assert.Equal(new Dictionary<string, object> { { "digits", digits } }, dataSent);
+            Assert.Null(dataSent);
         }
     }
 }

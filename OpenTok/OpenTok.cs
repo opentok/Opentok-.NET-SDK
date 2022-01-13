@@ -302,7 +302,7 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                else if(layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                else if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
@@ -346,7 +346,7 @@ namespace OpenTokSDK
         /// The session ID.
         /// </param>
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
-        public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
+        public ArchiveList ListArchives(int offset = 0, int count = 0, string sessionId = "")
         {
             if (count < 0)
             {
@@ -643,7 +643,7 @@ namespace OpenTokSDK
                     if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
                     {
                         data.Add("stylesheet", layout.Stylesheet);
-                    }      
+                    }
                     if (layout.ScreenShareType != null)
                     {
                         data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
@@ -668,13 +668,13 @@ namespace OpenTokSDK
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var data = new Dictionary<string, object>();
-            if(layout != null)
+            if (layout != null)
             {
                 if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
                 }
-                else if(layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                else if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
                 }
@@ -686,7 +686,7 @@ namespace OpenTokSDK
                 }
                 if (layout.ScreenShareType != null)
                 {
-                    if(layout.Type != LayoutType.bestFit)
+                    if (layout.Type != LayoutType.bestFit)
                     {
                         throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit");
                     }
@@ -784,8 +784,8 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
-                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{this.ApiKey}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{this.ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
@@ -806,12 +806,150 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
-                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{this.ApiKey}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{this.ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
             return Client.PostAsync(url, headers, data);
         }
+
+
+        /// <summary>
+        /// Force a publisher of a specific stream to mute its published audio
+        /// </summary>
+        /// <param name="sessionId">ID of session to force mute upon</param>
+        /// <param name="streamId">ID of stream to be muted</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session or stream Id is invalid</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        public void ForceMuteStream(string sessionId, string streamId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
+            }
+
+            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            Client.Post(url, headers, null);
+        }
+
+        /// <summary>
+        /// Force a publisher of a specific stream to mute its published audio
+        /// </summary>
+        /// <param name="sessionId">ID of session to force mute upon</param>
+        /// <param name="streamId">ID of stream to be muted</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session or stream Id is invalid</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        public async Task ForceMuteStreamAsync(string sessionId, string streamId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
+            }
+
+            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            await Client.PostAsync(url, headers, null);
+        }
+        
+        /// <summary>
+        /// You can use the OpenTok REST API to force all streams (except for an optional list of streams)
+        /// in a session to mute published audio. You can also use this method to disable the force mute
+        /// state of a session.
+        /// </summary>
+        /// <param name="sessionId">ID of session to force mute upon</param>
+        /// <param name="excludedStreamIds">Stream IDs that will not be effected by the force mute</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        public void ForceMuteAll(string sessionId, string[] excludedStreamIds)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };
+            Client.Post(url, headers, data);
+        }
+
+        /// <summary>
+        /// You can use the OpenTok REST API to force all streams (except for an optional list of streams)
+        /// in a session to mute published audio. You can also use this method to disable the force mute
+        /// state of a session.
+        /// </summary>
+        /// <param name="sessionId">ID of session to force mute upon</param>
+        /// <param name="excludedStreamIds">Stream IDs that will not be effected by the force mute</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        public async Task ForceMuteAllAsync(string sessionId, string[] excludedStreamIds)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };
+            await Client.PostAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Disables the muting of given session
+        /// </summary>
+        /// <param name="sessionId">ID of session to disable muting</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        public void DisableForceMute(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", false } };
+            Client.Post(url, headers, data);
+        }
+
+        /// <summary>
+        /// Disables the muting of given session
+        /// </summary>
+        /// <param name="sessionId">ID of session to disable muting</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        public async Task DisableForceMuteAsync(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", false } };
+            await Client.PostAsync(url, headers, data);
+        }
+
     }
 }
