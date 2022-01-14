@@ -816,12 +816,15 @@ namespace OpenTokSDK
 
 
         /// <summary>
-        /// Force a publisher of a specific stream to mute its published audio
+        /// Force the publisher of a specific stream to mute its published audio.
         /// </summary>
-        /// <param name="sessionId">ID of session to force mute upon</param>
-        /// <param name="streamId">ID of stream to be muted</param>
-        /// <exception cref="OpenTokArgumentException">Thrown when session or stream Id is invalid</exception>
-        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAll"/> and <see cref="ForceMuteStreamAsync"/> methods.
+        /// </para>
+        /// <param name="sessionId">The session ID of the session that includes the stream.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session or stream ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
         public void ForceMuteStream(string sessionId, string streamId)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -841,12 +844,15 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Force a publisher of a specific stream to mute its published audio
+        /// Force the publisher of a specific stream to mute its published audio.
         /// </summary>
-        /// <param name="sessionId">ID of session to force mute upon</param>
-        /// <param name="streamId">ID of stream to be muted</param>
-        /// <exception cref="OpenTokArgumentException">Thrown when session or stream Id is invalid</exception>
-        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAll"/> and <see cref="ForceMuteStream"/> methods.
+        /// </para>
+        /// <param name="sessionId">The session ID of the session that includes the stream.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session or stream ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
         public async Task ForceMuteStreamAsync(string sessionId, string streamId)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -866,14 +872,21 @@ namespace OpenTokSDK
         }
         
         /// <summary>
-        /// You can use the OpenTok REST API to force all streams (except for an optional list of streams)
-        /// in a session to mute published audio. You can also use this method to disable the force mute
-        /// state of a session.
+        /// Forces all streams (except for an optional list of streams) in a session to mute
+        /// published audio.
         /// </summary>
-        /// <param name="sessionId">ID of session to force mute upon</param>
-        /// <param name="excludedStreamIds">Stream IDs that will not be effected by the force mute</param>
-        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
-        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        /// <para>
+        /// In addition to existing streams, any streams that are published after the call to
+        /// this method are published with audio muted. You can remove the mute state of a session
+        /// by calling the <see cref="DisableForceMute"/> method.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAllAsync"/> and <see cref="ForceMuteStream"/> methods.
+        /// </para>
+        /// <param name="sessionId">The ID of session.</param>
+        /// <param name="excludedStreamIds">The stream IDs of streams that will not be muted.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
         public void ForceMuteAll(string sessionId, string[] excludedStreamIds)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -889,14 +902,21 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// You can use the OpenTok REST API to force all streams (except for an optional list of streams)
-        /// in a session to mute published audio. You can also use this method to disable the force mute
-        /// state of a session.
+        /// Forces all streams (except for an optional list of streams) in a session to mute
+        /// published audio.
         /// </summary>
-        /// <param name="sessionId">ID of session to force mute upon</param>
-        /// <param name="excludedStreamIds">Stream IDs that will not be effected by the force mute</param>
-        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
-        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        /// <para>
+        /// In addition to existing streams, any streams that are published after the call to
+        /// this method are published with audio muted. You can remove the mute state of a session
+        /// by calling the <see cref="DisableForceMuteAsync"/> method.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAll"/> and <see cref="ForceMuteStreamAsync"/> methods.
+        /// </para>
+        /// <param name="sessionId">The ID of session.</param>
+        /// <param name="excludedStreamIds">The stream IDs of streams that will not be muted.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
         public async Task ForceMuteAllAsync(string sessionId, string[] excludedStreamIds)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -912,11 +932,21 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Disables the muting of given session
+        /// Disables the active mute state of the session. After you call this method, new streams
+        /// published to the session will no longer have audio muted.
         /// </summary>
-        /// <param name="sessionId">ID of session to disable muting</param>
-        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
-        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        /// <para>
+        /// After you call the <see cref="ForceMuteAll"/> method, any streams published after
+        /// the call are published with audio muted. Call the <c>DisableForceMute()</c> method
+        //  to remove the mute state of a session, so that new published streams are not
+        /// automatically muted.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="DisableForceMuteAsync"/> method.
+        /// </para>
+        /// <param name="sessionId">The session ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
         public void DisableForceMute(string sessionId)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -932,11 +962,21 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Disables the muting of given session
+        /// Disables the active mute state of the session. After you call this method, new streams
+        /// published to the session will no longer have audio muted.
         /// </summary>
-        /// <param name="sessionId">ID of session to disable muting</param>
-        /// <exception cref="OpenTokArgumentException">Thrown when session Id is invalid</exception>
-        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred</exception>
+        /// <para>
+        /// After you call the <see cref="ForceMuteAllAsync"/> method, any streams published after
+        /// the call are published with audio muted. Call the <c>DisableForceMuteAsync()</c> method
+        //  to remove the mute state of a session, so that new published streams are not
+        /// automatically muted.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="DisableForceMutec"/> method.
+        /// </para>
+        /// <param name="sessionId">The session ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
         public async Task DisableForceMuteAsync(string sessionId)
         {
             if (string.IsNullOrEmpty(sessionId))
