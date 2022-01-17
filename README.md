@@ -10,6 +10,11 @@ The OpenTok .NET SDK lets you generate
 [tokens](https://www.tokbox.com/opentok/tutorials/create-token/) for
 [OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. The SDK also includes
 support for working with [OpenTok archives](https://tokbox.com/opentok/tutorials/archiving).
+working with [OpenTok live streaming broadcasts](https://tokbox.com/developer/guides/broadcast/live-streaming/),
+[working with OpenTok SIP interconnect](https://tokbox.com/developer/guides/sip), 
+[sending signals to clients connected to a session](https://www.tokbox.com/developer/guides/signaling/),
+and [disconnecting clients from sessions](https://tokbox.com/developer/guides/moderation/rest/).
+
 
 ## Installation
 
