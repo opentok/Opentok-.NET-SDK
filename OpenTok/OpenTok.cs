@@ -784,8 +784,8 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
-                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
@@ -806,8 +806,8 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
-                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
