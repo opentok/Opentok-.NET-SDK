@@ -11,7 +11,8 @@ env:
 
 jobs:
   build:
-
+    env:
+      DOTNET_NOLOGO: true
     runs-on: windows-latest
 
     steps:
@@ -19,7 +20,13 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.401'
+        dotnet-version: |
+          2.0.x
+          2.1.x
+          2.2.x
+          3.1.x
+          5.0.x
+          6.0.x
     - name: Clean
       run: dotnet clean OpenTok.sln --configuration ${{ env.CONFIGURATION }} && dotnet nuget locals all --clear
     - name: Install dependencies
