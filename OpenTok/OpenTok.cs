@@ -443,7 +443,7 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Force disconnects a specific client connected to an OpenTok session.
+        /// Force a specific client to disconnect from an OpenTok session.
         /// </summary>
         /// <param name="sessionId">The session ID corresponding to the session.</param>
         /// <param name="connectionId">The connectionId of the connection in a session.</param>
