@@ -8,8 +8,8 @@
 The OpenTok .NET SDK provides methods for:
 
 * Generating
-[sessions](https://www.tokbox.com/opentok/tutorials/create-session/) and
-[tokens](https://www.tokbox.com/opentok/tutorials/create-token/) for
+[sessions](https://tokbox.com/developer/guides/create-session/) and
+[tokens](https://tokbox.com/developer/guides/create-token/) for
 [OpenTok](https://www.tokbox.com/) applications that run on the .NET platform
 * Working with [OpenTok archives](https://tokbox.com/opentok/tutorials/archiving)
 * Working with [OpenTok live streaming broadcasts](https://tokbox.com/developer/guides/broadcast/live-streaming/)
