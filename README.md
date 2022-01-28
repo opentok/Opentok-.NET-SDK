@@ -5,11 +5,18 @@
 [![Build status](https://github.com/opentok/Opentok-.NET-SDK/workflows/.NET%20Core/badge.svg)](https://github.com/opentok/Opentok-.NET-SDK/actions?query=workflow%3A%22.NET+Core%22)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
-The OpenTok .NET SDK lets you generate
-[sessions](https://www.tokbox.com/opentok/tutorials/create-session/) and
-[tokens](https://www.tokbox.com/opentok/tutorials/create-token/) for
-[OpenTok](https://www.tokbox.com/) applications that run on the .NET platform. The SDK also includes
-support for working with [OpenTok archives](https://tokbox.com/opentok/tutorials/archiving).
+The OpenTok .NET SDK provides methods for:
+
+* Generating
+[sessions](https://tokbox.com/developer/guides/create-session/) and
+[tokens](https://tokbox.com/developer/guides/create-token/) for
+[OpenTok](https://www.tokbox.com/) applications that run on the .NET platform
+* Working with [OpenTok archives](https://tokbox.com/opentok/tutorials/archiving)
+* Working with [OpenTok live streaming broadcasts](https://tokbox.com/developer/guides/broadcast/live-streaming/)
+* Working with [OpenTok SIP interconnect](https://tokbox.com/developer/guides/sip)
+* [Sending signals to clients connected to a session](https://www.tokbox.com/developer/guides/signaling/)
+* [Disconnecting clients from sessions](https://tokbox.com/developer/guides/moderation/rest/)
+* [Forcing clients in a session to disconnect or mute published audio](https://tokbox.com/developer/guides/moderation/)
 
 ## Installation
 
@@ -230,6 +237,39 @@ OpenTok.Signal(sessionId, signalProperties);
 string connectionId = "CONNECTIONID";
 OpenTok.Signal(sessionId, signalProperties, connectionId);
 ```
+
+### Working with live streaming broadcasts
+
+You can start a live-streaming broadcast of an OpenTok Session using a `OpenTokSDK.OpenTok` instance's
+`StartBroadcast(sessionId, hls, rtmpList, resolution, maxDuration, layout)` method. This returns an
+`OpenTokSDK.Broadcast` instance.
+
+Also see the documentation for the `Opentok.StopBroadcast()` and `OpenTok.GetBroadcast()` methods.
+
+### SIP
+
+You can connect a SIP platform to an OpenTok session using the 
+`Opentok.Dial(sessionId, token, sipUri, options)` or
+`Opentok.DialAsync(sessionId, token, sipUri, options)` method.
+
+You can send DTMF digits to all participants an active OpenTok session, or to a specific client
+connected to that session, using the `Opentok.PlayDTMF(sessionId, digits, connectionId)` or
+`Opentok.PlayDTMFAsync(sessionId, digits, connectionId)` method.
+
+### Forcing clients in a session to disconnect or mute published audio
+
+You can force a specific client to disconnect from an OpenTok session using the 
+`Opentok.ForceDisconnect(sessionId, connectionId)` method.
+
+You can force the publisher of a specific stream to stop publishing audio using the 
+`Opentok.ForceMuteStream(sessionId, stream)` or `Opentok.ForceMuteStreamAsync(sessionId, stream)`method.
+
+You can force the publisher of all streams in a session ((except for an optional list of streams)
+to stop publishing audio using the `Opentok.ForceMuteAll(sessionId, excludedStreamIds)`
+or `Opentok.ForceMuteAllAsync(sessionId, excludedStreamIds)` method.
+You can then disable the mute state of the session by calling the
+`Opentok.DisableForceMute(sessionId)` or `Opentok.DisableForceMuteAsync(sessionId)`
+method.
 
 ### Changing the Timeout for Http Requests
 

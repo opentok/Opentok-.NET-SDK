@@ -32,7 +32,7 @@ namespace OpenTokSDK
         /// <summary>
         /// For internal use
         /// </summary>
-        public HttpClient Client { private get; set; }
+        public HttpClient Client { internal get; set; }
 
         private bool _debug;
         /// <summary>
@@ -302,7 +302,7 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                else if(layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                else if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
@@ -346,7 +346,7 @@ namespace OpenTokSDK
         /// The session ID.
         /// </param>
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
-        public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
+        public ArchiveList ListArchives(int offset = 0, int count = 0, string sessionId = "")
         {
             if (count < 0)
             {
@@ -424,7 +424,7 @@ namespace OpenTokSDK
 
         /// <summary>
         /// Returns a List of <see cref="Stream"/> objects, representing streams that are in-progress,
-        /// for the Session Id.
+        /// for the session ID.
         /// </summary>
         /// <param name="sessionId">The session ID corresponding to the session.</param>
         /// <returns>A List of <see cref="Stream"/> objects.</returns>
@@ -443,7 +443,7 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Force disconnects a specific client connected to an OpenTok session.
+        /// Force a specific client to disconnect from an OpenTok session.
         /// </summary>
         /// <param name="sessionId">The session ID corresponding to the session.</param>
         /// <param name="connectionId">The connectionId of the connection in a session.</param>
@@ -643,7 +643,7 @@ namespace OpenTokSDK
                     if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
                     {
                         data.Add("stylesheet", layout.Stylesheet);
-                    }      
+                    }
                     if (layout.ScreenShareType != null)
                     {
                         data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
@@ -668,13 +668,13 @@ namespace OpenTokSDK
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var data = new Dictionary<string, object>();
-            if(layout != null)
+            if (layout != null)
             {
                 if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
                 }
-                else if(layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                else if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
                 }
@@ -686,7 +686,7 @@ namespace OpenTokSDK
                 }
                 if (layout.ScreenShareType != null)
                 {
-                    if(layout.Type != LayoutType.bestFit)
+                    if (layout.Type != LayoutType.bestFit)
                     {
                         throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit");
                     }
@@ -784,8 +784,8 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
-                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
@@ -806,12 +806,297 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/<api_key>/session/{sessionId}/play-dtmf"
-                : $"v2/project/<api_key>/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
             return Client.PostAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Connects a SIP platform to an OpenTok session.
+        /// </summary>
+        /// <remarks>
+        /// For more information, including technical details and security considerations, see the 
+        /// the <a href="https://tokbox.com/developer/guides/sip/">OpenTok SIP interconnect developer guide</a>.
+        /// </remarks>
+        /// <param name="sessionId">The session ID corresponding to the session to which the user will connect.</param>
+        /// <param name="token">The token for the session ID with which the SIP user will use to connect.</param>
+        /// <param name="sipUri">The SIP URI to be used as destination of the SIP call initiated from
+        /// OpenTok to your SIP platform. If the SIP URI contains a ​transport=tls​ header,
+        /// the negotiation between OpenTok and the SIP endpoint will be done securely. Note that
+        /// this will only apply to the negotiation itself, and not to the transmission of audio.
+        /// If you also audio transmission to be encrypted, set the <c>Secure</c> property of the
+        /// of the DialOptions object passed into the options parameter to <c>​true​</c>.
+        /// This is an example of setting <c>sipUri</c> for a secure call negotiation:
+        /// <c>"sip:user@sip.partner.com;transport=tls"</c>. This is an example of insecure call negotiation:
+        /// <c>"sip:user@sip.partner.com"</c>.</param>
+        /// <param name="options">Optional parameters for SIP dialing.</param>
+        public void Dial(string sessionId, string token, string sipUri, DialOptions options = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            if (!OpenTokUtils.ValidateSession(sessionId))
+            {
+                throw new OpenTokArgumentException("Session Id is not valid");
+            }
+
+            string url = $"v2/project/{this.ApiKey}/dial";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId },
+                { "token", token },
+                { "spi", new { 
+                        uri = sipUri,
+                        from = options?.From,
+                        headers = options?.Headers,
+                        auth = options?.Auth,
+                        secure = options?.Secure,
+                        video = options?.Video,
+                        observeForceMute = options?.ObserveForceMute
+                    } 
+                }
+            };
+            Client.Post(url, headers, data);
+        }
+
+        /// <summary>
+        /// Connects a SIP platform to an OpenTok session.
+        /// </summary>
+        /// <remarks>
+        /// <p>
+        /// For more information, including technical details and security considerations, see the 
+        /// the <a href="https://tokbox.com/developer/guides/sip/">OpenTok SIP interconnect developer guide</a>.
+        /// </p>
+        /// <p>
+        /// Also see OpenTok.Dial.
+        /// </p>
+        /// </remarks>
+        /// <param name="sessionId">The session ID corresponding to the session to which the user will connect.</param>
+        /// <param name="token">The token for the session ID with which the SIP user will use to connect.</param>
+        /// <param name="sipUri">The SIP URI to be used as destination of the SIP call initiated from
+        /// OpenTok to your SIP platform. If the SIP URI contains a ​transport=tls​ header,
+        /// the negotiation between OpenTok and the SIP endpoint will be done securely. Note that
+        /// this will only apply to the negotiation itself, and not to the transmission of audio.
+        /// If you also audio transmission to be encrypted, set the <c>Secure</c> property of the
+        /// of the DialOptions object passed into the options parameter to <c>​true​</c>.
+        /// This is an example of setting <c>sipUri</c> for a secure call negotiation:
+        /// <c>"sip:user@sip.partner.com;transport=tls"</c>. This is an example of insecure call negotiation:
+        /// <c>"sip:user@sip.partner.com"</c>.</param>
+        /// <param name="options">Optional parameters for SIP dialing.</param>
+        public Task DialAsync(string sessionId, string token, string sipUri, DialOptions options = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+
+            if (!OpenTokUtils.ValidateSession(sessionId))
+            {
+                throw new OpenTokArgumentException("Session Id is not valid");
+            }
+
+            string url = $"v2/project/{this.ApiKey}/dial";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId },
+                { "token", token },
+                { "spi", new {
+                        uri = sipUri,
+                        from = options?.From,
+                        headers = options?.Headers,
+                        auth = options?.Auth,
+                        secure = options?.Secure,
+                        video = options?.Video,
+                        observeForceMute = options?.ObserveForceMute
+                    }
+                }
+            };
+            return Client.PostAsync(url, headers, data);
+        }
+        
+        /// <summary>
+        /// Force the publisher of a specific stream to mute its published audio.
+        /// </summary>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAll"/> and <see cref="ForceMuteStreamAsync"/> methods.
+        /// </para>
+        /// <param name="sessionId">The session ID of the session that includes the stream.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session or stream ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
+        public void ForceMuteStream(string sessionId, string streamId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
+            }
+
+            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            Client.Post(url, headers, null);
+        }
+
+        /// <summary>
+        /// Force the publisher of a specific stream to mute its published audio.
+        /// </summary>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAll"/> and <see cref="ForceMuteStream"/> methods.
+        /// </para>
+        /// <param name="sessionId">The session ID of the session that includes the stream.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when session or stream ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
+        public async Task ForceMuteStreamAsync(string sessionId, string streamId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
+            }
+
+            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            await Client.PostAsync(url, headers, null);
+        }
+        
+        /// <summary>
+        /// Forces all streams (except for an optional list of streams) in a session to mute
+        /// published audio.
+        /// </summary>
+        /// <para>
+        /// In addition to existing streams, any streams that are published after the call to
+        /// this method are published with audio muted. You can remove the mute state of a session
+        /// by calling the <see cref="DisableForceMute"/> method.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAllAsync"/> and <see cref="ForceMuteStream"/> methods.
+        /// </para>
+        /// <param name="sessionId">The ID of session.</param>
+        /// <param name="excludedStreamIds">The stream IDs of streams that will not be muted.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
+        public void ForceMuteAll(string sessionId, string[] excludedStreamIds)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };
+            Client.Post(url, headers, data);
+        }
+
+        /// <summary>
+        /// Forces all streams (except for an optional list of streams) in a session to mute
+        /// published audio.
+        /// </summary>
+        /// <para>
+        /// In addition to existing streams, any streams that are published after the call to
+        /// this method are published with audio muted. You can remove the mute state of a session
+        /// by calling the <see cref="DisableForceMuteAsync"/> method.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="ForceMuteAll"/> and <see cref="ForceMuteStreamAsync"/> methods.
+        /// </para>
+        /// <param name="sessionId">The ID of session.</param>
+        /// <param name="excludedStreamIds">The stream IDs of streams that will not be muted.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
+        public async Task ForceMuteAllAsync(string sessionId, string[] excludedStreamIds)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };
+            await Client.PostAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Disables the active mute state of the session. After you call this method, new streams
+        /// published to the session will no longer have audio muted.
+        /// </summary>
+        /// <para>
+        /// After you call the <see cref="ForceMuteAll"/> method, any streams published after
+        /// the call are published with audio muted. Call the <c>DisableForceMute()</c> method
+        //  to remove the mute state of a session, so that new published streams are not
+        /// automatically muted.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="DisableForceMuteAsync"/> method.
+        /// </para>
+        /// <param name="sessionId">The session ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
+        public void DisableForceMute(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", false } };
+            Client.Post(url, headers, data);
+        }
+
+        /// <summary>
+        /// Disables the active mute state of the session. After you call this method, new streams
+        /// published to the session will no longer have audio muted.
+        /// </summary>
+        /// <para>
+        /// After you call the <see cref="ForceMuteAllAsync"/> method, any streams published after
+        /// the call are published with audio muted. Call the <c>DisableForceMuteAsync()</c> method
+        //  to remove the mute state of a session, so that new published streams are not
+        /// automatically muted.
+        /// </para>
+        /// <para>
+        /// Also see the <see cref="DisableForceMutec"/> method.
+        /// </para>
+        /// <param name="sessionId">The session ID.</param>
+        /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
+        /// <exception cref="OpenTokWebException">Thrown when an HTTP error has occurred.</exception>
+        public async Task DisableForceMuteAsync(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "active", false } };
+            await Client.PostAsync(url, headers, data);
         }
     }
 }
