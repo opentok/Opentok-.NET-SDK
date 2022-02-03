@@ -76,6 +76,24 @@ namespace OpenTokSDK.Util
             return DoRequest(url, headers, data);
         }
 
+        public virtual async Task<string> PutAsync(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "PUT");
+            return DoRequest(url, headers, data);
+        }
+
+        public virtual string Patch(string url, Dictionary<string, string> headers, Dictionary<string, object> data = null)
+        {
+            headers.Add("Method", "PATCH");
+            return DoRequest(url, headers, data);
+        }
+
+        public virtual Task<string> PatchAsync(string url, Dictionary<string, string> headers, Dictionary<string, object> data = null)
+        {
+            headers.Add("Method", "PATCH");
+            return DoRequestAsync(url, headers, data);
+        }
+
         public virtual string Delete(string url, Dictionary<string, string> headers)
         {
             headers.Add("Method", "DELETE");

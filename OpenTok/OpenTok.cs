@@ -287,12 +287,12 @@ namespace OpenTokSDK
             }
             string url = $"v2/project/{this.ApiKey}/archive";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object>() { 
-                { "sessionId", sessionId }, 
-                { "name", name }, 
-                { "hasVideo", hasVideo }, 
-                { "hasAudio", hasAudio }, 
-                { "outputMode", outputMode.ToString().ToLowerInvariant() } 
+            var data = new Dictionary<string, object>() {
+                { "sessionId", sessionId },
+                { "name", name },
+                { "hasVideo", hasVideo },
+                { "hasAudio", hasAudio },
+                { "outputMode", outputMode.ToString().ToLowerInvariant() }
             };
 
             if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
@@ -310,14 +310,14 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                else if(layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                else if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
             }
 
-            if(streamMode.HasValue)
+            if (streamMode.HasValue)
             {
                 data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
@@ -359,7 +359,7 @@ namespace OpenTokSDK
         /// The session ID.
         /// </param>
         /// <returns>A List of <see cref="Archive"/> objects.</returns>
-        public ArchiveList ListArchives(int offset = 0 , int count = 0, string sessionId = "")
+        public ArchiveList ListArchives(int offset = 0, int count = 0, string sessionId = "")
         {
             if (count < 0)
             {
@@ -412,6 +412,70 @@ namespace OpenTokSDK
             string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
+        }
+
+        /// <summary>
+        /// Adds a stream to currently running composed archive that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// </summary>
+        /// <param name="archiveId">The ID for the archive to add the stream to</param>
+        /// <param name="streamId">The ID for the stream to be added to the archive</param>
+        public void AddStreamToArchive(string archiveId, string streamId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var data = new Dictionary<string, object> { { "addStream", streamId } };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Adds a stream to currently running composed archive that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// </summary>
+        /// <param name="archiveId">The ID for the archive to add the stream to</param>
+        /// <param name="streamId">The ID for the stream to be added to the archive</param>
+        public Task AddStreamToArchiveAsync(string archiveId, string streamId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var data = new Dictionary<string, object> { { "addStream", streamId } };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream to currently running composed archive that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// </summary>
+        /// <param name="archiveId">The ID for the archive to add the stream to</param>
+        /// <param name="streamId">The ID for the stream to be added to the archive</param>
+        public void RemoveStreamFromArchive(string archiveId, string streamId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var data = new Dictionary<string, object> { { "removeStream", streamId } };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream to currently running composed archive that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// </summary>
+        /// <param name="archiveId">The ID for the archive to add the stream to</param>
+        /// <param name="streamId">The ID for the stream to be added to the archive</param>
+        public Task RemoveStreamFromArchiveAsync(string archiveId, string streamId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var data = new Dictionary<string, object> { { "removeStream", streamId } };
+
+            return Client.PatchAsync(url, headers, data);
         }
 
         /// <summary>
@@ -656,7 +720,7 @@ namespace OpenTokSDK
                     if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
                     {
                         data.Add("stylesheet", layout.Stylesheet);
-                    }      
+                    }
                     if (layout.ScreenShareType != null)
                     {
                         data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
@@ -681,13 +745,13 @@ namespace OpenTokSDK
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var data = new Dictionary<string, object>();
-            if(layout != null)
+            if (layout != null)
             {
                 if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
                 }
-                else if(layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                else if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
                 }
@@ -699,7 +763,7 @@ namespace OpenTokSDK
                 }
                 if (layout.ScreenShareType != null)
                 {
-                    if(layout.Type != LayoutType.bestFit)
+                    if (layout.Type != LayoutType.bestFit)
                     {
                         throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit");
                     }
