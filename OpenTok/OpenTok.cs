@@ -821,6 +821,135 @@ namespace OpenTokSDK
         }
 
         /// <summary>
+        /// Adds a stream to currently running broadcast that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// </summary>
+        /// <param name="broadcastId">The ID for the broadcast to have stream added to</param>
+        /// <param name="streamId">The ID for the stream to be added to the broadcast</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default) or not (false)</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default) or not (false)</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public void AddStreamToBroadcast(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Adds a stream to currently running broadcast that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// </summary>
+        /// <param name="broadcastId">The ID for the broadcast to have stream added to</param>
+        /// <param name="streamId">The ID for the stream to be added to the broadcast</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default) or not (false)</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default) or not (false)</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public Task AddStreamToBroadcastAsync(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream to currently running broadcast that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// </summary>
+        /// <param name="broadcastId">The ID for the broadcast to remove the stream from</param>
+        /// <param name="streamId">The ID for the stream to be removed from the broadcast</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public void RemoveStreamFromBroadcast(string broadcastId, string streamId)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"removeStream", streamId}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream to currently running broadcast that was started with the
+        /// streamMode set to "manual". For a description of the feature, see
+        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// </summary>
+        /// <param name="broadcastId">The ID for the broadcast to remove the stream from</param>
+        /// <param name="streamId">The ID for the stream to be removed from the broadcast</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public Task RemoveStreamFromBroadcastAsync(string broadcastId, string streamId)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"removeStream", streamId}
+            };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
+
+        /// <summary>
         /// Sets the layout class list for streams in a session. Layout classes are used in
         /// the layout for composed archives and live streaming broadcasts. For more information, see
         /// <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a> and

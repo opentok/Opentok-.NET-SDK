@@ -8,29 +8,29 @@ using Xunit;
 
 namespace OpenTokSDKTest
 {
-    public class ArchiveTests : TestBase
+    public class BroadcastTests : TestBase
     {
-        // AddStreamToArchive
+        // AddStreamToBroadcast
 
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public void AddStreamToArchiveInvalidArchiveIdThrowsException(string archiveId)
+        public void AddStreamToBroadcastInvalidArchiveIdThrowsException(string archiveId)
         {
             string streamId = "1234567890";
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
-            Assert.Throws<OpenTokArgumentException>(() => opentok.AddStreamToArchive(archiveId, streamId));
+            Assert.Throws<OpenTokArgumentException>(() => opentok.AddStreamToBroadcast(archiveId, streamId));
         }
 
         [Fact]
-        public void AddStreamToArchiveCorrectUrl()
+        public void AddStreamToBroadcastCorrectUrl()
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
 
-            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{archiveId}/streams";
 
             var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
             mockClient
@@ -40,7 +40,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.AddStreamToArchive(archiveId, streamId);
+            opentok.AddStreamToBroadcast(archiveId, streamId);
 
             mockClient.Verify();
         }
@@ -50,7 +50,7 @@ namespace OpenTokSDKTest
         [InlineData(true, false)]
         [InlineData(false, true)]
         [InlineData(false, false)]
-        public void AddStreamToArchiveHeaderAndDataCorrect(bool hasAudio, bool hasVideo)
+        public void AddStreamToBroadcastHeaderAndDataCorrect(bool hasAudio, bool hasVideo)
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
@@ -69,7 +69,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.AddStreamToArchive(archiveId, streamId, hasAudio, hasVideo);
+            opentok.AddStreamToBroadcast(archiveId, streamId, hasAudio, hasVideo);
 
             Assert.NotNull(headersSent);
             Assert.Equal(new Dictionary<string, string> { { "Content-Type", "application/json" } }, headersSent);
@@ -78,25 +78,26 @@ namespace OpenTokSDKTest
             Assert.Equal(new Dictionary<string, object> { { "addStream", streamId }, { "hasAudio", hasAudio }, { "hasVideo", hasVideo } }, dataSent);
         }
 
+
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public async Task AddStreamToArchiveAsyncInvalidArchiveIdThrowsException(string archiveId)
+        public async Task AddStreamToBroadcastAsyncInvalidArchiveIdThrowsException(string archiveId)
         {
             string streamId = "1234567890";
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
-            await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.AddStreamToArchiveAsync(archiveId, streamId));
+            await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.AddStreamToBroadcastAsync(archiveId, streamId));
         }
 
         [Fact]
-        public async Task AddStreamToArchiveAsyncCorrectUrl()
+        public async Task AddStreamToBroadcastAsyncCorrectUrl()
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
 
-            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{archiveId}/streams";
 
             var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
             mockClient
@@ -106,7 +107,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.AddStreamToArchiveAsync(archiveId, streamId);
+            await opentok.AddStreamToBroadcastAsync(archiveId, streamId);
 
             mockClient.Verify();
         }
@@ -116,7 +117,7 @@ namespace OpenTokSDKTest
         [InlineData(true, false)]
         [InlineData(false, true)]
         [InlineData(false, false)]
-        public async Task AddStreamToArchiveAsyncHeaderAndDataCorrect(bool hasAudio, bool hasVideo)
+        public async Task AddStreamToBroadcastAsyncHeaderAndDataCorrect(bool hasAudio, bool hasVideo)
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
@@ -135,7 +136,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.AddStreamToArchiveAsync(archiveId, streamId, hasAudio, hasVideo);
+            await opentok.AddStreamToBroadcastAsync(archiveId, streamId, hasAudio, hasVideo);
 
             Assert.NotNull(headersSent);
             Assert.Equal(new Dictionary<string, string> { { "Content-Type", "application/json" } }, headersSent);
@@ -144,27 +145,27 @@ namespace OpenTokSDKTest
             Assert.Equal(new Dictionary<string, object> { { "addStream", streamId }, { "hasAudio", hasAudio }, { "hasVideo", hasVideo } }, dataSent);
         }
 
-        // RemoveStreamFromArchive
+        // RemoveStreamFromBroadcast
 
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public void RemoveStreamFromArchiveInvalidArchiveIdThrowsException(string archiveId)
+        public void RemoveStreamFromBroadcastInvalidArchiveIdThrowsException(string archiveId)
         {
             string streamId = "1234567890";
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
-            Assert.Throws<OpenTokArgumentException>(() => opentok.RemoveStreamFromArchive(archiveId, streamId));
+            Assert.Throws<OpenTokArgumentException>(() => opentok.RemoveStreamFromBroadcast(archiveId, streamId));
         }
-        
+
         [Fact]
-        public void RemoveStreamFromArchiveCorrectUrl()
+        public void RemoveStreamFromBroadcastCorrectUrl()
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
 
-            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{archiveId}/streams";
 
             var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
             mockClient
@@ -174,13 +175,13 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.RemoveStreamFromArchive(archiveId, streamId);
+            opentok.RemoveStreamFromBroadcast(archiveId, streamId);
 
             mockClient.Verify();
         }
 
         [Fact]
-        public void RemoveStreamFromArchiveHeaderAndDataCorrect()
+        public void RemoveStreamFromBroadcastHeaderAndDataCorrect()
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
@@ -199,7 +200,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            opentok.RemoveStreamFromArchive(archiveId, streamId);
+            opentok.RemoveStreamFromBroadcast(archiveId, streamId);
 
             Assert.NotNull(headersSent);
             Assert.Equal(new Dictionary<string, string> { { "Content-Type", "application/json" } }, headersSent);
@@ -211,22 +212,22 @@ namespace OpenTokSDKTest
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public async Task RemoveStreamFromArchiveAsyncInvalidArchiveIdThrowsException(string archiveId)
+        public async Task RemoveStreamFromBroadcastAsyncInvalidArchiveIdThrowsException(string archiveId)
         {
             string streamId = "1234567890";
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
-            await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.RemoveStreamFromArchiveAsync(archiveId, streamId));
+            await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.RemoveStreamFromBroadcastAsync(archiveId, streamId));
         }
 
         [Fact]
-        public async Task RemoveStreamFromArchiveAsyncCorrectUrl()
+        public async Task RemoveStreamFromBroadcastAsyncCorrectUrl()
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
 
-            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{archiveId}/streams";
 
             var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
             mockClient
@@ -236,13 +237,13 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.RemoveStreamFromArchiveAsync(archiveId, streamId);
+            await opentok.RemoveStreamFromBroadcastAsync(archiveId, streamId);
 
             mockClient.Verify();
         }
 
         [Fact]
-        public async Task RemoveStreamFromArchiveAsyncHeaderAndDataCorrect()
+        public async Task RemoveStreamFromBroadcastAsyncHeaderAndDataCorrect()
         {
             string archiveId = "ARCHIVEID";
             string streamId = "1234567890";
@@ -261,7 +262,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            await opentok.RemoveStreamFromArchiveAsync(archiveId, streamId);
+            await opentok.RemoveStreamFromBroadcastAsync(archiveId, streamId);
 
             Assert.NotNull(headersSent);
             Assert.Equal(new Dictionary<string, string> { { "Content-Type", "application/json" } }, headersSent);
