@@ -388,7 +388,7 @@ namespace OpenTokSDKTest
             
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.GetArchive(archiveId);
+            OpenTokSDK.Archive archive = opentok.GetArchive(archiveId);
 
             Assert.NotNull(archive);
             Assert.Equal(this.apiKey, archive.PartnerId);
@@ -425,7 +425,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.GetArchive(archiveId);
+            OpenTokSDK.Archive archive = opentok.GetArchive(archiveId);
 
             Assert.NotNull(archive);
             Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
@@ -454,7 +454,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.GetArchive(archiveId);
+            OpenTokSDK.Archive archive = opentok.GetArchive(archiveId);
 
             Assert.NotNull(archive);
 
@@ -712,7 +712,7 @@ namespace OpenTokSDKTest
             
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, null);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, null);
 
             Assert.NotNull(archive);
             Assert.Equal(sessionId, archive.SessionId);
@@ -743,7 +743,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.INDIVIDUAL);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.INDIVIDUAL);
 
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
@@ -774,7 +774,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
 
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
@@ -792,7 +792,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType=ScreenShareLayoutType.BestFit };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expected, layoutString);
@@ -820,7 +820,7 @@ namespace OpenTokSDKTest
         {
             var opentok = new OpenTok(apiKey, apiSecret);
             var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType = ScreenShareLayoutType.Pip };
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var archiveId = "123456789";
             var expectedUrl = $"v2/project/{apiKey}/archive/{archiveId}/layout";
             var mockClient = new Mock<HttpClient>();
@@ -854,7 +854,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.custom, StyleSheet = "stream.instructor {position: absolute; width: 100%;  height:50%;}" };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expected, layoutString);            
@@ -869,7 +869,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.pip };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expectedString, layoutString);            
@@ -884,7 +884,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.pip, StyleSheet=string.Empty };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expectedString, layoutString);
@@ -915,7 +915,7 @@ namespace OpenTokSDKTest
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
             var layout = new ArchiveLayout { Type = LayoutType.custom, StyleSheet = "stream.instructor {position: absolute; width: 100%;  height:50%;}" };
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
 
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
@@ -952,7 +952,7 @@ namespace OpenTokSDKTest
                 Type = LayoutType.verticalPresentation,
                 StyleSheet = ""
             };
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
             Assert.Equal(resolution, archive.Resolution);
@@ -989,7 +989,7 @@ namespace OpenTokSDKTest
             };            
             try
             {
-                Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+                OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
                 Assert.True(false, "StartArchive should have thrown an exception");
             }
             catch (OpenTokArgumentException ex)
@@ -1025,7 +1025,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.custom };
             try
             {
-                Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+                OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
                 Assert.True(false, "StartArchive should have thrown an exception");
             }
             catch(OpenTokArgumentException ex)
@@ -1058,7 +1058,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
 
             Assert.NotNull(archive);
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
@@ -1091,7 +1091,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive;
+            OpenTokSDK.Archive archive;
             try
             {
                 archive = opentok.StartArchive(sessionId, outputMode: OutputMode.INDIVIDUAL, resolution: resolution);
@@ -1126,7 +1126,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId);
 
             Assert.NotNull(archive);
             Assert.Equal(sessionId, archive.SessionId);
@@ -1159,7 +1159,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StartArchive(sessionId, hasVideo: false);
+            OpenTokSDK.Archive archive = opentok.StartArchive(sessionId, hasVideo: false);
 
             Assert.NotNull(archive);
             Assert.Equal(sessionId, archive.SessionId);
@@ -1191,7 +1191,7 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
-            Archive archive = opentok.StopArchive(archiveId);
+            OpenTokSDK.Archive archive = opentok.StopArchive(archiveId);
 
             Assert.NotNull(archive);
             Assert.Equal("SESSIONID", archive.SessionId);
@@ -1573,7 +1573,7 @@ namespace OpenTokSDKTest
             {
                 {"layout",layout }
             };
-            var expectedHeaders = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var expectedHeaders = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
 

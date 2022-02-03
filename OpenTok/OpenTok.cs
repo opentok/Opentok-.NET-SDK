@@ -156,7 +156,7 @@ namespace OpenTokSDK
 
             string preference = (mediaMode == MediaMode.RELAYED) ? "enabled" : "disabled";
 
-            var headers = new Dictionary<string, string> { { "Content-type", "application/x-www-form-urlencoded" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
             {
                 {"location", location},
@@ -286,7 +286,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session not valid");
             }
             string url = $"v2/project/{this.ApiKey}/archive";
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>() {
                 { "sessionId", sessionId },
                 { "name", name },
@@ -338,7 +338,7 @@ namespace OpenTokSDK
         public Archive StopArchive(string archiveId)
         {
             string url = string.Format("v2/project/{0}/archive/{1}/stop", this.ApiKey, archiveId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Archive>(response);
@@ -393,7 +393,7 @@ namespace OpenTokSDK
         public Archive GetArchive(string archiveId)
         {
             string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Get(url);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
@@ -418,14 +418,32 @@ namespace OpenTokSDK
         /// Adds a stream to currently running composed archive that was started with the
         /// streamMode set to "manual". For a description of the feature, see
         /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// You can call the method repeatedly with addStream set to the same stream ID, to toggle the stream's audio or video in the archive.
         /// </summary>
         /// <param name="archiveId">The ID for the archive to add the stream to</param>
         /// <param name="streamId">The ID for the stream to be added to the archive</param>
-        public void AddStreamToArchive(string archiveId, string streamId)
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio (true, the default) or not (false)</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video (true, the default) or not (false).</param>
+        public void AddStreamToArchive(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
         {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object> { { "addStream", streamId } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
 
             Client.Patch(url, headers, data);
         }
@@ -434,14 +452,32 @@ namespace OpenTokSDK
         /// Adds a stream to currently running composed archive that was started with the
         /// streamMode set to "manual". For a description of the feature, see
         /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// You can call the method repeatedly with addStream set to the same stream ID, to toggle the stream's audio or video in the archive.
         /// </summary>
         /// <param name="archiveId">The ID for the archive to add the stream to</param>
         /// <param name="streamId">The ID for the stream to be added to the archive</param>
-        public Task AddStreamToArchiveAsync(string archiveId, string streamId)
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio (true, the default) or not (false)</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video (true, the default) or not (false).</param>
+        public Task AddStreamToArchiveAsync(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
         {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object> { { "addStream", streamId } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
 
             return Client.PatchAsync(url, headers, data);
         }
@@ -455,8 +491,18 @@ namespace OpenTokSDK
         /// <param name="streamId">The ID for the stream to be added to the archive</param>
         public void RemoveStreamFromArchive(string archiveId, string streamId)
         {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "removeStream", streamId } };
 
             Client.Patch(url, headers, data);
@@ -472,7 +518,7 @@ namespace OpenTokSDK
         public Task RemoveStreamFromArchiveAsync(string archiveId, string streamId)
         {
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "removeStream", streamId } };
 
             return Client.PatchAsync(url, headers, data);
@@ -491,7 +537,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId or streamId cannot be null or empty");
             }
             string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Get(url);
             Stream stream = JsonConvert.DeserializeObject<Stream>(response);
             Stream streamCopy = new Stream();
@@ -601,7 +647,7 @@ namespace OpenTokSDK
             }
 
             string url = string.Format("v2/project/{0}/broadcast", this.ApiKey);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var outputs = new Dictionary<string, object>();
 
             if (hls)
@@ -668,7 +714,7 @@ namespace OpenTokSDK
         public Broadcast StopBroadcast(string broadcastId)
         {
             string url = string.Format("v2/project/{0}/broadcast/{1}/stop", this.ApiKey, broadcastId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Broadcast>(response);
@@ -701,7 +747,7 @@ namespace OpenTokSDK
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
             string url = string.Format("v2/project/{0}/broadcast/{1}/layout", this.ApiKey, broadcastId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
             {
@@ -743,7 +789,7 @@ namespace OpenTokSDK
         public bool SetArchiveLayout(string archiveId, ArchiveLayout layout)
         {
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
             {
@@ -789,7 +835,7 @@ namespace OpenTokSDK
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
             string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
             if (streams == null || streams.Count() == 0)
@@ -829,7 +875,7 @@ namespace OpenTokSDK
             string url = String.IsNullOrEmpty(connectionId) ?
                             string.Format("v2/project/{0}/session/{1}/signal", this.ApiKey, sessionId) :
                             string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", this.ApiKey, sessionId, connectionId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
                 { "data", signalProperties.data },
