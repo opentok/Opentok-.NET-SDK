@@ -517,6 +517,16 @@ namespace OpenTokSDK
         /// <param name="streamId">The ID for the stream to be added to the archive</param>
         public Task RemoveStreamFromArchiveAsync(string archiveId, string streamId)
         {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "removeStream", streamId } };
