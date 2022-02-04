@@ -13,7 +13,7 @@ namespace OpenTokSDKTest
         // StartBroadcast
 
         [Fact]
-        public void StartBroadcastTest()
+        public void StartBroadcast()
         {
             string sessionId = "SESSIONID";
             string returnString = "{\n" +
@@ -101,7 +101,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartBroadcastWithHDResolutionTest()
+        public void StartBroadcastWithHDResolution()
         {
             string sessionId = "SESSIONID";
             string resolution = "1280x720";
@@ -134,7 +134,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartBroadcastWithSDResolutionTest()
+        public void StartBroadcastWithSDResolution()
         {
             string sessionId = "SESSIONID";
             string resolution = "640x480";
@@ -167,7 +167,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartBroadcastOnlyWithRTMPTest()
+        public void StartBroadcastOnlyWithRTMP()
         {
             string sessionId = "SESSIONID";
             List<Rtmp> rtmpList = new List<Rtmp>();
@@ -218,7 +218,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartBroadcastWithRTMPandHLSTest()
+        public void StartBroadcastWithRTMPandHLS()
         {
             string sessionId = "SESSIONID";
             List<Rtmp> rtmpList = new List<Rtmp>();

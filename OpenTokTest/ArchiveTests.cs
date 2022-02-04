@@ -14,7 +14,7 @@ namespace OpenTokSDKTest
         // StartArchive
 
         [Fact]
-        public void StartArchiveTest()
+        public void StartArchive()
         {
             string sessionId = "SESSIONID";
             string responseJson = GetResponseJson();
@@ -34,7 +34,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveIndividualTest()
+        public void StartArchiveIndividual()
         {
             string sessionId = "SESSIONID";
             string responseJson = GetResponseJson();
@@ -52,7 +52,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveWithSDResolutionTest()
+        public void StartArchiveWithSDResolution()
         {
             string sessionId = "SESSIONID";
             string resolution = "640x480";
@@ -168,7 +168,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveWithHDResolutionTest()
+        public void StartArchiveWithHDResolution()
         {
             string sessionId = "SESSIONID";
             string resolution = "1280x720";
@@ -206,7 +206,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveNoResolutionTest()
+        public void StartArchiveNoResolution()
         {
             string sessionId = "SESSIONID";
             string resolution = "640x480";
@@ -227,7 +227,7 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
-        public void StartArchiveVoiceOnlyTest()
+        public void StartArchiveVoiceOnly()
         {
             string sessionId = "SESSIONID";
             string responseJson = GetResponseJson();
