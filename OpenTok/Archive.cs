@@ -67,8 +67,7 @@ namespace OpenTokSDK
         /// </summary>
         INDIVIDUAL
     }
-
-
+    
     /// <summary>
     /// Represents an archive of an OpenTok session.
     /// </summary>

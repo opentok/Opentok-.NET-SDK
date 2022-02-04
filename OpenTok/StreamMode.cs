@@ -13,7 +13,15 @@ namespace OpenTokSDK
         [Description("auto")]
         Auto,
         /// <summary>
-        /// Specify which streams to be included.
+        /// You will specify streams to be included in the archive using the
+        /// <see cref="OpenTok.AddStreamToArchive"/>,
+        /// <see cref="OpenTok.RemoveStreamFromArchive"/>,
+        /// <see cref="OpenTok.AddStreamToBroadcast"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcast"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToArchiveAsync"/>,
+        /// <see cref="OpenTok.AddStreamToBroadcastAsync"/>,
+        /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
         /// </summary>
         [Description("manual")]
         Manual
