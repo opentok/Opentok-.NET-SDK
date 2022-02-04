@@ -81,6 +81,7 @@
 	
   <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp3.1' ">
 	<Reference Include="System.Web" />
+	<Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   
 </Project>
