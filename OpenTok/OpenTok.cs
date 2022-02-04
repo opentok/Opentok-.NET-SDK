@@ -274,7 +274,13 @@ namespace OpenTokSDK
         /// you must provide a StyleSheet string to Vonage how to layout your archive.
         /// </param>
         /// <param name="streamMode">
-        /// Whether streams included in the archive are selected automatically ("auto", the default) or manually.
+        /// Whether streams included in the archive are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the archive using the
+        /// <see cref="OpenTok.AddStreamToArchive"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchive"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
         /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
@@ -418,15 +424,16 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Adds a stream to currently running composed archive that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-archive-streams
-        /// You can call the method repeatedly with addStream set to the same stream ID, to toggle the stream's audio or video in the archive.
+        /// Adds a stream to a currently running composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the archive.
         /// </summary>
-        /// <param name="archiveId">The ID for the archive to add the stream to</param>
-        /// <param name="streamId">The ID for the stream to be added to the archive</param>
-        /// <param name="hasAudio">Whether the composed archive should include the stream's audio (true, the default) or not (false)</param>
-        /// <param name="hasVideo">Whether the composed archive should include the stream's video (true, the default) or not (false).</param>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio
+        /// (true, the default) or not (false).</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video
+        /// (true, the default) or not (false).</param>
         public void AddStreamToArchive(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
         {
             if (string.IsNullOrEmpty(archiveId))
@@ -452,15 +459,16 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Adds a stream to currently running composed archive that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-archive-streams
-        /// You can call the method repeatedly with addStream set to the same stream ID, to toggle the stream's audio or video in the archive.
+        /// Adds a stream to a currently running composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the archive.
         /// </summary>
-        /// <param name="archiveId">The ID for the archive to add the stream to</param>
-        /// <param name="streamId">The ID for the stream to be added to the archive</param>
-        /// <param name="hasAudio">Whether the composed archive should include the stream's audio (true, the default) or not (false)</param>
-        /// <param name="hasVideo">Whether the composed archive should include the stream's video (true, the default) or not (false).</param>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio
+        /// (true, the default) or not (false).</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video
+        /// (true, the default) or not (false).</param>
         public Task AddStreamToArchiveAsync(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
         {
             if (string.IsNullOrEmpty(archiveId))
@@ -486,12 +494,11 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Removes a stream to currently running composed archive that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// Removes a stream from a composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual.
         /// </summary>
-        /// <param name="archiveId">The ID for the archive to add the stream to</param>
-        /// <param name="streamId">The ID for the stream to be added to the archive</param>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
         public void RemoveStreamFromArchive(string archiveId, string streamId)
         {
             if (string.IsNullOrEmpty(archiveId))
@@ -512,12 +519,11 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Removes a stream to currently running composed archive that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-archive-streams
+        /// Removes a stream from a composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual.
         /// </summary>
-        /// <param name="archiveId">The ID for the archive to add the stream to</param>
-        /// <param name="streamId">The ID for the stream to be added to the archive</param>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
         public Task RemoveStreamFromArchiveAsync(string archiveId, string streamId)
         {
             if (string.IsNullOrEmpty(archiveId))
@@ -841,14 +847,16 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Adds a stream to currently running broadcast that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// Adds a stream to a currently running broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the broadcast.
         /// </summary>
-        /// <param name="broadcastId">The ID for the broadcast to have stream added to</param>
-        /// <param name="streamId">The ID for the stream to be added to the broadcast</param>
-        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default) or not (false)</param>
-        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default) or not (false)</param>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default)
+        /// or not (false).</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default)
+        /// or not (false).</param>
         /// <exception cref="OpenTokArgumentException"></exception>
         public void AddStreamToBroadcast(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
         {
@@ -875,14 +883,16 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Adds a stream to currently running broadcast that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// Adds a stream to a currently running broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the broadcast.
         /// </summary>
-        /// <param name="broadcastId">The ID for the broadcast to have stream added to</param>
-        /// <param name="streamId">The ID for the stream to be added to the broadcast</param>
-        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default) or not (false)</param>
-        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default) or not (false)</param>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default)
+        /// or not (false).</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default)
+        /// or not (false).</param>
         /// <exception cref="OpenTokArgumentException"></exception>
         public Task AddStreamToBroadcastAsync(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
         {
@@ -909,12 +919,11 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Removes a stream to currently running broadcast that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// Removes a stream from a broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual.
         /// </summary>
-        /// <param name="broadcastId">The ID for the broadcast to remove the stream from</param>
-        /// <param name="streamId">The ID for the stream to be removed from the broadcast</param>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
         /// <exception cref="OpenTokArgumentException"></exception>
         public void RemoveStreamFromBroadcast(string broadcastId, string streamId)
         {
@@ -939,12 +948,11 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Removes a stream to currently running broadcast that was started with the
-        /// streamMode set to "manual". For a description of the feature, see
-        /// https://tokbox.com/developer/rest/#selecting-broadcast-streams.
+        /// Removes a stream from a broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual.
         /// </summary>
-        /// <param name="broadcastId">The ID for the broadcast to remove the stream from</param>
-        /// <param name="streamId">The ID for the stream to be removed from the broadcast</param>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
         /// <exception cref="OpenTokArgumentException"></exception>
         public Task RemoveStreamFromBroadcastAsync(string broadcastId, string streamId)
         {
