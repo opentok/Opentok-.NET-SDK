@@ -299,10 +299,12 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
             }
-            else if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
             {
                 data.Add("resolution", resolution);
             }
+
             if (layout != null)
             {
                 if (layout?.Type == LayoutType.custom && string.IsNullOrEmpty(layout?.StyleSheet) ||
@@ -310,7 +312,8 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                else if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                
+                if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
@@ -633,15 +636,18 @@ namespace OpenTokSDK
         /// Specify this BroadcastLayout object to assign the initial layout type for
         /// the broadcast.
         /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the broadcast are selected automatically ("auto", the default) or manually.
+        /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
-        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, int maxDuration = 7200, BroadcastLayout layout = null)
+        public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null, int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
 
-            if (!String.IsNullOrEmpty(resolution) && resolution != "640x480" && resolution != "1280x720")
+            if (!string.IsNullOrEmpty(resolution) && resolution != "640x480" && resolution != "1280x720")
             {
                 throw new OpenTokArgumentException("Resolution value must be either 640x480 (SD) or 1280x720 (HD).");
             }
@@ -651,18 +657,18 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("MaxDuration value must be between 60 and 36000 (inclusive).");
             }
 
-            if (rtmpList != null && rtmpList.Count() >= 5)
+            if (rtmpList != null && rtmpList.Count >= 5)
             {
                 throw new OpenTokArgumentException("Cannot add more than 5 RTMP properties");
             }
 
-            string url = string.Format("v2/project/{0}/broadcast", this.ApiKey);
+            string url = $"v2/project/{ApiKey}/broadcast";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var outputs = new Dictionary<string, object>();
 
             if (hls)
             {
-                outputs.Add("hls", new Object());
+                outputs.Add("hls", new object());
             }
 
             if (rtmpList != null)
@@ -676,32 +682,36 @@ namespace OpenTokSDK
                 { "outputs", outputs }
             };
 
-            if (!String.IsNullOrEmpty(resolution))
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(resolution))
             {
                 data.Add("resolution", resolution);
             }
 
             if (layout != null)
             {
-                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.Stylesheet)) ||
-                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet)))
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && string.IsNullOrEmpty(layout.Stylesheet) ||
+                    !layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !string.IsNullOrEmpty(layout.Stylesheet))
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
                 }
-                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+
+                if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
+
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                {
+                    data.Add("layout", layout);
+                }
                 else
                 {
-                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
-                    {
-                        data.Add("layout", layout);
-                    }
-                    else
-                    {
-                        data.Add("layout", layout);
-                    }
+                    data.Add("layout", layout);
                 }
             }
 

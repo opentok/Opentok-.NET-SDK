@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace OpenTokSDK
 {
@@ -72,21 +69,6 @@ namespace OpenTokSDK
     }
 
     /// <summary>
-    /// Whether streams included in the archive are selected automatically or manually.
-    /// </summary>
-    public enum StreamMode
-    {
-        /// <summary>
-        /// All streams in the session can be included in the archive.
-        /// </summary>
-        Auto,
-        /// <summary>
-        /// Specify which streams to be included.
-        /// </summary>
-        Manual
-    }
-
-    /// <summary>
     /// Represents an archive of an OpenTok session.
     /// </summary>
     public class Archive
@@ -108,20 +90,21 @@ namespace OpenTokSDK
 
         internal void CopyArchive(Archive archive)
         {
-            this.CreatedAt = archive.CreatedAt;
-            this.Duration = archive.Duration;
-            this.Id = archive.Id;
-            this.Name = archive.Name;
-            this.PartnerId = archive.PartnerId;
-            this.SessionId = archive.SessionId;
-            this.Size = archive.Size;
-            this.Status = archive.Status;
-            this.Url = archive.Url;
-            this.Password = archive.Password;
-            this.HasVideo = archive.HasVideo;
-            this.HasAudio = archive.HasAudio;
-            this.OutputMode = archive.OutputMode;
-            this.Resolution = archive.Resolution;
+            CreatedAt = archive.CreatedAt;
+            Duration = archive.Duration;
+            Id = archive.Id;
+            Name = archive.Name;
+            PartnerId = archive.PartnerId;
+            SessionId = archive.SessionId;
+            Size = archive.Size;
+            Status = archive.Status;
+            Url = archive.Url;
+            Password = archive.Password;
+            HasVideo = archive.HasVideo;
+            HasAudio = archive.HasAudio;
+            OutputMode = archive.OutputMode;
+            Resolution = archive.Resolution;
+            StreamMode = archive.StreamMode;
         }
 
         /// <summary>
@@ -208,6 +191,11 @@ namespace OpenTokSDK
         /// The encryption password of the archive.
         /// </summary>
         public String Password { get; set; }
+
+        /// <summary>
+        /// Whether streams included in the archive are selected automatically ("auto", the default) or manually.
+        /// </summary>
+        public StreamMode StreamMode { get; set; }
 
         /// <summary>
         /// Stops the OpenTok archive if it is being recorded.

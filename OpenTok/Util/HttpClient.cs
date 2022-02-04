@@ -136,8 +136,7 @@ namespace OpenTokSDK.Util
                         case HttpStatusCode.NoContent:
                             return "";
                         default:
-                            throw new OpenTokWebException("Response returned with unexpected status code " +
-                                                          response.StatusCode.ToString());
+                            throw new OpenTokWebException($"Response returned with unexpected status code {response.StatusCode}");
                     }
                 }
             }
@@ -312,7 +311,8 @@ namespace OpenTokSDK.Util
                 {
                     return JsonConvert.SerializeObject(data);
                 }
-                else if (headers["Content-Type"] == "application/x-www-form-urlencoded")
+
+                if (headers["Content-Type"] == "application/x-www-form-urlencoded")
                 {
                     return ProcessParameters(data);
                 }

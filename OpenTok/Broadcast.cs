@@ -25,7 +25,7 @@ namespace OpenTokSDK
             STARTED
         }
 
-        private OpenTok opentok;
+        private readonly OpenTok _opentok;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Broadcast"/> class.
@@ -37,7 +37,7 @@ namespace OpenTokSDK
 
         internal Broadcast(OpenTok opentok)
         {
-            this.opentok = opentok;
+            _opentok = opentok;
         }
 
         internal void CopyBroadcast(Broadcast broadcast)
@@ -51,6 +51,7 @@ namespace OpenTokSDK
             MaxDuration = broadcast.MaxDuration;
             Status = broadcast.Status;
             BroadcastUrls = broadcast.BroadcastUrls;
+            StreamMode = broadcast.StreamMode;
 
             if (BroadcastUrls != null)
             {
@@ -84,7 +85,7 @@ namespace OpenTokSDK
         /// The session ID of the OpenTok session associated with this broadcast.
         /// </summary>
         [JsonProperty("sessionId")]
-        public String SessionId { get; set; }
+        public string SessionId { get; set; }
 
         /// <summary>
         /// The OpenTok API key associated with the broadcast.
@@ -143,11 +144,17 @@ namespace OpenTokSDK
         /// </summary>
         public void Stop()
         {
-            if (opentok != null)
+            if (_opentok != null)
             {
-                Broadcast broadcast = opentok.StopBroadcast(Id);
+                Broadcast broadcast = _opentok.StopBroadcast(Id);
                 Status = broadcast.Status;
             }
         }
+
+        /// <summary>
+        /// Whether streams included in the broadcast are selected automatically ("auto", the default) or manually
+        /// </summary>
+        [JsonProperty("streamMode")]
+        public StreamMode StreamMode { get; set; }
     }
 }
