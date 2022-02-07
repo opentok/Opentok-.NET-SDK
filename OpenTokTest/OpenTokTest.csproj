@@ -7,6 +7,70 @@
     <RootNamespace>OpenTokSDKTest</RootNamespace>        
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Data\ArchiveTests\StartArchive-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAutoStreamMode-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveCreateInvalidIndividualModeArchivingWithResolution-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveCustomLayout-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveCustomLayoutMissingStylesheet-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveIndividual-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveManualStreamMode-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveNoResolution-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveVerticalLayout-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveVerticalLayoutWithStyleSheet-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveVoiceOnly-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveWithHDResolution-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveWithSDResolution-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcastWithAutoStreamMode-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\ArchiveTests\StartArchiveAutoStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveCreateInvalidIndividualModeArchivingWithResolution-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveCustomLayout-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveCustomLayoutMissingStylesheet-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveIndividual-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveManualStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveNoResolution-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchive-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveVerticalLayout-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveVerticalLayoutWithStyleSheet-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveVoiceOnly-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveWithHDResolution-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveWithSDResolution-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcastWithAutoStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Moq" Version="4.14.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />

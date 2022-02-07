@@ -77,7 +77,7 @@ namespace OpenTokSDK
     public class Archive
     {
 
-        private OpenTok opentok;
+        private readonly OpenTok _opentok;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Archive"/> class.
@@ -88,25 +88,26 @@ namespace OpenTokSDK
 
         internal Archive(OpenTok opentok)
         {
-            this.opentok = opentok;
+            _opentok = opentok;
         }
 
         internal void CopyArchive(Archive archive)
         {
-            this.CreatedAt = archive.CreatedAt;
-            this.Duration = archive.Duration;
-            this.Id = archive.Id;
-            this.Name = archive.Name;
-            this.PartnerId = archive.PartnerId;
-            this.SessionId = archive.SessionId;
-            this.Size = archive.Size;
-            this.Status = archive.Status;
-            this.Url = archive.Url;
-            this.Password = archive.Password;
-            this.HasVideo = archive.HasVideo;
-            this.HasAudio = archive.HasAudio;
-            this.OutputMode = archive.OutputMode;
-            this.Resolution = archive.Resolution;
+            CreatedAt = archive.CreatedAt;
+            Duration = archive.Duration;
+            Id = archive.Id;
+            Name = archive.Name;
+            PartnerId = archive.PartnerId;
+            SessionId = archive.SessionId;
+            Size = archive.Size;
+            Status = archive.Status;
+            Url = archive.Url;
+            Password = archive.Password;
+            HasVideo = archive.HasVideo;
+            HasAudio = archive.HasAudio;
+            OutputMode = archive.OutputMode;
+            Resolution = archive.Resolution;
+            StreamMode = archive.StreamMode;
         }
 
         /// <summary>
@@ -195,6 +196,11 @@ namespace OpenTokSDK
         public String Password { get; set; }
 
         /// <summary>
+        /// Whether streams included in the archive are selected automatically ("auto", the default) or manually.
+        /// </summary>
+        public StreamMode StreamMode { get; set; }
+
+        /// <summary>
         /// Stops the OpenTok archive if it is being recorded.
         /// <para>
         /// Archives automatically stop recording after 120 minutes or when all clients have
@@ -203,9 +209,9 @@ namespace OpenTokSDK
         /// </summary>
         public void Stop()
         {
-            if (opentok != null)
+            if (_opentok != null)
             {
-                Archive archive = opentok.StopArchive(Id.ToString());
+                Archive archive = _opentok.StopArchive(Id.ToString());
                 Status = archive.Status;
             }
         }
@@ -220,9 +226,9 @@ namespace OpenTokSDK
         /// </summary>
         public void Delete()
         {
-            if (opentok != null)
+            if (_opentok != null)
             {
-                opentok.DeleteArchive(Id.ToString());
+                _opentok.DeleteArchive(Id.ToString());
             }
         }
     }
