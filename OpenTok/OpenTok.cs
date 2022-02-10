@@ -274,27 +274,38 @@ namespace OpenTokSDK
         /// The layout that you want to use for your archive. If type is set to <see cref="LayoutType.custom"/>
         /// you must provide a StyleSheet string to Vonage how to layout your archive.
         /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the archive are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the archive using the
+        /// <see cref="OpenTok.AddStreamToArchive"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchive"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
+        /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
-            string url = string.Format("v2/project/{0}/archive", this.ApiKey);
+            string url = $"v2/project/{ApiKey}/archive";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
-            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
+            var data = new Dictionary<string, object> { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
 
-            if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
             {
                 throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
             }
-            else if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+            
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
             {
                 data.Add("resolution", resolution);
             }
+            
             if (layout != null)
             {
                 if (layout?.Type == LayoutType.custom && string.IsNullOrEmpty(layout?.StyleSheet) ||
@@ -307,6 +318,11 @@ namespace OpenTokSDK
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
+            }
+
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
 
             string response = Client.Post(url, headers, data);
@@ -399,6 +415,126 @@ namespace OpenTokSDK
             string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
+        }
+
+        /// <summary>
+        /// Adds a stream to a currently running composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the archive.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio
+        /// (true, the default) or not (false).</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video
+        /// (true, the default) or not (false).</param>
+        public void AddStreamToArchive(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Adds a stream to a currently running composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the archive.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio
+        /// (true, the default) or not (false).</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video
+        /// (true, the default) or not (false).</param>
+        public Task AddStreamToArchiveAsync(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        public void RemoveStreamFromArchive(string archiveId, string streamId)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "removeStream", streamId } };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        public Task RemoveStreamFromArchiveAsync(string archiveId, string streamId)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "removeStream", streamId } };
+
+            return Client.PatchAsync(url, headers, data);
         }
 
         /// <summary>
@@ -500,15 +636,25 @@ namespace OpenTokSDK
         /// Specify this BroadcastLayout object to assign the initial layout type for
         /// the broadcast.
         /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the broadcast are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the broadcast using the
+        /// <see cref="OpenTok.AddStreamToBroadcast"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcast"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToBroadcastAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> methods).
+        /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
-        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, int maxDuration = 7200, BroadcastLayout layout = null)
+        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, 
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
 
-            if (!String.IsNullOrEmpty(resolution) && resolution != "640x480" && resolution != "1280x720")
+            if (!string.IsNullOrEmpty(resolution) && resolution != "640x480" && resolution != "1280x720")
             {
                 throw new OpenTokArgumentException("Resolution value must be either 640x480 (SD) or 1280x720 (HD).");
             }
@@ -523,13 +669,13 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Cannot add more than 5 RTMP properties");
             }
 
-            string url = string.Format("v2/project/{0}/broadcast", this.ApiKey);
+            string url = $"v2/project/{this.ApiKey}/broadcast";
             var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
             var outputs = new Dictionary<string, object>();
 
             if (hls)
             {
-                outputs.Add("hls", new Object());
+                outputs.Add("hls", new object());
             }
 
             if (rtmpList != null)
@@ -543,33 +689,37 @@ namespace OpenTokSDK
                 { "outputs", outputs }
             };
 
-            if (!String.IsNullOrEmpty(resolution))
+            if (!string.IsNullOrEmpty(resolution))
             {
                 data.Add("resolution", resolution);
             }
 
             if (layout != null)
             {
-                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.Stylesheet)) ||
-                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet)))
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && string.IsNullOrEmpty(layout.Stylesheet) ||
+                    !layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !string.IsNullOrEmpty(layout.Stylesheet))
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
                 }
-                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+
+                if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
+
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                {
+                    data.Add("layout", layout);
+                }
                 else
                 {
-                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
-                    {
-                        data.Add("layout", layout);
-                    }
-                    else
-                    {
-                        data.Add("layout", layout);
-                    }
+                    data.Add("layout", layout);
                 }
+            }
+
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
 
             string response = Client.Post(url, headers, data);
@@ -695,6 +845,137 @@ namespace OpenTokSDK
             }
             Client.Put(url, headers, data);
             return true;
+        }
+
+
+        /// <summary>
+        /// Adds a stream to a currently running broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the broadcast.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default)
+        /// or not (false).</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default)
+        /// or not (false).</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public void AddStreamToBroadcast(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Adds a stream to a currently running broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the broadcast.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default)
+        /// or not (false).</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default)
+        /// or not (false).</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public Task AddStreamToBroadcastAsync(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public void RemoveStreamFromBroadcast(string broadcastId, string streamId)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"removeStream", streamId}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public Task RemoveStreamFromBroadcastAsync(string broadcastId, string streamId)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"removeStream", streamId}
+            };
+
+            return Client.PatchAsync(url, headers, data);
         }
 
         /// <summary>

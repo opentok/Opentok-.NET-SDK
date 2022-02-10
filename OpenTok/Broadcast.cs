@@ -25,7 +25,7 @@ namespace OpenTokSDK
             STARTED
         }
 
-        private OpenTok opentok;
+        private readonly OpenTok _opentok;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Broadcast"/> class.
@@ -37,7 +37,7 @@ namespace OpenTokSDK
 
         internal Broadcast(OpenTok opentok)
         {
-            this.opentok = opentok;
+            this._opentok = opentok;
         }
 
         internal void CopyBroadcast(Broadcast broadcast)
@@ -51,25 +51,29 @@ namespace OpenTokSDK
             MaxDuration = broadcast.MaxDuration;
             Status = broadcast.Status;
             BroadcastUrls = broadcast.BroadcastUrls;
+            StreamMode = broadcast.StreamMode;
 
-            if (BroadcastUrls != null)
+            if (BroadcastUrls == null)
+                return;
+
+            if (BroadcastUrls.ContainsKey("hls"))
             {
-                if (BroadcastUrls.ContainsKey("hls"))
-                {
-                    Hls = BroadcastUrls["hls"].ToString();
-                }
+                Hls = BroadcastUrls["hls"].ToString();
+            }
 
-                if (BroadcastUrls.ContainsKey("rtmp"))
+            if (BroadcastUrls.ContainsKey("rtmp"))
+            {
+                RtmpList = new List<Rtmp>();
+                foreach (var jsonToken in (JArray)BroadcastUrls["rtmp"])
                 {
-                    RtmpList = new List<Rtmp>();
-                    foreach (JObject item in (JArray)BroadcastUrls["rtmp"])
+                    var item = (JObject) jsonToken;
+                    Rtmp rtmp = new Rtmp
                     {
-                        Rtmp rtmp = new Rtmp();
-                        rtmp.Id = item.GetValue("id").ToString();
-                        rtmp.ServerUrl = item.GetValue("serverUrl").ToString();
-                        rtmp.StreamName = item.GetValue("streamName").ToString();
-                        RtmpList.Add(rtmp);
-                    }
+                        Id = item.GetValue("id")?.ToString(),
+                        ServerUrl = item.GetValue("serverUrl")?.ToString(),
+                        StreamName = item.GetValue("streamName")?.ToString()
+                    };
+                    RtmpList.Add(rtmp);
                 }
             }
         }
@@ -139,13 +143,19 @@ namespace OpenTokSDK
         private Dictionary<string, object> BroadcastUrls { get; set; }
 
         /// <summary>
+        /// Whether streams included in the broadcast are selected automatically ("auto", the default) or manually
+        /// </summary>
+        [JsonProperty("streamMode")]
+        public StreamMode StreamMode { get; set; }
+
+        /// <summary>
         /// Stops the live broadcasting if it is started.
         /// </summary>
         public void Stop()
         {
-            if (opentok != null)
+            if (_opentok != null)
             {
-                Broadcast broadcast = opentok.StopBroadcast(Id);
+                Broadcast broadcast = _opentok.StopBroadcast(Id);
                 Status = broadcast.Status;
             }
         }
