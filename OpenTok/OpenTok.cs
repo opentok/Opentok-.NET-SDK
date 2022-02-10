@@ -637,7 +637,13 @@ namespace OpenTokSDK
         /// the broadcast.
         /// </param>
         /// <param name="streamMode">
-        /// Whether streams included in the broadcast are selected automatically ("auto", the default) or manually.
+        /// Whether streams included in the broadcast are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the broadcast using the
+        /// <see cref="OpenTok.AddStreamToBroadcast"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcast"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToBroadcastAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> methods).
         /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, 
