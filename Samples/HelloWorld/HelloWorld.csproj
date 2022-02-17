@@ -17,13 +17,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Content\js\helloworld.js" />
-    <None Remove="views\index.sshtml" />
+    <None Remove="views\index.html" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\js\helloworld.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="views\index.sshtml">
+    <Content Include="views\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

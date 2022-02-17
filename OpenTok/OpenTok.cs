@@ -157,7 +157,7 @@ namespace OpenTokSDK
 
             string preference = (mediaMode == MediaMode.RELAYED) ? "enabled" : "disabled";
 
-            var headers = new Dictionary<string, string> { { "Content-type", "application/x-www-form-urlencoded" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
             {
                 {"location", location},
@@ -284,7 +284,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session not valid");
             }
             string url = string.Format("v2/project/{0}/archive", this.ApiKey);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
 
             if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
@@ -325,7 +325,7 @@ namespace OpenTokSDK
         public Archive StopArchive(string archiveId)
         {
             string url = string.Format("v2/project/{0}/archive/{1}/stop", this.ApiKey, archiveId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Archive>(response);
@@ -380,7 +380,7 @@ namespace OpenTokSDK
         public Archive GetArchive(string archiveId)
         {
             string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Get(url);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
@@ -414,7 +414,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId or streamId cannot be null or empty");
             }
             string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Get(url);
             Stream stream = JsonConvert.DeserializeObject<Stream>(response);
             Stream streamCopy = new Stream();
@@ -524,7 +524,7 @@ namespace OpenTokSDK
             }
 
             string url = string.Format("v2/project/{0}/broadcast", this.ApiKey);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var outputs = new Dictionary<string, object>();
 
             if (hls)
@@ -591,7 +591,7 @@ namespace OpenTokSDK
         public Broadcast StopBroadcast(string broadcastId)
         {
             string url = string.Format("v2/project/{0}/broadcast/{1}/stop", this.ApiKey, broadcastId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Broadcast>(response);
@@ -624,7 +624,7 @@ namespace OpenTokSDK
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
             string url = string.Format("v2/project/{0}/broadcast/{1}/layout", this.ApiKey, broadcastId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
             {
@@ -666,7 +666,7 @@ namespace OpenTokSDK
         public bool SetArchiveLayout(string archiveId, ArchiveLayout layout)
         {
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
             {
@@ -712,7 +712,7 @@ namespace OpenTokSDK
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
             string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
             if (streams == null || streams.Count() == 0)
@@ -752,7 +752,7 @@ namespace OpenTokSDK
             string url = String.IsNullOrEmpty(connectionId) ?
                             string.Format("v2/project/{0}/session/{1}/signal", this.ApiKey, sessionId) :
                             string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", this.ApiKey, sessionId, connectionId);
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
                 { "data", signalProperties.data },
@@ -852,7 +852,7 @@ namespace OpenTokSDK
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "spi", new { 
+                { "sip", new { 
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
@@ -863,7 +863,7 @@ namespace OpenTokSDK
                     } 
                 }
             };
-            Client.Post(url, headers, data);
+           string test = Client.Post(url, headers, data);
         }
 
         /// <summary>
@@ -909,7 +909,7 @@ namespace OpenTokSDK
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "spi", new {
+                { "sip", new {
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
