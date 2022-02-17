@@ -1,4 +1,7 @@
-﻿namespace OpenTokSDK
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
+
+namespace OpenTokSDK
 {
     /// <summary>
     /// Used to set the username and password to be used in the <see cref="OpenTok.Dial"/> method.
@@ -10,11 +13,13 @@
         /// <summary>
         /// The username.
         /// </summary>
+        [JsonProperty("username")]
         public string Username { get; set; }
 
         /// <summary>
         /// The password.
         /// </summary>
+        [JsonProperty("password")]
         public string Password { get; set; }
     }
 }

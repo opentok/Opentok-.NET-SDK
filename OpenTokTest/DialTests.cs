@@ -179,16 +179,16 @@ namespace OpenTokSDKTest
             Assert.Equal(SessionId, dataSent["sessionId"]);
             Assert.Equal(token, dataSent["token"]);
 
-            Assert.True(dataSent.ContainsKey("spi"));
+            Assert.True(dataSent.ContainsKey("sip"));
 
-            dynamic spi = dataSent["spi"];
+            dynamic sip = dataSent["sip"];
 
-            Assert.Equal(dialOptions.From, spi.from);
-            Assert.Equal(dialOptions.Headers, spi.headers);
-            Assert.Equal(dialOptions.Auth, spi.auth);
-            Assert.Equal(dialOptions.Secure, spi.secure);
-            Assert.Equal(dialOptions.Video, spi.video);
-            Assert.Equal(dialOptions.ObserveForceMute, spi.observeForceMute);
+            Assert.Equal(dialOptions.From, sip.from);
+            Assert.Equal(dialOptions.Headers, sip.headers);
+            Assert.Equal(dialOptions.Auth, sip.auth);
+            Assert.Equal(dialOptions.Secure, sip.secure);
+            Assert.Equal(dialOptions.Video, sip.video);
+            Assert.Equal(dialOptions.ObserveForceMute, sip.observeForceMute);
         }
 
         [Fact]
@@ -230,16 +230,16 @@ namespace OpenTokSDKTest
             Assert.Equal(SessionId, dataSent["sessionId"]);
             Assert.Equal(token, dataSent["token"]);
 
-            Assert.True(dataSent.ContainsKey("spi"));
+            Assert.True(dataSent.ContainsKey("sip"));
 
-            dynamic spi = dataSent["spi"];
+            dynamic sip = dataSent["sip"];
 
-            Assert.Equal(dialOptions.From, spi.from);
-            Assert.Equal(dialOptions.Headers, spi.headers);
-            Assert.Equal(dialOptions.Auth, spi.auth);
-            Assert.Equal(dialOptions.Secure, spi.secure);
-            Assert.Equal(dialOptions.Video, spi.video);
-            Assert.Equal(dialOptions.ObserveForceMute, spi.observeForceMute);
+            Assert.Equal(dialOptions.From, sip.from);
+            Assert.Equal(dialOptions.Headers, sip.headers);
+            Assert.Equal(dialOptions.Auth, sip.auth);
+            Assert.Equal(dialOptions.Secure, sip.secure);
+            Assert.Equal(dialOptions.Video, sip.video);
+            Assert.Equal(dialOptions.ObserveForceMute, sip.observeForceMute);
         }
     }
 }
