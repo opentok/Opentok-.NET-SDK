@@ -700,7 +700,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType=ScreenShareLayoutType.BestFit };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expected, layoutString);
@@ -713,7 +713,7 @@ namespace OpenTokSDKTest
         {
             var opentok = new OpenTok(apiKey, apiSecret);
             var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType = ScreenShareLayoutType.Pip };
-            var headers = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var archiveId = "123456789";
             var expectedUrl = $"v2/project/{apiKey}/archive/{archiveId}/layout";
             var mockClient = new Mock<HttpClient>();
@@ -747,7 +747,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.custom, StyleSheet = "stream.instructor {position: absolute; width: 100%;  height:50%;}" };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expected, layoutString);            
@@ -762,7 +762,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.pip };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expectedString, layoutString);            
@@ -777,7 +777,7 @@ namespace OpenTokSDKTest
             var layout = new ArchiveLayout { Type = LayoutType.pip, StyleSheet=string.Empty };
             data.Add("layout", layout);
             var headers = new Dictionary<string, string>();
-            headers.Add("Content-type", "application/json");
+            headers.Add("Content-Type", "application/json");
             var clientType = typeof(HttpClient);
             var layoutString = (string)clientType.GetMethod("GetRequestPostData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(httpClient, new object[] { data, headers });
             Assert.Equal(expectedString, layoutString);
@@ -1114,7 +1114,7 @@ namespace OpenTokSDKTest
             {
                 {"layout",layout }
             };
-            var expectedHeaders = new Dictionary<string, string> { { "Content-type", "application/json" } };
+            var expectedHeaders = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             OpenTok opentok = new OpenTok(apiKey, apiSecret);
             opentok.Client = mockClient.Object;
 

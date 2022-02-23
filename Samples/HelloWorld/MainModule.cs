@@ -1,10 +1,8 @@
 ﻿using System.Dynamic;
-
 using Nancy;
 
 namespace HelloWorld
 {
-
     public class MainModule : NancyModule
     {
 

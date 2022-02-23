@@ -278,11 +278,11 @@ namespace OpenTokSDK.Util
             request.ContentLength = data.Length;
             request.UserAgent = OpenTokVersion.GetVersion();
 
-            if (headers.ContainsKey("Content-type"))
+            if (headers.ContainsKey("Content-Type"))
             {
-                request.ContentType = headers["Content-type"];
-                request.Expect = headers["Content-type"];
-                headers.Remove("Content-type");
+                request.ContentType = headers["Content-Type"];
+                request.Expect = headers["Content-Type"];
+                headers.Remove("Content-Type");
             }
             if (headers.ContainsKey("Method"))
             {
@@ -308,20 +308,20 @@ namespace OpenTokSDK.Util
 
         private string GetRequestPostData(Dictionary<string, object> data, Dictionary<string, string> headers)
         {
-            if (data != null && headers.ContainsKey("Content-type"))
+            if (data != null && headers.ContainsKey("Content-Type"))
             {
-                if (headers["Content-type"] == "application/json")
+                if (headers["Content-Type"] == "application/json")
                 {
                     return JsonConvert.SerializeObject(data, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
                 }
-                else if (headers["Content-type"] == "application/x-www-form-urlencoded")
+                else if (headers["Content-Type"] == "application/x-www-form-urlencoded")
                 {
                     return ProcessParameters(data);
                 }
             }
-            else if (data != null || headers.ContainsKey("Content-type"))
+            else if (data != null || headers.ContainsKey("Content-Type"))
             {
-                throw new OpenTokArgumentException("If Content-type is set in the headers data in the body is expected");
+                throw new OpenTokArgumentException("If Content-Type is set in the headers data in the body is expected");
             }
             return "";
         }
