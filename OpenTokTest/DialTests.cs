@@ -105,6 +105,8 @@ namespace OpenTokSDKTest
             Dictionary<string, string> headersSent = null;
             Dictionary<string, object> dataSent = null;
 
+            string expectedJson = GetResponseJson();
+
             var mockClient = new Mock<HttpClient>();
             mockClient
                 .Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
@@ -112,7 +114,8 @@ namespace OpenTokSDKTest
                 {
                     headersSent = headers;
                     dataSent = data;
-                });
+                })
+                .Returns(expectedJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
@@ -133,6 +136,8 @@ namespace OpenTokSDKTest
             Dictionary<string, string> headersSent = null;
             Dictionary<string, object> dataSent = null;
 
+            string expectedJson = GetResponseJson();
+
             var mockClient = new Mock<HttpClient>();
             mockClient
                 .Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
@@ -140,7 +145,8 @@ namespace OpenTokSDKTest
                 {
                     headersSent = headers;
                     dataSent = data;
-                });
+                })
+                .ReturnsAsync(expectedJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
