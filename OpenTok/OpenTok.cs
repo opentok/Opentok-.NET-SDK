@@ -144,10 +144,9 @@ namespace OpenTokSDK
         /// </returns>
         public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
         {
-
             if (!OpenTokUtils.TestIpAddress(location))
             {
-                throw new OpenTokArgumentException(string.Format("Location {0} is not a valid IP address", location));
+                throw new OpenTokArgumentException($"Location {location} is not a valid IP address");
             }
 
             if (archiveMode == ArchiveMode.ALWAYS && mediaMode != MediaMode.ROUTED)
@@ -176,7 +175,7 @@ namespace OpenTokSDK
             var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
             return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
         }
-
+        
         /// <summary>
         /// Creates a token for connecting to an OpenTok session. In order to authenticate a user
         /// connecting to an OpenTok session, the client passes a token when connecting to the session.
@@ -1329,7 +1328,7 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAll"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMute()</c> method
-        //  to remove the mute state of a session, so that new published streams are not
+        ///  to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>

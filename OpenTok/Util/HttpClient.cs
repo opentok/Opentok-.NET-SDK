@@ -167,8 +167,6 @@ namespace OpenTokSDK.Util
 
                 OpenTokUtils.ValidateTlsVersion(e);
 
-                OpenTokUtils.ValidateTlsVersion(e);
-
                 throw new OpenTokWebException("Error with request submission", e);
             }
 
