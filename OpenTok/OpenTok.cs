@@ -175,7 +175,111 @@ namespace OpenTokSDK
             var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
             return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
         }
-        
+
+        /// <summary>
+        /// Creates a new OpenTok session.
+        /// <para>
+        /// OpenTok sessions do not expire. However, authentication tokens do expire (see the
+        /// generateToken() method). Also note that sessions cannot explicitly be destroyed.
+        /// </para>
+        /// <para>
+        /// A session ID string can be up to 255 characters long.
+        /// </para>
+        /// <para>
+        /// Calling this method results in an OpenTokException in the event of an error.
+        /// Check the error message for details.
+        /// 
+        /// You can also create a session using the
+        /// <a href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok
+        /// REST API</a> or by logging in to your
+        /// <a href="https://tokbox.com/account">TokBox account</a>.
+        /// </para>
+        /// </summary>
+        /// <param name="location">
+        /// An IP address that the OpenTok servers will use to situate the session in its
+        /// global network. If you do not set a location hint, the OpenTok servers will be
+        /// based on the first client connecting to the session.
+        /// </param>
+        /// <param name="mediaMode">
+        /// Whether the session will transmit streams using the OpenTok Media Router
+        /// (<see cref="MediaMode.ROUTED"/>) or not (<see cref="MediaMode.RELAYED"/>).
+        /// By default, the setting is <see cref="MediaMode.RELAYED"/>.
+        /// <para>
+        /// With the parameter set to <see cref="MediaMode.RELAYED"/>, the session will
+        /// attempt to transmit streams directly between clients. If clients cannot connect
+        /// due to firewall restrictions, the session uses the OpenTok TURN server to relay streams.
+        /// </para>
+        /// <para>
+        /// The <a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode">
+        /// OpenTok Media Router</a> provides the following benefits:
+        /// - The OpenTok Media Router can decrease bandwidth usage in multiparty sessions.
+        ///   (When the <paramref name="mediaMode"/> parameter is set to <see cref="MediaMode.ROUTED"/>,
+        ///   each client must send a separate audio-video stream to each client subscribing to it.)
+        /// - The OpenTok Media Router can improve the quality of the user experience through
+        ///   <a href="https://tokbox.com/platform/fallback">audio fallback and video recovery</a>
+        ///   With these features, if a client's connectivity degrades to a degree that it does not
+        ///   support video for a stream it's subscribing to, the video is dropped on that client
+        ///   (without affecting other clients), and the client receives audio only. If the client's
+        ///   connectivity improves, the video returns.
+        /// - The OpenTok Media Router supports the <a href="http://tokbox.com/opentok/tutorials/archiving">archiving</a>
+        ///   feature, which lets you record, save, and retrieve OpenTok sessions.
+        /// </para>
+        /// </param>
+        /// <param name="archiveMode">
+        /// Whether the session is automatically archived (<see cref="ArchiveMode.ALWAYS"/>) or not
+        /// (<see cref="ArchiveMode.MANUAL"/>). By default, the setting is <see cref="ArchiveMode.MANUAL"/>
+        /// and you must call the <see cref="StartArchive"/> method of the OpenTok object to start archiving.
+        /// To archive the session (either automatically or not), you must set the mediaMode parameter to
+        /// <see cref="MediaMode.ROUTED"/>
+        /// </param>
+        /// <returns>
+        /// A Session object representing the new session. The <see cref="Session.Id"/> property of the
+        /// <see cref="Session"/> is the session ID, which uniquely identifies the session. You will use
+        /// this session ID in the client SDKs to identify the session. For example, when using the
+        /// OpenTok.js library, use the session ID when calling the
+        /// <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a>
+        /// method (to initialize an OpenTok session).
+        /// </returns>
+        public async Task<Session> CreateSessionAsync(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
+        {
+            if (!OpenTokUtils.TestIpAddress(location))
+            {
+                throw new OpenTokArgumentException($"Location {location} is not a valid IP address");
+            }
+
+            if (archiveMode == ArchiveMode.ALWAYS && mediaMode != MediaMode.ROUTED)
+            {
+                throw new OpenTokArgumentException("A session with always archive mode must also have the routed media mode.");
+            }
+
+            string preference = mediaMode == MediaMode.RELAYED 
+                ? "enabled" 
+                : "disabled";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
+            var data = new Dictionary<string, object>
+            {
+                {"location", location},
+                {"p2p.preference", preference},
+                {"archiveMode", archiveMode.ToString().ToLowerInvariant()}
+            };
+
+            var response = await Client.PostAsync("session/create", headers, data);
+            var xmlDoc = Client.ReadXmlResponse(response);
+
+            if (xmlDoc.GetElementsByTagName("session_id").Count == 0)
+            {
+                throw new OpenTokWebException("Session could not be provided. Are ApiKey and ApiSecret correctly set?");
+            }
+            var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
+            var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
+            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+        }
+
+
+
+
+
         /// <summary>
         /// Creates a token for connecting to an OpenTok session. In order to authenticate a user
         /// connecting to an OpenTok session, the client passes a token when connecting to the session.
