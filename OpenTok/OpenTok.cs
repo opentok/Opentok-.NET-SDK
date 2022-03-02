@@ -1049,7 +1049,7 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAll"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMute()</c> method
-        //  to remove the mute state of a session, so that new published streams are not
+        /// to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>
@@ -1079,11 +1079,11 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAllAsync"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMuteAsync()</c> method
-        //  to remove the mute state of a session, so that new published streams are not
+        ///  to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>
-        /// Also see the <see cref="DisableForceMutec"/> method.
+        /// Also see the <see cref="DisableForceMute"/> method.
         /// </para>
         /// <param name="sessionId">The session ID.</param>
         /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>

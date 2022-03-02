@@ -2,6 +2,9 @@
 
 namespace OpenTokSDK
 {
+    /// <summary>
+    /// Dial response object containing SIP information
+    /// </summary>
     public class Sip
     {
         /// <summary>
