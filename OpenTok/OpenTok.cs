@@ -1343,7 +1343,7 @@ namespace OpenTokSDK
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "spi", new {
+                { "sip", new {
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
@@ -1400,7 +1400,7 @@ namespace OpenTokSDK
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "spi", new {
+                { "sip", new {
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
