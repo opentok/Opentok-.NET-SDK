@@ -20,9 +20,7 @@ namespace OpenTokSDKTest
             var opentok = new OpenTok(apiKey, apiSecret);
             Assert.IsType<OpenTok>(opentok);
         }
-
         
-
         [Fact]
         public void GenerateTokenTest()
         {

@@ -252,8 +252,8 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("A session with always archive mode must also have the routed media mode.");
             }
 
-            string preference = mediaMode == MediaMode.RELAYED 
-                ? "enabled" 
+            string preference = mediaMode == MediaMode.RELAYED
+                ? "enabled"
                 : "disabled";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
@@ -275,10 +275,6 @@ namespace OpenTokSDK
             var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
             return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
         }
-
-
-
-
 
         /// <summary>
         /// Creates a token for connecting to an OpenTok session. In order to authenticate a user
@@ -403,12 +399,12 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
             }
-            
+
             if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
             {
                 data.Add("resolution", resolution);
             }
-            
+
             if (layout != null)
             {
                 if (layout?.Type == LayoutType.custom && string.IsNullOrEmpty(layout?.StyleSheet) ||
@@ -416,7 +412,7 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                
+
                 if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
@@ -430,6 +426,115 @@ namespace OpenTokSDK
             }
 
             string response = Client.Post(url, headers, data);
+            return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /// <summary>
+        /// Starts archiving an OpenTok session.
+        /// <para>
+        /// Clients must be actively connected to the OpenTok session for you to successfully start
+        /// recording an archive.
+        /// </para>
+        /// <para>
+        /// You can only record one archive at a time for a given session. You can only record
+        /// archives of sessions that uses the OpenTok Media Router (sessions with the media mode set
+        /// to routed); you cannot archive sessions with the media mode set to relayed.
+        /// </para>
+        /// <para>
+        /// Note that you can have the session be automatically archived by setting the archiveMode
+        /// parameter of the <see cref="CreateSession"/> method to <see cref="ArchiveMode.ALWAYS"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="sessionId">
+        /// The session ID of the OpenTok session to archive.
+        /// </param>
+        /// <param name="name">
+        /// The name of the archive. You can use this name to identify the archive. It is a property
+        /// of the Archive object, and it is a property of archive-related events in the OpenTok client
+        /// libraries.
+        /// </param>
+        /// <param name="hasVideo">
+        /// Whether the archive will record video (true) or not (false). The default value is true
+        /// (video is recorded). If you set both <paramref name="hasAudio"/> and <paramref name="hasVideo"/>
+        /// to false, the call to the <see cref="StartArchive"/> method results in an error.
+        /// </param>
+        /// <param name="hasAudio">
+        /// Whether the archive will record audio (true) or not (false). The default value is true
+        /// (audio is recorded). If you set both <paramref name="hasAudio"/> and <paramref name="hasVideo"/>
+        /// to false, the call to the <see cref="StartArchive"/> method results in an error.
+        /// </param>
+        /// <param name="outputMode">
+        /// Whether all streams in the archive are recorded to a single file (<see cref="OutputMode.COMPOSED"/>,
+        /// the default) or to individual files (<see cref="OutputMode.INDIVIDUAL"/>).
+        /// </param>
+        /// <param name="resolution">
+        /// The resolution for the archive. The default for <see cref="OutputMode.COMPOSED"/> is "640x480".
+        /// You cannot specify the resolution for <see cref="OutputMode.INDIVIDUAL"/>.
+        /// </param>
+        /// <param name="layout">
+        /// The layout that you want to use for your archive. If type is set to <see cref="LayoutType.custom"/>
+        /// you must provide a StyleSheet string to Vonage how to layout your archive.
+        /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the archive are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the archive using the
+        /// <see cref="OpenTok.AddStreamToArchive"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchive"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
+        /// </param>
+        /// <returns>
+        /// The Archive object. This object includes properties defining the archive, including the archive ID.
+        /// </returns>
+        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("Session not valid");
+            }
+            string url = $"v2/project/{ApiKey}/archive";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId }, 
+                { "name", name }, 
+                { "hasVideo", hasVideo }, 
+                { "hasAudio", hasAudio }, 
+                { "outputMode", outputMode.ToString().ToLowerInvariant() }
+            };
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            {
+                throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
+            }
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+            {
+                data.Add("resolution", resolution);
+            }
+
+            if (layout != null)
+            {
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet) ||
+                    layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
+                }
+
+                if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
+                data.Add("layout", layout);
+            }
+
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
+            }
+
+            string response = await Client.PostAsync(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
@@ -750,7 +855,7 @@ namespace OpenTokSDK
         /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> methods).
         /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
-        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, 
+        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null,
             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -928,7 +1033,7 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
                 }
-                
+
                 if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
@@ -1238,7 +1343,7 @@ namespace OpenTokSDK
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "spi", new { 
+                { "spi", new {
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
@@ -1246,7 +1351,7 @@ namespace OpenTokSDK
                         secure = options?.Secure,
                         video = options?.Video,
                         observeForceMute = options?.ObserveForceMute
-                    } 
+                    }
                 }
             };
             Client.Post(url, headers, data);
@@ -1308,7 +1413,7 @@ namespace OpenTokSDK
             };
             return Client.PostAsync(url, headers, data);
         }
-        
+
         /// <summary>
         /// Force the publisher of a specific stream to mute its published audio.
         /// </summary>
@@ -1364,7 +1469,7 @@ namespace OpenTokSDK
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             await Client.PostAsync(url, headers, null);
         }
-        
+
         /// <summary>
         /// Forces all streams (except for an optional list of streams) in a session to mute
         /// published audio.
