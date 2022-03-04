@@ -54,7 +54,8 @@ var OpenTok = new OpenTok(ApiKey, ApiSecret);
 ### Creating Sessions
 
 To create an OpenTok Session, call the `OpenTok` instance's
-`CreateSession(string location, MediaMode mediaMode, ArchiveMode archiveMode)`
+`CreateSession(string location, MediaMode mediaMode, ArchiveMode archiveMode)` or
+`CreateSessionAsync(string location, MediaMode mediaMode, ArchiveMode archiveMode)`
 method. Each of the parameters are optional and can be omitted if not needed. They are:
 
 - `string location` : An IPv4 address used as a location hint. (default: "")
@@ -118,7 +119,14 @@ Archive. Note that you can only start an Archive on a Session that has clients c
 ```csharp
 // A simple Archive (without a name)
 var archive = OpenTok.StartArchive(sessionId);
-
+```
+or
+```csharp
+// A simple Archive (without a name)
+var = await OpenTok.StartArchiveAsync(sessionId);
+```
+then
+```csharp
 // Store this archive ID in the database for later use
 Guid archiveId = archive.Id;
 ```
