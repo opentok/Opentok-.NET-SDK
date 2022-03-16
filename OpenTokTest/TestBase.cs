@@ -33,13 +33,23 @@ namespace OpenTokSDKTest
 
         protected string GetResponseJson([CallerMemberName] string name = null)
         {
-            name = $"{name}-response";
+            return ReadDataFile(name, "json");
+        }
+
+        protected string GetResponseXml([CallerMemberName] string name = null)
+        {
+            return ReadDataFile(name, "xml");
+        }
+
+        private string ReadDataFile(string testName, string fileExtension)
+        {
+            testName = $"{testName}-response";
 
             var type = GetType().Name;
             var ns = GetType().Namespace;
             if (ns != null)
             {
-                var path = Path.Combine(AssemblyDirectory, "Data", type, name + ".json");
+                var path = Path.Combine(AssemblyDirectory, "Data", type, $"{testName}.{fileExtension}");
 
                 if (!File.Exists(path))
                 {

@@ -8,6 +8,19 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Data\ArchiveTests\StartArchive-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsync-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncAutoStreamMode-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncCreateInvalidIndividualModeArchivingWithResolution-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncCustomLayout-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncCustomLayoutMissingStylesheet-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncIndividual-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncManualStreamMode-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncNoResolution-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncVerticalLayout-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncVerticalLayoutWithStyleSheet-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncVoiceOnly-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncWithHDResolution-response.json" />
+    <None Remove="Data\ArchiveTests\StartArchiveAsyncWithSDResolution-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveAutoStreamMode-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveCreateInvalidIndividualModeArchivingWithResolution-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveCustomLayout-response.json" />
@@ -24,22 +37,46 @@
     <None Remove="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\ArchiveTests\StartArchiveAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncAutoStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveAutoStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncCreateInvalidIndividualModeArchivingWithResolution-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\ArchiveTests\StartArchiveCreateInvalidIndividualModeArchivingWithResolution-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncCustomLayout-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveCustomLayout-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncCustomLayoutMissingStylesheet-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\ArchiveTests\StartArchiveCustomLayoutMissingStylesheet-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncIndividual-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveIndividual-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncManualStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveManualStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncNoResolution-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\ArchiveTests\StartArchiveNoResolution-response.json">
@@ -48,16 +85,31 @@
     <Content Include="Data\ArchiveTests\StartArchive-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncVerticalLayout-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveVerticalLayout-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncVerticalLayoutWithStyleSheet-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\ArchiveTests\StartArchiveVerticalLayoutWithStyleSheet-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncVoiceOnly-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveVoiceOnly-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncWithHDResolution-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveWithHDResolution-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveAsyncWithSDResolution-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\ArchiveTests\StartArchiveWithSDResolution-response.json">

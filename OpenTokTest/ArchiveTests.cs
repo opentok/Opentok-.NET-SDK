@@ -19,7 +19,8 @@ namespace OpenTokSDKTest
             string responseJson = GetResponseJson();
 
             var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .Returns(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
@@ -30,6 +31,26 @@ namespace OpenTokSDKTest
             Assert.NotEqual(Guid.Empty, archive.Id);
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveAsync()
+        {
+            string responseJson = GetResponseJson();
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(SessionId, null);
+
+            Assert.NotNull(archive);
+            Assert.Equal(SessionId, archive.SessionId);
+            Assert.NotEqual(Guid.Empty, archive.Id);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -47,6 +68,24 @@ namespace OpenTokSDKTest
             Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncIndividual()
+        {
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(SessionId, outputMode: OutputMode.INDIVIDUAL);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.INDIVIDUAL, archive.OutputMode);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -70,12 +109,43 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public async Task StartArchiveAsyncWithSDResolution()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "640x480";
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
+            Assert.Equal(resolution, archive.Resolution);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
         public void StartArchiveScreenShareInvalidType()
         {
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             ArchiveLayout layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.BestFit };
 
             var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.StartArchive("abcd", layout: layout));
+            Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", exception.Message);
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncScreenShareInvalidType()
+        {
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            ArchiveLayout layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.BestFit };
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.StartArchiveAsync("abcd", layout: layout));
             Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", exception.Message);
         }
 
@@ -101,6 +171,28 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public async Task StartArchiveAsyncCustomLayout()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "1280x720";
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            var layout = new ArchiveLayout { Type = LayoutType.custom, StyleSheet = "stream.instructor {position: absolute; width: 100%;  height:50%;}" };
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
+            Assert.Equal(resolution, archive.Resolution);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
         public void StartArchiveVerticalLayout()
         {
             string sessionId = "SESSIONID";
@@ -120,6 +212,32 @@ namespace OpenTokSDKTest
             Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
             Assert.Equal(resolution, archive.Resolution);
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncVerticalLayout()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "1280x720";
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+            
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.verticalPresentation,
+                StyleSheet = ""
+            };
+
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution, layout: layout);
+            
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
+            Assert.Equal(resolution, archive.Resolution);
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -146,6 +264,32 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public async Task StartArchiveAsyncVerticalLayoutWithStyleSheet()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "1280x720";
+            string responseJson = GetResponseJson();
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.verticalPresentation,
+                StyleSheet = "blah"
+            };
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+                await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution,
+                    layout: layout));
+
+            Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", exception.Message);
+        }
+
+        [Fact]
         public void StartArchiveCustomLayoutMissingStylesheet()
         {
             string sessionId = "SESSIONID";
@@ -160,6 +304,27 @@ namespace OpenTokSDKTest
 
             var exception = Assert.Throws<OpenTokArgumentException>(() =>
                 opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution,
+                    layout: layout));
+
+            Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", exception.Message);
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncCustomLayoutMissingStylesheet()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "1280x720";
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            var layout = new ArchiveLayout { Type = LayoutType.custom };
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+               await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution,
                     layout: layout));
 
             Assert.Equal("Could not set layout, stylesheet must be set if and only if type is custom", exception.Message);
@@ -186,6 +351,27 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public async Task StartArchiveAsyncWithHDResolution()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "1280x720";
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
+
+            Assert.NotNull(archive);
+            Assert.Equal(OutputMode.COMPOSED, archive.OutputMode);
+            Assert.Equal(resolution, archive.Resolution);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
         public void StartArchiveCreateInvalidIndividualModeArchivingWithResolution()
         {
             string sessionId = "SESSIONID";
@@ -199,6 +385,25 @@ namespace OpenTokSDKTest
 
             var exception = Assert.Throws<OpenTokArgumentException>(() =>
                 opentok.StartArchive(sessionId, outputMode: OutputMode.INDIVIDUAL, resolution: resolution));
+
+            Assert.Equal("Resolution can't be specified for Individual Archives", exception.Message);
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncCreateInvalidIndividualModeArchivingWithResolution()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "640x480";
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+                await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.INDIVIDUAL, resolution: resolution));
 
             Assert.Equal("Resolution can't be specified for Individual Archives", exception.Message);
         }
@@ -224,6 +429,27 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public async Task StartArchiveAsyncNoResolution()
+        {
+            string resolution = "640x480";
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(SessionId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(SessionId, archive.SessionId);
+            Assert.NotEqual(Guid.Empty, archive.Id);
+            Assert.Equal(resolution, archive.Resolution);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
         public void StartArchiveVoiceOnly()
         {
             string responseJson = GetResponseJson();
@@ -239,6 +465,25 @@ namespace OpenTokSDKTest
             Assert.NotEqual(Guid.Empty, archive.Id);
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncVoiceOnly()
+        {
+            string responseJson = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(SessionId, hasVideo: false);
+
+            Assert.NotNull(archive);
+            Assert.Equal(SessionId, archive.SessionId);
+            Assert.NotEqual(Guid.Empty, archive.Id);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
         [Fact]
@@ -270,6 +515,34 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public async Task StartArchiveAsyncAutoStreamMode()
+        {
+            string sessionId = "SESSIONID";
+            string responseJson = GetResponseJson();
+            Dictionary<string, object> dataSent = null;
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson)
+                .Callback<string, Dictionary<string, string>, Dictionary<string, object>>((url, headers, data) =>
+                {
+                    dataSent = data;
+                });
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(sessionId, streamMode: StreamMode.Auto);
+
+            Assert.NotNull(archive);
+            Assert.Equal(StreamMode.Auto, archive.StreamMode);
+
+            Assert.True(dataSent.ContainsKey("streamMode"));
+            Assert.Equal("auto", dataSent["streamMode"]);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
         public void StartArchiveManualStreamMode()
         {
             string sessionId = "SESSIONID";
@@ -295,6 +568,34 @@ namespace OpenTokSDKTest
             Assert.Equal("manual", dataSent["streamMode"]);
 
             mockClient.Verify(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StartArchiveAsyncManualStreamMode()
+        {
+            string sessionId = "SESSIONID";
+            string responseJson = GetResponseJson();
+            Dictionary<string, object> dataSent = null;
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson)
+                .Callback<string, Dictionary<string, string>, Dictionary<string, object>>((url, headers, data) =>
+                {
+                    dataSent = data;
+                });
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StartArchiveAsync(sessionId, streamMode: StreamMode.Manual);
+
+            Assert.NotNull(archive);
+            Assert.Equal(StreamMode.Manual, archive.StreamMode);
+
+            Assert.True(dataSent.ContainsKey("streamMode"));
+            Assert.Equal("manual", dataSent["streamMode"]);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
 

@@ -144,10 +144,9 @@ namespace OpenTokSDK
         /// </returns>
         public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
         {
-
             if (!OpenTokUtils.TestIpAddress(location))
             {
-                throw new OpenTokArgumentException(string.Format("Location {0} is not a valid IP address", location));
+                throw new OpenTokArgumentException($"Location {location} is not a valid IP address");
             }
 
             if (archiveMode == ArchiveMode.ALWAYS && mediaMode != MediaMode.ROUTED)
@@ -166,6 +165,106 @@ namespace OpenTokSDK
             };
 
             var response = Client.Post("session/create", headers, data);
+            var xmlDoc = Client.ReadXmlResponse(response);
+
+            if (xmlDoc.GetElementsByTagName("session_id").Count == 0)
+            {
+                throw new OpenTokWebException("Session could not be provided. Are ApiKey and ApiSecret correctly set?");
+            }
+            var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
+            var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
+            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+        }
+
+        /// <summary>
+        /// Creates a new OpenTok session.
+        /// <para>
+        /// OpenTok sessions do not expire. However, authentication tokens do expire (see the
+        /// generateToken() method). Also note that sessions cannot explicitly be destroyed.
+        /// </para>
+        /// <para>
+        /// A session ID string can be up to 255 characters long.
+        /// </para>
+        /// <para>
+        /// Calling this method results in an OpenTokException in the event of an error.
+        /// Check the error message for details.
+        /// 
+        /// You can also create a session using the
+        /// <a href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok
+        /// REST API</a> or by logging in to your
+        /// <a href="https://tokbox.com/account">TokBox account</a>.
+        /// </para>
+        /// </summary>
+        /// <param name="location">
+        /// An IP address that the OpenTok servers will use to situate the session in its
+        /// global network. If you do not set a location hint, the OpenTok servers will be
+        /// based on the first client connecting to the session.
+        /// </param>
+        /// <param name="mediaMode">
+        /// Whether the session will transmit streams using the OpenTok Media Router
+        /// (<see cref="MediaMode.ROUTED"/>) or not (<see cref="MediaMode.RELAYED"/>).
+        /// By default, the setting is <see cref="MediaMode.RELAYED"/>.
+        /// <para>
+        /// With the parameter set to <see cref="MediaMode.RELAYED"/>, the session will
+        /// attempt to transmit streams directly between clients. If clients cannot connect
+        /// due to firewall restrictions, the session uses the OpenTok TURN server to relay streams.
+        /// </para>
+        /// <para>
+        /// The <a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode">
+        /// OpenTok Media Router</a> provides the following benefits:
+        /// - The OpenTok Media Router can decrease bandwidth usage in multiparty sessions.
+        ///   (When the <paramref name="mediaMode"/> parameter is set to <see cref="MediaMode.ROUTED"/>,
+        ///   each client must send a separate audio-video stream to each client subscribing to it.)
+        /// - The OpenTok Media Router can improve the quality of the user experience through
+        ///   <a href="https://tokbox.com/platform/fallback">audio fallback and video recovery</a>
+        ///   With these features, if a client's connectivity degrades to a degree that it does not
+        ///   support video for a stream it's subscribing to, the video is dropped on that client
+        ///   (without affecting other clients), and the client receives audio only. If the client's
+        ///   connectivity improves, the video returns.
+        /// - The OpenTok Media Router supports the <a href="http://tokbox.com/opentok/tutorials/archiving">archiving</a>
+        ///   feature, which lets you record, save, and retrieve OpenTok sessions.
+        /// </para>
+        /// </param>
+        /// <param name="archiveMode">
+        /// Whether the session is automatically archived (<see cref="ArchiveMode.ALWAYS"/>) or not
+        /// (<see cref="ArchiveMode.MANUAL"/>). By default, the setting is <see cref="ArchiveMode.MANUAL"/>
+        /// and you must call the <see cref="StartArchive"/> method of the OpenTok object to start archiving.
+        /// To archive the session (either automatically or not), you must set the mediaMode parameter to
+        /// <see cref="MediaMode.ROUTED"/>
+        /// </param>
+        /// <returns>
+        /// A Session object representing the new session. The <see cref="Session.Id"/> property of the
+        /// <see cref="Session"/> is the session ID, which uniquely identifies the session. You will use
+        /// this session ID in the client SDKs to identify the session. For example, when using the
+        /// OpenTok.js library, use the session ID when calling the
+        /// <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a>
+        /// method (to initialize an OpenTok session).
+        /// </returns>
+        public async Task<Session> CreateSessionAsync(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
+        {
+            if (!OpenTokUtils.TestIpAddress(location))
+            {
+                throw new OpenTokArgumentException($"Location {location} is not a valid IP address");
+            }
+
+            if (archiveMode == ArchiveMode.ALWAYS && mediaMode != MediaMode.ROUTED)
+            {
+                throw new OpenTokArgumentException("A session with always archive mode must also have the routed media mode.");
+            }
+
+            string preference = mediaMode == MediaMode.RELAYED
+                ? "enabled"
+                : "disabled";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
+            var data = new Dictionary<string, object>
+            {
+                {"location", location},
+                {"p2p.preference", preference},
+                {"archiveMode", archiveMode.ToString().ToLowerInvariant()}
+            };
+
+            var response = await Client.PostAsync("session/create", headers, data);
             var xmlDoc = Client.ReadXmlResponse(response);
 
             if (xmlDoc.GetElementsByTagName("session_id").Count == 0)
@@ -300,12 +399,12 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
             }
-            
+
             if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
             {
                 data.Add("resolution", resolution);
             }
-            
+
             if (layout != null)
             {
                 if (layout?.Type == LayoutType.custom && string.IsNullOrEmpty(layout?.StyleSheet) ||
@@ -313,7 +412,7 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                
+
                 if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
@@ -327,6 +426,115 @@ namespace OpenTokSDK
             }
 
             string response = Client.Post(url, headers, data);
+            return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /// <summary>
+        /// Starts archiving an OpenTok session.
+        /// <para>
+        /// Clients must be actively connected to the OpenTok session for you to successfully start
+        /// recording an archive.
+        /// </para>
+        /// <para>
+        /// You can only record one archive at a time for a given session. You can only record
+        /// archives of sessions that uses the OpenTok Media Router (sessions with the media mode set
+        /// to routed); you cannot archive sessions with the media mode set to relayed.
+        /// </para>
+        /// <para>
+        /// Note that you can have the session be automatically archived by setting the archiveMode
+        /// parameter of the <see cref="CreateSession"/> method to <see cref="ArchiveMode.ALWAYS"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="sessionId">
+        /// The session ID of the OpenTok session to archive.
+        /// </param>
+        /// <param name="name">
+        /// The name of the archive. You can use this name to identify the archive. It is a property
+        /// of the Archive object, and it is a property of archive-related events in the OpenTok client
+        /// libraries.
+        /// </param>
+        /// <param name="hasVideo">
+        /// Whether the archive will record video (true) or not (false). The default value is true
+        /// (video is recorded). If you set both <paramref name="hasAudio"/> and <paramref name="hasVideo"/>
+        /// to false, the call to the <see cref="StartArchive"/> method results in an error.
+        /// </param>
+        /// <param name="hasAudio">
+        /// Whether the archive will record audio (true) or not (false). The default value is true
+        /// (audio is recorded). If you set both <paramref name="hasAudio"/> and <paramref name="hasVideo"/>
+        /// to false, the call to the <see cref="StartArchive"/> method results in an error.
+        /// </param>
+        /// <param name="outputMode">
+        /// Whether all streams in the archive are recorded to a single file (<see cref="OutputMode.COMPOSED"/>,
+        /// the default) or to individual files (<see cref="OutputMode.INDIVIDUAL"/>).
+        /// </param>
+        /// <param name="resolution">
+        /// The resolution for the archive. The default for <see cref="OutputMode.COMPOSED"/> is "640x480".
+        /// You cannot specify the resolution for <see cref="OutputMode.INDIVIDUAL"/>.
+        /// </param>
+        /// <param name="layout">
+        /// The layout that you want to use for your archive. If type is set to <see cref="LayoutType.custom"/>
+        /// you must provide a StyleSheet string to Vonage how to layout your archive.
+        /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the archive are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the archive using the
+        /// <see cref="OpenTok.AddStreamToArchive"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchive"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
+        /// </param>
+        /// <returns>
+        /// The Archive object. This object includes properties defining the archive, including the archive ID.
+        /// </returns>
+        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("Session not valid");
+            }
+            string url = $"v2/project/{ApiKey}/archive";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId }, 
+                { "name", name }, 
+                { "hasVideo", hasVideo }, 
+                { "hasAudio", hasAudio }, 
+                { "outputMode", outputMode.ToString().ToLowerInvariant() }
+            };
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            {
+                throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
+            }
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+            {
+                data.Add("resolution", resolution);
+            }
+
+            if (layout != null)
+            {
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet) ||
+                    layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
+                }
+
+                if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
+                data.Add("layout", layout);
+            }
+
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
+            }
+
+            string response = await Client.PostAsync(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
@@ -647,7 +855,7 @@ namespace OpenTokSDK
         /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> methods).
         /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
-        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, 
+        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null,
             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null)
         {
             if (string.IsNullOrEmpty(sessionId))
@@ -825,7 +1033,7 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
                 }
-                
+
                 if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
@@ -1135,7 +1343,7 @@ namespace OpenTokSDK
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "spi", new { 
+                { "sip", new {
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
@@ -1143,7 +1351,7 @@ namespace OpenTokSDK
                         secure = options?.Secure,
                         video = options?.Video,
                         observeForceMute = options?.ObserveForceMute
-                    } 
+                    }
                 }
             };
             Client.Post(url, headers, data);
@@ -1192,7 +1400,7 @@ namespace OpenTokSDK
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "spi", new {
+                { "sip", new {
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
@@ -1205,7 +1413,7 @@ namespace OpenTokSDK
             };
             return Client.PostAsync(url, headers, data);
         }
-        
+
         /// <summary>
         /// Force the publisher of a specific stream to mute its published audio.
         /// </summary>
@@ -1261,7 +1469,7 @@ namespace OpenTokSDK
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             await Client.PostAsync(url, headers, null);
         }
-        
+
         /// <summary>
         /// Forces all streams (except for an optional list of streams) in a session to mute
         /// published audio.
@@ -1329,7 +1537,7 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAll"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMute()</c> method
-        //  to remove the mute state of a session, so that new published streams are not
+        ///  to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>
