@@ -123,7 +123,7 @@ var archive = OpenTok.StartArchive(sessionId);
 or
 ```csharp
 // A simple Archive (without a name)
-var = await OpenTok.StartArchiveAsync(sessionId);
+var archive = await OpenTok.StartArchiveAsync(sessionId);
 ```
 then
 ```csharp
