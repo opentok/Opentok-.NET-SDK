@@ -604,12 +604,23 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Archive"/> object.</returns>
         public Archive GetArchive(string archiveId)
         {
-            string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
-            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
             string response = Client.Get(url);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
 
+        /// <summary>
+        /// Gets an Archive object for the given archive ID.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <returns>The <see cref="Archive"/> object.</returns>
+        public async Task<Archive> GetArchiveAsync(string archiveId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            string response = await Client.GetAsync(url);
+            return JsonConvert.DeserializeObject<Archive>(response);
+        }
+        
         /// <summary>
         /// Deletes an OpenTok archive.
         /// <para>
@@ -621,10 +632,32 @@ namespace OpenTokSDK
         /// <param name="archiveId">The archive ID of the archive you want to delete.</param>
         public void DeleteArchive(string archiveId)
         {
-            string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
         }
+
+        /// <summary>
+        /// Deletes an OpenTok archive.
+        /// <para>
+        /// You can only delete an archive which has a status of "available" or "uploaded". Deleting
+        /// an archive removes its record from the list of archives. For an "available" archive, it
+        /// also removes the archive file, making it unavailable for download.
+        /// </para>
+        /// </summary>
+        /// <param name="archiveId">The archive ID of the archive you want to delete.</param>
+        public Task DeleteArchiveAsync(string archiveId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            var headers = new Dictionary<string, string>();
+            return Client.DeleteAsync(url, headers);
+        }
+
+
+
+
+
+
 
         /// <summary>
         /// Adds a stream to a currently running composed archive that was started with the

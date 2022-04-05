@@ -56,11 +56,19 @@ namespace OpenTokSDK.Util
         {
             return Get(url, new Dictionary<string, string>());
         }
-
+        
         public virtual string Get(string url, Dictionary<string, string> headers)
         {
             headers.Add("Method", "GET");
             return DoRequest(url, headers, null);
+        }
+
+        public virtual Task<string> GetAsync(string url, Dictionary<string, string> headers = null)
+        {
+            if(headers == null) headers = new Dictionary<string, string>();
+
+            headers.Add("Method", "GET");
+            return DoRequestAsync(url, headers, null);
         }
 
         public virtual string Post(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
@@ -97,6 +105,12 @@ namespace OpenTokSDK.Util
         {
             headers.Add("Method", "DELETE");
             return DoRequest(url, headers, null);
+        }
+
+        public virtual Task<string> DeleteAsync(string url, Dictionary<string, string> headers)
+        {
+            headers.Add("Method", "DELETE");
+            return DoRequestAsync(url, headers, null);
         }
 
         public string DoRequest(string url, Dictionary<string, string> specificHeaders,

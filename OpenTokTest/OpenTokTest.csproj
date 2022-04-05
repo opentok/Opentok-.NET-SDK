@@ -7,6 +7,12 @@
     <RootNamespace>OpenTokSDKTest</RootNamespace>        
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Data\ArchiveTests\GetArchive-response.json" />
+    <None Remove="Data\ArchiveTests\GetArchiveAsync-response.json" />
+    <None Remove="Data\ArchiveTests\GetArchiveWithUnknownProperties-response.json" />
+    <None Remove="Data\ArchiveTests\GetArchiveWithUnknownPropertiesAsync-response.json" />
+    <None Remove="Data\ArchiveTests\GetExpiredArchive-response.json" />
+    <None Remove="Data\ArchiveTests\GetExpiredArchiveAsync-response.json" />
     <None Remove="Data\ArchiveTests\StartArchive-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveAsync-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveAsyncAutoStreamMode-response.json" />
@@ -37,7 +43,25 @@
     <None Remove="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\ArchiveTests\GetArchiveAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\GetArchiveWithUnknownPropertiesAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\GetArchiveWithUnknownProperties-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\GetExpiredArchiveAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\GetExpiredArchive-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StartArchiveAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\GetArchive-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\ArchiveTests\StartArchiveAsyncAutoStreamMode-response.json">
