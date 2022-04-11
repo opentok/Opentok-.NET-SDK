@@ -407,8 +407,8 @@ namespace OpenTokSDK
 
             if (layout != null)
             {
-                if (layout?.Type == LayoutType.custom && string.IsNullOrEmpty(layout?.StyleSheet) ||
-                    layout?.Type != LayoutType.custom && !string.IsNullOrEmpty(layout?.StyleSheet))
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet) ||
+                    layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
@@ -652,12 +652,6 @@ namespace OpenTokSDK
             var headers = new Dictionary<string, string>();
             return Client.DeleteAsync(url, headers);
         }
-
-
-
-
-
-
 
         /// <summary>
         /// Adds a stream to a currently running composed archive that was started with the

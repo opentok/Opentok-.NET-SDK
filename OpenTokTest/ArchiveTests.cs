@@ -1016,6 +1016,28 @@ namespace OpenTokSDKTest
         }
 
         [Fact]
+        public void DeleteArchiveFromArchiveObject()
+        {
+            Guid archiveId = new Guid("30b3ebf1-ba36-4f5b-8def-6f70d9986fe9");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            
+            Archive archive = new Archive(opentok);
+            archive.Id = archiveId;
+
+            archive.Delete();
+
+            mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
+                    url => url.Equals($"v2/project/{ApiKey}/archive/{archiveId}")),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
+
+        [Fact]
         public async Task DeleteArchiveAsync()
         {
             string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
@@ -1029,6 +1051,30 @@ namespace OpenTokSDKTest
                 Client = mockClient.Object
             };
             await opentok.DeleteArchiveAsync(archiveId);
+
+            mockClient.Verify(httpClient => httpClient.DeleteAsync(It.Is<string>(
+                    url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task DeleteArchiveAsyncFromArchiveObject()
+        {
+            Guid archiveId = new Guid("30b3ebf1-ba36-4f5b-8def-6f70d9986fe9");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.DeleteAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret)
+            {
+                Client = mockClient.Object
+            };
+
+            Archive archive = new Archive(opentok);
+            archive.Id = archiveId;
+
+            await archive.DeleteAsync();
 
             mockClient.Verify(httpClient => httpClient.DeleteAsync(It.Is<string>(
                     url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)),
