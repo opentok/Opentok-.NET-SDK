@@ -25,6 +25,30 @@ namespace OpenTokSDK
             STARTED
         }
 
+        /// <summary>
+        /// Broadcast settings
+        /// </summary>
+        public class BroadcastSettings
+        {
+            /// <summary>
+            /// Broasdcast HLS settings
+            /// </summary>
+            [JsonProperty("hls")]
+            public BroadcastSettingsHls Hls { get; private set; }
+        }
+
+        /// <summary>
+        /// HLS Broadcast settings
+        /// </summary>
+        public class BroadcastSettingsHls
+        {
+            /// <summary>
+            /// Low latency on or off
+            /// </summary>
+            [JsonProperty("lowLatency")]
+            public bool LowLatency { get; private set; }
+        }
+
         private readonly OpenTok _opentok;
 
         /// <summary>
@@ -37,7 +61,7 @@ namespace OpenTokSDK
 
         internal Broadcast(OpenTok opentok)
         {
-            this._opentok = opentok;
+            _opentok = opentok;
         }
 
         internal void CopyBroadcast(Broadcast broadcast)
@@ -52,6 +76,7 @@ namespace OpenTokSDK
             Status = broadcast.Status;
             BroadcastUrls = broadcast.BroadcastUrls;
             StreamMode = broadcast.StreamMode;
+            Settings = broadcast.Settings;
 
             if (BroadcastUrls == null)
                 return;
@@ -88,7 +113,7 @@ namespace OpenTokSDK
         /// The session ID of the OpenTok session associated with this broadcast.
         /// </summary>
         [JsonProperty("sessionId")]
-        public String SessionId { get; set; }
+        public string SessionId { get; set; }
 
         /// <summary>
         /// The OpenTok API key associated with the broadcast.
@@ -134,7 +159,7 @@ namespace OpenTokSDK
         /// <summary>
         /// HLS Url.
         /// </summary>
-        public String Hls { get; set; }
+        public string Hls { get; set; }
 
         /// <summary>
         /// The broadcast HLS and RTMP URLs.
@@ -147,6 +172,12 @@ namespace OpenTokSDK
         /// </summary>
         [JsonProperty("streamMode")]
         public StreamMode StreamMode { get; set; }
+
+        /// <summary>
+        /// Broadcast settings
+        /// </summary>
+        [JsonProperty("settings")]
+        public BroadcastSettings Settings { get; set; }
 
         /// <summary>
         /// Stops the live broadcasting if it is started.
