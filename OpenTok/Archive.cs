@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OpenTokSDK
 {
@@ -226,10 +227,20 @@ namespace OpenTokSDK
         /// </summary>
         public void Delete()
         {
-            if (_opentok != null)
-            {
-                _opentok.DeleteArchive(Id.ToString());
-            }
+            _opentok?.DeleteArchive(Id.ToString());
+        }
+
+        /// <summary>
+        /// Deletes the OpenTok archive.
+        /// <para>
+        /// You can only delete an archive which has a status of "available" or "uploaded". Deleting
+        /// an archive removes its record from the list of archives. For an "available" archive, it
+        /// also removes the archive file, making it unavailable for download.
+        /// </para>
+        /// </summary>
+        public Task DeleteAsync()
+        {
+            return _opentok?.DeleteArchiveAsync(Id.ToString());
         }
     }
 }

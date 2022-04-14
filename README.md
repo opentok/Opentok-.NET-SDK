@@ -158,6 +158,10 @@ To get an `OpenTokSDK.Archive` instance (and all the information about it) from 
 ```csharp
 var archive = OpenTok.GetArchive(archiveId);
 ```
+or
+```csharp
+var archive = OpenTok.GetArchiveAsync(archiveId);
+```
 
 To delete an archive, you can call a `OpenTokSDK.OpenTok` instance's `DeleteArchive(archiveId)` method or
 call the `OpenTokSDK.Archive` instance's `Delete()` method.
@@ -168,6 +172,16 @@ OpenTok.DeleteArchive(archiveId);
 
 // Delete an archive from an Archive instance (returned from GetArchive)
 Archive.Delete();
+```
+
+or
+
+```csharp
+// Delete an archive from an archive ID (fetched from database)
+OpenTok.DeleteArchiveAsync(archiveId);
+
+// Delete an archive from an Archive instance (returned from GetArchive)
+Archive.DeleteAsync();
 ```
 
 You can also get a list of all the Archives you've created (up to 1000) with your API Key. This is
