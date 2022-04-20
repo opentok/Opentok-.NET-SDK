@@ -31,22 +31,29 @@ namespace OpenTokSDK
         public class BroadcastSettings
         {
             /// <summary>
-            /// Broasdcast HLS settings
+            /// Broadcast HLS settings
             /// </summary>
             [JsonProperty("hls")]
-            public BroadcastSettingsHls Hls { get; private set; }
+            public BroadcastHlsSettings Hls { get; private set; }
         }
 
         /// <summary>
         /// HLS Broadcast settings
         /// </summary>
-        public class BroadcastSettingsHls
+        public class BroadcastHlsSettings
         {
             /// <summary>
-            /// Low latency on or off
+            /// Whether low-latency mode is enabled for the HLS stream.
             /// </summary>
             [JsonProperty("lowLatency")]
             public bool LowLatency { get; private set; }
+
+
+            /// <summary>
+            /// Whether DVR functionality is enabled for this broadcast.
+            /// </summary>
+            [JsonProperty("dvr")]
+            public bool DVR { get; private set; }
         }
 
         private readonly OpenTok _opentok;
@@ -174,7 +181,8 @@ namespace OpenTokSDK
         public StreamMode StreamMode { get; set; }
 
         /// <summary>
-        /// Broadcast settings
+        /// Further details on an HLS broadcast stream. This includes information on
+        /// whether the stream supports DVR functionality and low-latency mode.
         /// </summary>
         [JsonProperty("settings")]
         public BroadcastSettings Settings { get; set; }
