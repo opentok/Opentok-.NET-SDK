@@ -870,7 +870,7 @@ namespace OpenTokSDK
         /// or not (false, the default). With DVR enabled,
         /// the HLS URL will include a ?DVR query string appended to the end.</param>
         /// <param name="lowLatency">Whether to enable low-latency mode for the HLSstream. Some HLS players do not support low-latency mode. 
-        /// This feature is incompatible with DVR mode HLS broadcasts. This is a beta feature.</param>
+        /// This feature is incompatible with DVR mode HLS broadcasts.</param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null)
