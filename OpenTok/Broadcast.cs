@@ -26,7 +26,9 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Broadcast settings
+        /// Further details on the HLS broadcast stream. This properties object includes an hls property with the following properties:
+        /// dvr — Whether <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a> is enabled for this broadcast.
+        /// lowLatency — Whether <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a> is enabled for the HLS stream.
         /// </summary>
         public class BroadcastSettings
         {
