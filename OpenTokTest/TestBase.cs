@@ -1,8 +1,11 @@
 ﻿using System;
+using System.CodeDom;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using JWT.Algorithms;
 
 namespace OpenTokSDKTest
 {
@@ -34,6 +37,15 @@ namespace OpenTokSDKTest
         protected string GetResponseJson([CallerMemberName] string name = null)
         {
             return ReadDataFile(name, "json");
+        }
+
+        static readonly Regex ResponseTokenRegex = new Regex(@"\$(\w+)\$", RegexOptions.Compiled);
+        
+        protected string GetResponseJson(Dictionary<string, string> paramters, [CallerMemberName] string name = null)
+        {
+            var response = GetResponseJson(name);
+            response = ResponseTokenRegex.Replace(response, match => paramters[match.Groups[1].Value]);
+            return response;
         }
 
         protected string GetResponseXml([CallerMemberName] string name = null)

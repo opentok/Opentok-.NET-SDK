@@ -858,5 +858,227 @@ namespace OpenTokSDKTest
             Assert.NotNull(dataSent);
             Assert.Equal(new Dictionary<string, object> { { "removeStream", streamId } }, dataSent);
         }
+
+        // Get Archive
+
+        [Fact]
+        public void GetArchive()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = GetResponseJson(new Dictionary<string, string> { { "archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8" } });
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret)
+            {
+                Client = mockClient.Object
+            };
+            Archive archive = opentok.GetArchive(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(ApiKey, archive.PartnerId);
+            Assert.Equal(archiveId, archive.Id.ToString());
+            Assert.Equal(1395187836000L, archive.CreatedAt);
+            Assert.Equal(62, archive.Duration);
+            Assert.Equal("", archive.Name);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(8347554, archive.Size);
+            Assert.Equal(ArchiveStatus.AVAILABLE, archive.Status);
+            Assert.Equal("http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" + archiveId + "%2Farchive.mp4?Expires=13951" +
+                    "94362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", archive.Url);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetArchiveAsync()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = GetResponseJson(new Dictionary<string, string> { { "archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8" } });
+            var mockClient = new Mock<HttpClient>();
+            mockClient
+                .Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret)
+            {
+                Client = mockClient.Object
+            };
+            Archive archive = await opentok.GetArchiveAsync(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(ApiKey, archive.PartnerId);
+            Assert.Equal(archiveId, archive.Id.ToString());
+            Assert.Equal(1395187836000L, archive.CreatedAt);
+            Assert.Equal(62, archive.Duration);
+            Assert.Equal("", archive.Name);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(8347554, archive.Size);
+            Assert.Equal(ArchiveStatus.AVAILABLE, archive.Status);
+            Assert.Equal("http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" + archiveId + "%2Farchive.mp4?Expires=13951" +
+                         "94362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", archive.Url);
+
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)), null), Times.Once());
+        }
+
+        [Fact]
+        public void GetExpiredArchive()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = GetResponseJson(new Dictionary<string, string> { { "archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8" } });
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = opentok.GetArchive(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetExpiredArchiveAsync()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = GetResponseJson(new Dictionary<string, string> { { "archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8" } });
+            var mockClient = new Mock<HttpClient>();
+            mockClient
+                .Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.GetArchiveAsync(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
+
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)), null), Times.Once());
+        }
+
+        [Fact]
+        public void GetArchiveWithUnknownProperties()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = GetResponseJson(new Dictionary<string, string> { { "archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8" } });
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = opentok.GetArchive(archiveId);
+
+            Assert.NotNull(archive);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetArchiveWithUnknownPropertiesAsync()
+        {
+            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
+            string returnString = GetResponseJson(new Dictionary<string, string> { { "archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8" } });
+            var mockClient = new Mock<HttpClient>();
+            mockClient
+                .Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.GetArchiveAsync(archiveId);
+
+            Assert.NotNull(archive);
+
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)), null), Times.Once());
+        }
+
+        // Delete Archive
+
+        [Fact]
+        public void DeleteArchive()
+        {
+            string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            opentok.DeleteArchive(archiveId);
+
+            mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
+                    url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
+
+        [Fact]
+        public void DeleteArchiveFromArchiveObject()
+        {
+            Guid archiveId = new Guid("30b3ebf1-ba36-4f5b-8def-6f70d9986fe9");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            
+            Archive archive = new Archive(opentok);
+            archive.Id = archiveId;
+
+            archive.Delete();
+
+            mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
+                    url => url.Equals($"v2/project/{ApiKey}/archive/{archiveId}")),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task DeleteArchiveAsync()
+        {
+            string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.DeleteAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret)
+            {
+                Client = mockClient.Object
+            };
+            await opentok.DeleteArchiveAsync(archiveId);
+
+            mockClient.Verify(httpClient => httpClient.DeleteAsync(It.Is<string>(
+                    url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task DeleteArchiveAsyncFromArchiveObject()
+        {
+            Guid archiveId = new Guid("30b3ebf1-ba36-4f5b-8def-6f70d9986fe9");
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.DeleteAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>()));
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret)
+            {
+                Client = mockClient.Object
+            };
+
+            Archive archive = new Archive(opentok);
+            archive.Id = archiveId;
+
+            await archive.DeleteAsync();
+
+            mockClient.Verify(httpClient => httpClient.DeleteAsync(It.Is<string>(
+                    url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)),
+                It.IsAny<Dictionary<string, string>>()), Times.Once());
+        }
     }
 }

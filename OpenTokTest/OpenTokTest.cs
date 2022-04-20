@@ -162,102 +162,6 @@ namespace OpenTokSDKTest
             }
 
         }
-
-        [Fact]
-        public void GetArchiveTest()
-        {
-            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
-            string returnString = "{\n" +
-                                    " \"createdAt\" : 1395187836000,\n" +
-                                    " \"duration\" : 62,\n" +
-                                    " \"id\" : \"" + archiveId + "\",\n" +
-                                    " \"name\" : \"\",\n" +
-                                    " \"partnerId\" : 123456,\n" +
-                                    " \"reason\" : \"\",\n" +
-                                    " \"sessionId\" : \"SESSIONID\",\n" +
-                                    " \"size\" : 8347554,\n" +
-                                    " \"status\" : \"available\",\n" +
-                                    " \"url\" : \"http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" +
-                                    archiveId + "%2Farchive.mp4?Expires=1395194362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Si" +
-                                    "gnature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\n" + " }";
-            var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
-            
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-            opentok.Client = mockClient.Object;
-            Archive archive = opentok.GetArchive(archiveId);
-
-            Assert.NotNull(archive);
-            Assert.Equal(this.apiKey, archive.PartnerId);
-            Assert.Equal(archiveId, archive.Id.ToString());
-            Assert.Equal(1395187836000L, archive.CreatedAt);
-            Assert.Equal(62, archive.Duration);
-            Assert.Equal("", archive.Name);
-            Assert.Equal("SESSIONID", archive.SessionId);
-            Assert.Equal(8347554, archive.Size);
-            Assert.Equal(ArchiveStatus.AVAILABLE, archive.Status);
-            Assert.Equal("http://tokbox.com.archive2.s3.amazonaws.com/123456%2F" + archiveId + "%2Farchive.mp4?Expires=13951" +
-                    "94362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", archive.Url);
-
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/"+this.apiKey+"/archive/"+archiveId))), Times.Once());
-        }
-
-        [Fact]
-        public void GetExpiredArchiveTest()
-        {
-            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
-            string returnString = "{\n" +
-                                    " \"createdAt\" : 1395187836000,\n" +
-                                    " \"duration\" : 62,\n" +
-                                    " \"id\" : \"" + archiveId + "\",\n" +
-                                    " \"name\" : \"\",\n" +
-                                    " \"partnerId\" : 123456,\n" +
-                                    " \"reason\" : \"\",\n" +
-                                    " \"sessionId\" : \"SESSIONID\",\n" +
-                                    " \"size\" : 8347554,\n" +
-                                    " \"status\" : \"expired\",\n" +
-                                    " \"url\" : null\n" + " }";
-            var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
-
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-            opentok.Client = mockClient.Object;
-            Archive archive = opentok.GetArchive(archiveId);
-
-            Assert.NotNull(archive);
-            Assert.Equal(ArchiveStatus.EXPIRED, archive.Status);
-
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
-        }
-
-        [Fact]
-        public void GetArchiveWithUnknownPropertiesTest()
-        {
-            string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
-            string returnString = "{\n" +
-                                    " \"createdAt\" : 1395187836000,\n" +
-                                    " \"duration\" : 62,\n" +
-                                    " \"id\" : \"" + archiveId + "\",\n" +
-                                    " \"name\" : \"\",\n" +
-                                    " \"partnerId\" : 123456,\n" +
-                                    " \"reason\" : \"\",\n" +
-                                    " \"sessionId\" : \"SESSIONID\",\n" +
-                                    " \"size\" : 8347554,\n" +
-                                    " \"status\" : \"expired\",\n" +
-                                    " \"notarealproperty\" : \"not a real value\",\n" +
-                                    " \"url\" : null\n" + " }";
-            var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
-
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-            opentok.Client = mockClient.Object;
-            Archive archive = opentok.GetArchive(archiveId);
-
-            Assert.NotNull(archive);
-
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/archive/" + archiveId))), Times.Once());
-        }
-
         
         [Fact]
         public void ListArchivesTest()
@@ -614,25 +518,7 @@ namespace OpenTokSDKTest
                 It.IsAny<Dictionary<string, string>>(), 
                 It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
-
-        [Fact]
-        public void DeleteArchiveTest()
-        {
-            string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
-            
-            var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Delete(It.IsAny<string>(),
-                It.IsAny<Dictionary<string, string>>()));
-
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-            opentok.Client = mockClient.Object;
-            opentok.DeleteArchive(archiveId);
-
-            mockClient.Verify(httpClient => httpClient.Delete(It.Is<string>(
-                url => url.Equals("v2/project/" + apiKey + "/archive/" + archiveId)),
-                It.IsAny<Dictionary<string, string>>()), Times.Once());
-        }
-
+        
         [Fact]
         public void GetStreamTestFromOpenTokInstance()
         {
