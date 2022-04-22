@@ -1009,37 +1009,76 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/layout", this.ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
             {
-                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.Stylesheet)) ||
-                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet)))
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && string.IsNullOrEmpty(layout.Stylesheet) ||
+                    !layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !string.IsNullOrEmpty(layout.Stylesheet))
                 {
-                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
+                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.", nameof(layout));
                 }
-                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+
+                if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
-                else
+
+                data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
+                
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
                 {
-                    data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
-                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
-                    {
-                        data.Add("stylesheet", layout.Stylesheet);
-                    }
-                    if (layout.ScreenShareType != null)
-                    {
-                        data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
-                    }
+                    data.Add("stylesheet", layout.Stylesheet);
+                }
+
+                if (layout.ScreenShareType != null)
+                {
+                    data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
                 }
             }
 
             Client.Put(url, headers, data);
         }
 
+        /// <summary>
+        /// Sets the layout type for the broadcast. For a description of layout types, see
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts">Configuring the video layout for OpenTok live streaming broadcasts</a>.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session.</param>
+        /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
+        public async Task SetBroadcastLayoutAsync(string broadcastId, BroadcastLayout layout)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>();
+            if (layout != null)
+            {
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && string.IsNullOrEmpty(layout.Stylesheet) ||
+                    !layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !string.IsNullOrEmpty(layout.Stylesheet))
+                {
+                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.", nameof(layout));
+                }
+
+                if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
+
+                data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
+
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                {
+                    data.Add("stylesheet", layout.Stylesheet);
+                }
+                if (layout.ScreenShareType != null)
+                {
+                    data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
+                }
+            }
+
+            await Client.PutAsync(url, headers, data);
+        }
 
         /// <summary>
         /// Allows you to Dynamically change the layout of a composed archive while it's being recorded
@@ -1054,16 +1093,17 @@ namespace OpenTokSDK
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
+            
             if (layout != null)
             {
                 if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
                 {
-                    throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
+                    throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided", nameof(layout));
                 }
 
                 if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
-                    throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
+                    throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set", nameof(layout));
                 }
 
                 data.Add("type", layout.Type.ToString());
@@ -1071,16 +1111,64 @@ namespace OpenTokSDK
                 {
                     data.Add("stylesheet", layout.StyleSheet);
                 }
+
                 if (layout.ScreenShareType != null)
                 {
                     if (layout.Type != LayoutType.bestFit)
                     {
-                        throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit");
+                        throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit", nameof(layout));
                     }
                     data.Add("screenshareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
                 }
             }
+
             Client.Put(url, headers, data);
+            return true;
+        }
+
+        /// <summary>
+        /// Allows you to Dynamically change the layout of a composed archive while it's being recorded
+        /// see <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a>
+        /// for details regarding customizing a layout.
+        /// </summary>
+        /// <param name="archiveId"></param>
+        /// <param name="layout"></param>
+        /// <returns></returns>
+        public async Task<bool> SetArchiveLayoutAsync(string archiveId, ArchiveLayout layout)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>();
+
+            if (layout != null)
+            {
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided", nameof(layout));
+                }
+
+                if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set", nameof(layout));
+                }
+
+                data.Add("type", layout.Type.ToString());
+                if (!string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    data.Add("stylesheet", layout.StyleSheet);
+                }
+
+                if (layout.ScreenShareType != null)
+                {
+                    if (layout.Type != LayoutType.bestFit)
+                    {
+                        throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit", nameof(layout));
+                    }
+                    data.Add("screenshareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
+                }
+            }
+
+            await Client.PutAsync(url, headers, data);
             return true;
         }
 

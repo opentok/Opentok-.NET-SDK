@@ -89,6 +89,12 @@ namespace OpenTokSDK.Util
             return DoRequest(url, headers, data);
         }
 
+        public virtual async Task<string> PutAsync(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "PUT");
+            return await DoRequestAsync(url, headers, data);
+        }
+
         public virtual string Patch(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
         {
             headers.Add("Method", "PATCH");
@@ -206,7 +212,7 @@ namespace OpenTokSDK.Util
                     DebugLog("Request Body: " + data);
                     await SendDataAsync(request, data);
                 }
-                using (response = await request.GetResponseAsync() as HttpWebResponse)
+                using (response = await request.GetResponseAsync().ConfigureAwait(false) as HttpWebResponse)
                 {
                     DebugLog("Response Status Code: " + response.StatusCode);
                     DebugLog("Response Status Description: " + response.StatusDescription);
@@ -273,15 +279,15 @@ namespace OpenTokSDK.Util
 
         private async Task SendDataAsync(HttpWebRequest request, string data)
         {
-            using (StreamWriter stream = new StreamWriter(await request.GetRequestStreamAsync()))
+            using (StreamWriter stream = new StreamWriter(await request.GetRequestStreamAsync().ConfigureAwait(false)))
             {
-                await stream.WriteAsync(data);
+                await stream.WriteAsync(data).ConfigureAwait(false);
             }
         }
 
         private HttpWebRequest CreateRequest(string url, Dictionary<string, string> headers, string data)
         {
-            Uri uri = new Uri(string.Format("{0}/{1}", apiUrl, url));
+            Uri uri = new Uri($"{apiUrl}/{url}");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             if (RequestTimeout != null)
             {

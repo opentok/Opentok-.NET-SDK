@@ -1080,5 +1080,163 @@ namespace OpenTokSDKTest
                     url => url.Equals("v2/project/" + ApiKey + "/archive/" + archiveId)),
                 It.IsAny<Dictionary<string, string>>()), Times.Once());
         }
+
+        // Set Archive Layout
+
+        [Fact]
+        public void SetArchiveLayoutScreenShareType()
+        {
+            var archiveId = "123456789";
+            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+
+            var expectedHeaders = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var expectedData = new Dictionary<string, object>
+            {
+                {"type","bestFit" },
+                {"screenshareType", "pip"}
+            };
+
+            var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
+            mockClient.Setup(c => c.Put(expectedUrl, expectedHeaders, expectedData))
+                .Returns("")
+                .Verifiable();
+            
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.bestFit, 
+                ScreenShareType = ScreenShareLayoutType.Pip
+            };
+
+            Assert.True(opentok.SetArchiveLayout(archiveId, layout));
+        }
+
+        [Fact]
+        public async Task SetArchiveLayoutAsyncScreenShareType()
+        {
+            var archiveId = "123456789";
+            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+
+            var expectedHeaders = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            var expectedData = new Dictionary<string, object>
+            {
+                {"type","bestFit" },
+                {"screenshareType", "pip"}
+            };
+
+            var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
+            mockClient.Setup(c => c.PutAsync(expectedUrl, expectedHeaders, expectedData))
+                .ReturnsAsync("")
+                .Verifiable();
+
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.bestFit,
+                ScreenShareType = ScreenShareLayoutType.Pip
+            };
+
+            Assert.True(await opentok.SetArchiveLayoutAsync(archiveId, layout));
+        }
+
+        [Fact]
+        public void SetArchiveLayoutCustomLayoutTypeNoStylesheetThrowsException()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.custom
+            };
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.SetArchiveLayout("12345", layout));
+            Assert.Contains("Invalid layout, layout is custom but no stylesheet provided", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+
+        [Fact]
+        public async Task SetArchiveLayoutAsyncCustomLayoutTypeNoStylesheetThrowsException()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.custom
+            };
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.SetArchiveLayoutAsync("12345", layout));
+            Assert.Contains("Invalid layout, layout is custom but no stylesheet provided", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+
+        [Fact]
+        public void SetArchiveLayoutNonCustomLayoutTypeStylesheetProvidedThrowsException()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.bestFit,
+                StyleSheet = "bob"
+            };
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.SetArchiveLayout("12345", layout));
+            Assert.Contains("Invalid layout, layout is not custom, but stylesheet is set", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+
+        [Fact]
+        public async Task SetArchiveLayoutAsyncNonCustomLayoutTypeStylesheetProvidedThrowsException()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout
+            {
+                Type = LayoutType.bestFit,
+                StyleSheet = "bob"
+            };
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.SetArchiveLayoutAsync("12345", layout));
+            Assert.Contains("Invalid layout, layout is not custom, but stylesheet is set", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+
+        [Fact]
+        public void SetArchiveLayoutTypeNotBestfitThrowsException()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout
+            {
+                ScreenShareType = ScreenShareLayoutType.BestFit,
+                Type = LayoutType.pip
+            };
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.SetArchiveLayout("12345", layout));
+            Assert.Contains("Invalid layout, when ScreenShareType is set, Type must be bestFit", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+
+        [Fact]
+        public async Task SetArchiveLayoutAsyncTypeNotBestfitThrowsException()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout
+            {
+                ScreenShareType = ScreenShareLayoutType.BestFit,
+                Type = LayoutType.pip
+            };
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(() => opentok.SetArchiveLayoutAsync("12345", layout));
+            Assert.Contains("Invalid layout, when ScreenShareType is set, Type must be bestFit", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
     }
 }

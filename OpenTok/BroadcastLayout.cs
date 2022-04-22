@@ -55,21 +55,21 @@ namespace OpenTokSDK
         /// <summary>
         /// Initalizes a BroadcastLayout with the given <see cref="LayoutType"/>
         /// </summary>
-        /// <param name="Type"></param>
-        public BroadcastLayout(LayoutType Type)
+        /// <param name="type"></param>
+        public BroadcastLayout(LayoutType type)
         {
-            this.Type = Type;
+            Type = type;
         }
 
         /// <summary>
         /// Initalizes a BroadcastLayout with the given <see cref="LayoutType"/> and stylesheet - note Type must be <see cref="LayoutType.Custom"/>
         /// </summary>
-        /// <param name="Type"></param>
-        /// <param name="Stylesheet">A string de</param>
-        public BroadcastLayout(LayoutType Type, string Stylesheet)
+        /// <param name="type"></param>
+        /// <param name="stylesheet">A string de</param>
+        public BroadcastLayout(LayoutType type, string stylesheet)
         {
-            this.Type = Type;
-            this.Stylesheet = Stylesheet;
+            Type = type;
+            Stylesheet = stylesheet;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace OpenTokSDK
         /// The Stylesheet for the Custom Layout
         /// </summary>
         [JsonProperty("stylesheet")]
-        public string Stylesheet { get; set; } = null;
+        public string Stylesheet { get; set; }
 
         /// <summary>
         /// The <see cref="LayoutType"/>to use when there is a screen-sharing 
