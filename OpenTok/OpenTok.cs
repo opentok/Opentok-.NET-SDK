@@ -557,6 +557,24 @@ namespace OpenTokSDK
         }
 
         /// <summary>
+        /// Stops an OpenTok archive that is being recorded.
+        /// <para>
+        /// Archives automatically stop recording after 120 minutes or when all clients have
+        /// disconnected from the session being archived.
+        /// </para>
+        /// </summary>
+        /// <param name="archiveId">The archive ID of the archive you want to stop recording.</param>
+        /// <returns>The Archive object corresponding to the archive being STOPPED.</returns>
+        public async Task<Archive> StopArchiveAsync(string archiveId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/stop";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
+            return JsonConvert.DeserializeObject<Archive>(response);
+        }
+
+        /// <summary>
         /// Returns a List of <see cref="Archive"/> objects, representing archives that are both
         /// both completed and in-progress, for your API key.
         /// </summary>
@@ -577,10 +595,10 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
-            string url = string.Format("v2/project/{0}/archive?offset={1}", this.ApiKey, offset);
+            string url = $"v2/project/{this.ApiKey}/archive?offset={offset}";
             if (count > 0)
             {
-                url = string.Format("{0}&count={1}", url, count);
+                url = $"{url}&count={count}";
             }
             if (!string.IsNullOrEmpty(sessionId))
             {
@@ -591,6 +609,49 @@ namespace OpenTokSDK
                 url = $"{url}&sessionId={sessionId}";
             }
             string response = Client.Get(url);
+            JObject archives = JObject.Parse(response);
+            JArray archiveArray = (JArray)archives["items"];
+            ArchiveList archiveList = new ArchiveList(archiveArray.ToObject<List<Archive>>(), (int)archives["count"]);
+            return archiveList;
+        }
+
+        /// <summary>
+        /// Returns a List of <see cref="Archive"/> objects, representing archives that are both
+        /// both completed and in-progress, for your API key.
+        /// </summary>
+        /// <param name="offset">
+        /// The index offset of the first archive. 0 is offset of the most recently started archive.
+        /// 1 is the offset of the archive that started prior to the most recent archive.
+        /// </param>
+        /// <param name="count">
+        /// The number of archives to be returned. The maximum number of archives returned is 1000.
+        /// </param>
+        /// <param name="sessionId">
+        /// The session ID.
+        /// </param>
+        /// <returns>A List of <see cref="Archive"/> objects.</returns>
+        public async Task<ArchiveList> ListArchivesAsync(int offset = 0, int count = 0, string sessionId = "")
+        {
+            if (count < 0)
+            {
+                throw new OpenTokArgumentException("count cannot be smaller than 0");
+            }
+
+            string url = $"v2/project/{this.ApiKey}/archive?offset={offset}";
+            if (count > 0)
+            {
+                url = $"{url}&count={count}";
+            }
+
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                if (!OpenTokUtils.ValidateSession(sessionId))
+                {
+                    throw new OpenTokArgumentException("Session Id is not valid");
+                }
+                url = $"{url}&sessionId={sessionId}";
+            }
+            string response = await Client.GetAsync(url);
             JObject archives = JObject.Parse(response);
             JArray archiveArray = (JArray)archives["items"];
             ArchiveList archiveList = new ArchiveList(archiveArray.ToObject<List<Archive>>(), (int)archives["count"]);
@@ -617,7 +678,7 @@ namespace OpenTokSDK
         public async Task<Archive> GetArchiveAsync(string archiveId)
         {
             string url = $"v2/project/{ApiKey}/archive/{archiveId}";
-            string response = await Client.GetAsync(url);
+            string response = await Client.GetAsync(url, null);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
         
