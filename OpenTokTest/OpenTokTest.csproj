@@ -41,6 +41,12 @@
     <None Remove="Data\ArchiveTests\StartArchiveWithSDResolution-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithAutoStreamMode-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json" />
+    <None Remove="Data\StreamTests\GetStream-response.json" />
+    <None Remove="Data\StreamTests\GetStreamAsync-response.json" />
+    <None Remove="Data\StreamTests\GetStreamAsyncEmpty-response.json" />
+    <None Remove="Data\StreamTests\GetStreamEmpty-response.json" />
+    <None Remove="Data\StreamTests\ListStreams-response.json" />
+    <None Remove="Data\StreamTests\ListStreamsAsync-response.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\ArchiveTests\GetArchiveAsync-response.json">
@@ -143,6 +149,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\StreamTests\GetStreamAsyncEmpty-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\StreamTests\ListStreamsAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\StreamTests\ListStreams-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\StreamTests\GetStreamEmpty-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\StreamTests\GetStream-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\StreamTests\GetStreamAsync-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

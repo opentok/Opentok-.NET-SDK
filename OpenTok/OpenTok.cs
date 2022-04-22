@@ -41,11 +41,11 @@ namespace OpenTokSDK
         /// </summary>
         public bool Debug
         {
-            get { return _debug; }
+            get => _debug;
             set
             {
                 _debug = value;
-                Client.debug = _debug;
+                Client.Debug = _debug;
             }
         }
 
@@ -781,13 +781,44 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Stream"/> object.</returns>
         public Stream GetStream(string sessionId, string streamId)
         {
-            if (String.IsNullOrEmpty(sessionId) || String.IsNullOrEmpty(streamId))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                throw new OpenTokArgumentException("The sessionId or streamId cannot be null or empty");
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
             }
-            string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
-            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty", nameof(streamId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}";
             string response = Client.Get(url);
+            Stream stream = JsonConvert.DeserializeObject<Stream>(response);
+            Stream streamCopy = new Stream();
+            streamCopy.CopyStream(stream);
+            return streamCopy;
+        }
+
+        /// <summary>
+        /// Gets a Stream object for the given stream ID.
+        /// </summary>
+        /// <param name="sessionId">The session ID of the OpenTok session.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <returns>The <see cref="Stream"/> object.</returns>
+        public async Task<Stream> GetStreamAsync(string sessionId, string streamId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty", nameof(streamId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}";
+            string response = await Client.GetAsync(url);
             Stream stream = JsonConvert.DeserializeObject<Stream>(response);
             Stream streamCopy = new Stream();
             streamCopy.CopyStream(stream);
@@ -800,14 +831,36 @@ namespace OpenTokSDK
         /// </summary>
         /// <param name="sessionId">The session ID corresponding to the session.</param>
         /// <returns>A List of <see cref="Stream"/> objects.</returns>
+        /// <exception cref="OpenTokArgumentException"></exception>
         public StreamList ListStreams(string sessionId)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                throw new OpenTokArgumentException("The sessionId cannot be null or empty");
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
             }
-            string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
             string response = Client.Get(url);
+            JObject streams = JObject.Parse(response);
+            JArray streamsArray = (JArray)streams["items"];
+            StreamList streamList = new StreamList(streamsArray.ToObject<List<Stream>>(), (int)streams["count"]);
+            return streamList;
+        }
+
+        /// <summary>
+        /// Returns a List of <see cref="Stream"/> objects, representing streams that are in-progress,
+        /// for the session ID.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session.</param>
+        /// <returns>A List of <see cref="Stream"/> objects.</returns>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public async Task<StreamList> ListStreamsAsync(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
+            }
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            string response = await Client.GetAsync(url);
             JObject streams = JObject.Parse(response);
             JArray streamsArray = (JArray)streams["items"];
             StreamList streamList = new StreamList(streamsArray.ToObject<List<Stream>>(), (int)streams["count"]);
