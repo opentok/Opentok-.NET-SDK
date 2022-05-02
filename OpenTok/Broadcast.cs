@@ -26,33 +26,38 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Further details on the HLS broadcast stream. This properties object includes an hls property with the following properties:
-        /// dvr — Whether <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a> is enabled for this broadcast.
-        /// lowLatency — Whether <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a> is enabled for the HLS stream.
+        /// Provides details on an HLS broadcast stream. This object includes an <c>hls</c> property
+        /// that specifies whether
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a>
+        /// and <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a>
+        /// are enabled for the HLS stream.
         /// </summary>
         public class BroadcastSettings
         {
             /// <summary>
-            /// Broadcast HLS settings
+            /// Provides details on the HLS stream.
             /// </summary>
             [JsonProperty("hls")]
             public BroadcastHlsSettings Hls { get; private set; }
         }
 
         /// <summary>
-        /// HLS Broadcast settings
+        /// Provides details on an HLS stream.
         /// </summary>
         public class BroadcastHlsSettings
         {
             /// <summary>
-            /// Whether low-latency mode is enabled for the HLS stream.
+            /// Whether
+            /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a>
+            /// is enabled for the HLS stream.
             /// </summary>
             [JsonProperty("lowLatency")]
             public bool LowLatency { get; private set; }
 
-
             /// <summary>
-            /// Whether DVR functionality is enabled for this broadcast.
+            /// Whether
+            /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a>
+            /// is enabled for the HLS stream.
             /// </summary>
             [JsonProperty("dvr")]
             public bool DVR { get; private set; }
@@ -183,7 +188,7 @@ namespace OpenTokSDK
         public StreamMode StreamMode { get; set; }
 
         /// <summary>
-        /// Further details on an HLS broadcast stream. This includes information on
+        /// Provides details on an HLS broadcast stream. This includes information on
         /// whether the stream supports DVR functionality and low-latency mode.
         /// </summary>
         [JsonProperty("settings")]
