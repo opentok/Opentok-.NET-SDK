@@ -39,7 +39,10 @@
     <None Remove="Data\ArchiveTests\StartArchiveVoiceOnly-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveWithHDResolution-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveWithSDResolution-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcast-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithAutoStreamMode-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcastWithDvr-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcastWithLowLatency-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +140,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\ArchiveTests\StartArchiveWithSDResolution-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcast-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcastWithLowLatency-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcastWithDvr-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\BroadcastTests\StartBroadcastWithAutoStreamMode-response.json">
