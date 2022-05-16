@@ -25,6 +25,44 @@ namespace OpenTokSDK
             STARTED
         }
 
+        /// <summary>
+        /// Provides details on an HLS broadcast stream. This object includes an <c>hls</c> property
+        /// that specifies whether
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a>
+        /// and <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a>
+        /// are enabled for the HLS stream.
+        /// </summary>
+        public class BroadcastSettings
+        {
+            /// <summary>
+            /// Provides details on the HLS stream.
+            /// </summary>
+            [JsonProperty("hls")]
+            public BroadcastHlsSettings Hls { get; private set; }
+        }
+
+        /// <summary>
+        /// Provides details on an HLS stream.
+        /// </summary>
+        public class BroadcastHlsSettings
+        {
+            /// <summary>
+            /// Whether
+            /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a>
+            /// is enabled for the HLS stream.
+            /// </summary>
+            [JsonProperty("lowLatency")]
+            public bool LowLatency { get; private set; }
+
+            /// <summary>
+            /// Whether
+            /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a>
+            /// is enabled for the HLS stream.
+            /// </summary>
+            [JsonProperty("dvr")]
+            public bool DVR { get; private set; }
+        }
+
         private readonly OpenTok _opentok;
 
         /// <summary>
@@ -37,7 +75,7 @@ namespace OpenTokSDK
 
         internal Broadcast(OpenTok opentok)
         {
-            this._opentok = opentok;
+            _opentok = opentok;
         }
 
         internal void CopyBroadcast(Broadcast broadcast)
@@ -52,6 +90,7 @@ namespace OpenTokSDK
             Status = broadcast.Status;
             BroadcastUrls = broadcast.BroadcastUrls;
             StreamMode = broadcast.StreamMode;
+            Settings = broadcast.Settings;
 
             if (BroadcastUrls == null)
                 return;
@@ -88,7 +127,7 @@ namespace OpenTokSDK
         /// The session ID of the OpenTok session associated with this broadcast.
         /// </summary>
         [JsonProperty("sessionId")]
-        public String SessionId { get; set; }
+        public string SessionId { get; set; }
 
         /// <summary>
         /// The OpenTok API key associated with the broadcast.
@@ -134,7 +173,7 @@ namespace OpenTokSDK
         /// <summary>
         /// HLS Url.
         /// </summary>
-        public String Hls { get; set; }
+        public string Hls { get; set; }
 
         /// <summary>
         /// The broadcast HLS and RTMP URLs.
@@ -147,6 +186,13 @@ namespace OpenTokSDK
         /// </summary>
         [JsonProperty("streamMode")]
         public StreamMode StreamMode { get; set; }
+
+        /// <summary>
+        /// Provides details on an HLS broadcast stream. This includes information on
+        /// whether the stream supports DVR functionality and low-latency mode.
+        /// </summary>
+        [JsonProperty("settings")]
+        public BroadcastSettings Settings { get; set; }
 
         /// <summary>
         /// Stops the live broadcasting if it is started.
