@@ -54,7 +54,8 @@ var OpenTok = new OpenTok(ApiKey, ApiSecret);
 ### Creating Sessions
 
 To create an OpenTok Session, call the `OpenTok` instance's
-`CreateSession(string location, MediaMode mediaMode, ArchiveMode archiveMode)`
+`CreateSession(string location, MediaMode mediaMode, ArchiveMode archiveMode)` or
+`CreateSessionAsync(string location, MediaMode mediaMode, ArchiveMode archiveMode)`
 method. Each of the parameters are optional and can be omitted if not needed. They are:
 
 - `string location` : An IPv4 address used as a location hint. (default: "")
@@ -118,7 +119,14 @@ Archive. Note that you can only start an Archive on a Session that has clients c
 ```csharp
 // A simple Archive (without a name)
 var archive = OpenTok.StartArchive(sessionId);
-
+```
+or
+```csharp
+// A simple Archive (without a name)
+var archive = await OpenTok.StartArchiveAsync(sessionId);
+```
+then
+```csharp
 // Store this archive ID in the database for later use
 Guid archiveId = archive.Id;
 ```
@@ -150,6 +158,10 @@ To get an `OpenTokSDK.Archive` instance (and all the information about it) from 
 ```csharp
 var archive = OpenTok.GetArchive(archiveId);
 ```
+or
+```csharp
+var archive = OpenTok.GetArchiveAsync(archiveId);
+```
 
 To delete an archive, you can call a `OpenTokSDK.OpenTok` instance's `DeleteArchive(archiveId)` method or
 call the `OpenTokSDK.Archive` instance's `Delete()` method.
@@ -160,6 +172,16 @@ OpenTok.DeleteArchive(archiveId);
 
 // Delete an archive from an Archive instance (returned from GetArchive)
 Archive.Delete();
+```
+
+or
+
+```csharp
+// Delete an archive from an archive ID (fetched from database)
+OpenTok.DeleteArchiveAsync(archiveId);
+
+// Delete an archive from an Archive instance (returned from GetArchive)
+Archive.DeleteAsync();
 ```
 
 You can also get a list of all the Archives you've created (up to 1000) with your API Key. This is

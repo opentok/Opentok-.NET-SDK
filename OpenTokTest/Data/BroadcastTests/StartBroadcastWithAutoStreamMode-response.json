@@ -1,0 +1,13 @@
+{
+  "id": "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9",
+  "sessionId": "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4",
+  "projectId": 123456,
+  "createdAt": 1395183243556,
+  "updatedAt": 1395183243556,
+  "resolution": "640x480",
+  "status": "started",
+  "streamMode": "auto",
+  "broadcastUrls": {
+    "hls": "http://server/fakepath/playlist.m3u8"
+  }
+}

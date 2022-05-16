@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -33,13 +34,32 @@ namespace OpenTokSDKTest
 
         protected string GetResponseJson([CallerMemberName] string name = null)
         {
-            name = $"{name}-response";
+            return ReadDataFile(name, "json");
+        }
+
+        static readonly Regex ResponseTokenRegex = new Regex(@"\$(\w+)\$", RegexOptions.Compiled);
+        
+        protected string GetResponseJson(Dictionary<string, string> paramters, [CallerMemberName] string name = null)
+        {
+            var response = GetResponseJson(name);
+            response = ResponseTokenRegex.Replace(response, match => paramters[match.Groups[1].Value]);
+            return response;
+        }
+
+        protected string GetResponseXml([CallerMemberName] string name = null)
+        {
+            return ReadDataFile(name, "xml");
+        }
+
+        private string ReadDataFile(string testName, string fileExtension)
+        {
+            testName = $"{testName}-response";
 
             var type = GetType().Name;
             var ns = GetType().Namespace;
             if (ns != null)
             {
-                var path = Path.Combine(AssemblyDirectory, "Data", type, name + ".json");
+                var path = Path.Combine(AssemblyDirectory, "Data", type, $"{testName}.{fileExtension}");
 
                 if (!File.Exists(path))
                 {

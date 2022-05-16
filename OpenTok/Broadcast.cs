@@ -25,7 +25,45 @@ namespace OpenTokSDK
             STARTED
         }
 
-        private OpenTok opentok;
+        /// <summary>
+        /// Provides details on an HLS broadcast stream. This object includes an <c>hls</c> property
+        /// that specifies whether
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a>
+        /// and <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a>
+        /// are enabled for the HLS stream.
+        /// </summary>
+        public class BroadcastSettings
+        {
+            /// <summary>
+            /// Provides details on the HLS stream.
+            /// </summary>
+            [JsonProperty("hls")]
+            public BroadcastHlsSettings Hls { get; private set; }
+        }
+
+        /// <summary>
+        /// Provides details on an HLS stream.
+        /// </summary>
+        public class BroadcastHlsSettings
+        {
+            /// <summary>
+            /// Whether
+            /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency">low-latency mode</a>
+            /// is enabled for the HLS stream.
+            /// </summary>
+            [JsonProperty("lowLatency")]
+            public bool LowLatency { get; private set; }
+
+            /// <summary>
+            /// Whether
+            /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a>
+            /// is enabled for the HLS stream.
+            /// </summary>
+            [JsonProperty("dvr")]
+            public bool DVR { get; private set; }
+        }
+
+        private readonly OpenTok _opentok;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Broadcast"/> class.
@@ -37,7 +75,7 @@ namespace OpenTokSDK
 
         internal Broadcast(OpenTok opentok)
         {
-            this.opentok = opentok;
+            _opentok = opentok;
         }
 
         internal void CopyBroadcast(Broadcast broadcast)
@@ -51,25 +89,30 @@ namespace OpenTokSDK
             MaxDuration = broadcast.MaxDuration;
             Status = broadcast.Status;
             BroadcastUrls = broadcast.BroadcastUrls;
+            StreamMode = broadcast.StreamMode;
+            Settings = broadcast.Settings;
 
-            if (BroadcastUrls != null)
+            if (BroadcastUrls == null)
+                return;
+
+            if (BroadcastUrls.ContainsKey("hls"))
             {
-                if (BroadcastUrls.ContainsKey("hls"))
-                {
-                    Hls = BroadcastUrls["hls"].ToString();
-                }
+                Hls = BroadcastUrls["hls"].ToString();
+            }
 
-                if (BroadcastUrls.ContainsKey("rtmp"))
+            if (BroadcastUrls.ContainsKey("rtmp"))
+            {
+                RtmpList = new List<Rtmp>();
+                foreach (var jsonToken in (JArray)BroadcastUrls["rtmp"])
                 {
-                    RtmpList = new List<Rtmp>();
-                    foreach (JObject item in (JArray)BroadcastUrls["rtmp"])
+                    var item = (JObject) jsonToken;
+                    Rtmp rtmp = new Rtmp
                     {
-                        Rtmp rtmp = new Rtmp();
-                        rtmp.Id = item.GetValue("id").ToString();
-                        rtmp.ServerUrl = item.GetValue("serverUrl").ToString();
-                        rtmp.StreamName = item.GetValue("streamName").ToString();
-                        RtmpList.Add(rtmp);
-                    }
+                        Id = item.GetValue("id")?.ToString(),
+                        ServerUrl = item.GetValue("serverUrl")?.ToString(),
+                        StreamName = item.GetValue("streamName")?.ToString()
+                    };
+                    RtmpList.Add(rtmp);
                 }
             }
         }
@@ -84,7 +127,7 @@ namespace OpenTokSDK
         /// The session ID of the OpenTok session associated with this broadcast.
         /// </summary>
         [JsonProperty("sessionId")]
-        public String SessionId { get; set; }
+        public string SessionId { get; set; }
 
         /// <summary>
         /// The OpenTok API key associated with the broadcast.
@@ -130,7 +173,7 @@ namespace OpenTokSDK
         /// <summary>
         /// HLS Url.
         /// </summary>
-        public String Hls { get; set; }
+        public string Hls { get; set; }
 
         /// <summary>
         /// The broadcast HLS and RTMP URLs.
@@ -139,13 +182,26 @@ namespace OpenTokSDK
         private Dictionary<string, object> BroadcastUrls { get; set; }
 
         /// <summary>
+        /// Whether streams included in the broadcast are selected automatically ("auto", the default) or manually
+        /// </summary>
+        [JsonProperty("streamMode")]
+        public StreamMode StreamMode { get; set; }
+
+        /// <summary>
+        /// Provides details on an HLS broadcast stream. This includes information on
+        /// whether the stream supports DVR functionality and low-latency mode.
+        /// </summary>
+        [JsonProperty("settings")]
+        public BroadcastSettings Settings { get; set; }
+
+        /// <summary>
         /// Stops the live broadcasting if it is started.
         /// </summary>
         public void Stop()
         {
-            if (opentok != null)
+            if (_opentok != null)
             {
-                Broadcast broadcast = opentok.StopBroadcast(Id);
+                Broadcast broadcast = _opentok.StopBroadcast(Id);
                 Status = broadcast.Status;
             }
         }

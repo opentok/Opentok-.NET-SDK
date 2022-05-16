@@ -35,6 +35,18 @@ namespace OpenTokSDK
         public HttpClient Client { internal get; set; }
 
         private bool _debug;
+
+        private IEnumerable<string> _validResolutions = new[]
+        {
+            "640x480",
+            "1280x720",
+            "1920x1080",
+            "480x640",
+            "720x1280",
+            "1080x1920"
+        };
+
+
         /// <summary>
         /// Enables writing request/response details to console.
         /// Don't use in a production environment.
@@ -56,11 +68,11 @@ namespace OpenTokSDK
         /// <param name="apiSecret">Your OpenTok API secret. (See the <a href="https://tokbox.com/account" > TokBox account page</a></param>
         public OpenTok(int apiKey, string apiSecret)
         {
-            this.ApiKey = apiKey;
-            this.ApiSecret = apiSecret;
-            this.OpenTokServer = "https://api.opentok.com";
-            Client = new HttpClient(apiKey, apiSecret, this.OpenTokServer);
-            this.Debug = false;
+            ApiKey = apiKey;
+            ApiSecret = apiSecret;
+            OpenTokServer = "https://api.opentok.com";
+            Client = new HttpClient(apiKey, apiSecret, OpenTokServer);
+            Debug = false;
         }
 
         /// <summary>
@@ -71,11 +83,11 @@ namespace OpenTokSDK
         /// <param name="apiUrl"></param>
         public OpenTok(int apiKey, string apiSecret, string apiUrl)
         {
-            this.ApiKey = apiKey;
-            this.ApiSecret = apiSecret;
-            this.OpenTokServer = apiUrl;
-            Client = new HttpClient(apiKey, apiSecret, this.OpenTokServer);
-            this.Debug = false;
+            ApiKey = apiKey;
+            ApiSecret = apiSecret;
+            OpenTokServer = apiUrl;
+            Client = new HttpClient(apiKey, apiSecret, OpenTokServer);
+            Debug = false;
         }
 
         /// <summary>
@@ -144,10 +156,9 @@ namespace OpenTokSDK
         /// </returns>
         public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
         {
-
             if (!OpenTokUtils.TestIpAddress(location))
             {
-                throw new OpenTokArgumentException(string.Format("Location {0} is not a valid IP address", location));
+                throw new OpenTokArgumentException($"Location {location} is not a valid IP address");
             }
 
             if (archiveMode == ArchiveMode.ALWAYS && mediaMode != MediaMode.ROUTED)
@@ -166,6 +177,106 @@ namespace OpenTokSDK
             };
 
             var response = Client.Post("session/create", headers, data);
+            var xmlDoc = Client.ReadXmlResponse(response);
+
+            if (xmlDoc.GetElementsByTagName("session_id").Count == 0)
+            {
+                throw new OpenTokWebException("Session could not be provided. Are ApiKey and ApiSecret correctly set?");
+            }
+            var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
+            var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
+            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+        }
+
+        /// <summary>
+        /// Creates a new OpenTok session.
+        /// <para>
+        /// OpenTok sessions do not expire. However, authentication tokens do expire (see the
+        /// generateToken() method). Also note that sessions cannot explicitly be destroyed.
+        /// </para>
+        /// <para>
+        /// A session ID string can be up to 255 characters long.
+        /// </para>
+        /// <para>
+        /// Calling this method results in an OpenTokException in the event of an error.
+        /// Check the error message for details.
+        /// 
+        /// You can also create a session using the
+        /// <a href="http://www.tokbox.com/opentok/api/#session_id_production">OpenTok
+        /// REST API</a> or by logging in to your
+        /// <a href="https://tokbox.com/account">TokBox account</a>.
+        /// </para>
+        /// </summary>
+        /// <param name="location">
+        /// An IP address that the OpenTok servers will use to situate the session in its
+        /// global network. If you do not set a location hint, the OpenTok servers will be
+        /// based on the first client connecting to the session.
+        /// </param>
+        /// <param name="mediaMode">
+        /// Whether the session will transmit streams using the OpenTok Media Router
+        /// (<see cref="MediaMode.ROUTED"/>) or not (<see cref="MediaMode.RELAYED"/>).
+        /// By default, the setting is <see cref="MediaMode.RELAYED"/>.
+        /// <para>
+        /// With the parameter set to <see cref="MediaMode.RELAYED"/>, the session will
+        /// attempt to transmit streams directly between clients. If clients cannot connect
+        /// due to firewall restrictions, the session uses the OpenTok TURN server to relay streams.
+        /// </para>
+        /// <para>
+        /// The <a href="https://tokbox.com/opentok/tutorials/create-session/#media-mode">
+        /// OpenTok Media Router</a> provides the following benefits:
+        /// - The OpenTok Media Router can decrease bandwidth usage in multiparty sessions.
+        ///   (When the <paramref name="mediaMode"/> parameter is set to <see cref="MediaMode.ROUTED"/>,
+        ///   each client must send a separate audio-video stream to each client subscribing to it.)
+        /// - The OpenTok Media Router can improve the quality of the user experience through
+        ///   <a href="https://tokbox.com/platform/fallback">audio fallback and video recovery</a>
+        ///   With these features, if a client's connectivity degrades to a degree that it does not
+        ///   support video for a stream it's subscribing to, the video is dropped on that client
+        ///   (without affecting other clients), and the client receives audio only. If the client's
+        ///   connectivity improves, the video returns.
+        /// - The OpenTok Media Router supports the <a href="http://tokbox.com/opentok/tutorials/archiving">archiving</a>
+        ///   feature, which lets you record, save, and retrieve OpenTok sessions.
+        /// </para>
+        /// </param>
+        /// <param name="archiveMode">
+        /// Whether the session is automatically archived (<see cref="ArchiveMode.ALWAYS"/>) or not
+        /// (<see cref="ArchiveMode.MANUAL"/>). By default, the setting is <see cref="ArchiveMode.MANUAL"/>
+        /// and you must call the <see cref="StartArchive"/> method of the OpenTok object to start archiving.
+        /// To archive the session (either automatically or not), you must set the mediaMode parameter to
+        /// <see cref="MediaMode.ROUTED"/>
+        /// </param>
+        /// <returns>
+        /// A Session object representing the new session. The <see cref="Session.Id"/> property of the
+        /// <see cref="Session"/> is the session ID, which uniquely identifies the session. You will use
+        /// this session ID in the client SDKs to identify the session. For example, when using the
+        /// OpenTok.js library, use the session ID when calling the
+        /// <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a>
+        /// method (to initialize an OpenTok session).
+        /// </returns>
+        public async Task<Session> CreateSessionAsync(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL)
+        {
+            if (!OpenTokUtils.TestIpAddress(location))
+            {
+                throw new OpenTokArgumentException($"Location {location} is not a valid IP address");
+            }
+
+            if (archiveMode == ArchiveMode.ALWAYS && mediaMode != MediaMode.ROUTED)
+            {
+                throw new OpenTokArgumentException("A session with always archive mode must also have the routed media mode.");
+            }
+
+            string preference = mediaMode == MediaMode.RELAYED
+                ? "enabled"
+                : "disabled";
+
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
+            var data = new Dictionary<string, object>
+            {
+                {"location", location},
+                {"p2p.preference", preference},
+                {"archiveMode", archiveMode.ToString().ToLowerInvariant()}
+            };
+
+            var response = await Client.PostAsync("session/create", headers, data);
             var xmlDoc = Client.ReadXmlResponse(response);
 
             if (xmlDoc.GetElementsByTagName("session_id").Count == 0)
@@ -224,7 +335,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
-            Session session = new Session(sessionId, this.ApiKey, this.ApiSecret);
+            Session session = new Session(sessionId, ApiKey, ApiSecret);
             return session.GenerateToken(role, expireTime, data, initialLayoutClassList);
         }
 
@@ -274,42 +385,168 @@ namespace OpenTokSDK
         /// The layout that you want to use for your archive. If type is set to <see cref="LayoutType.custom"/>
         /// you must provide a StyleSheet string to Vonage how to layout your archive.
         /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the archive are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the archive using the
+        /// <see cref="OpenTok.AddStreamToArchive"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchive"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
+        /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
-            string url = string.Format("v2/project/{0}/archive", this.ApiKey);
+            string url = $"v2/project/{ApiKey}/archive";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
-            var data = new Dictionary<string, object>() { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
+            var data = new Dictionary<string, object> { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
 
-            if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
             {
                 throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
             }
-            else if (!String.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
             {
                 data.Add("resolution", resolution);
             }
+
             if (layout != null)
             {
-                if (layout?.Type == LayoutType.custom && string.IsNullOrEmpty(layout?.StyleSheet) ||
-                    layout?.Type != LayoutType.custom && !string.IsNullOrEmpty(layout?.StyleSheet))
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet) ||
+                    layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
                 }
-                else if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+
+                if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
             }
 
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
+            }
+
             string response = Client.Post(url, headers, data);
+            return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /// <summary>
+        /// Starts archiving an OpenTok session.
+        /// <para>
+        /// Clients must be actively connected to the OpenTok session for you to successfully start
+        /// recording an archive.
+        /// </para>
+        /// <para>
+        /// You can only record one archive at a time for a given session. You can only record
+        /// archives of sessions that uses the OpenTok Media Router (sessions with the media mode set
+        /// to routed); you cannot archive sessions with the media mode set to relayed.
+        /// </para>
+        /// <para>
+        /// Note that you can have the session be automatically archived by setting the archiveMode
+        /// parameter of the <see cref="CreateSession"/> method to <see cref="ArchiveMode.ALWAYS"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="sessionId">
+        /// The session ID of the OpenTok session to archive.
+        /// </param>
+        /// <param name="name">
+        /// The name of the archive. You can use this name to identify the archive. It is a property
+        /// of the Archive object, and it is a property of archive-related events in the OpenTok client
+        /// libraries.
+        /// </param>
+        /// <param name="hasVideo">
+        /// Whether the archive will record video (true) or not (false). The default value is true
+        /// (video is recorded). If you set both <paramref name="hasAudio"/> and <paramref name="hasVideo"/>
+        /// to false, the call to the <see cref="StartArchive"/> method results in an error.
+        /// </param>
+        /// <param name="hasAudio">
+        /// Whether the archive will record audio (true) or not (false). The default value is true
+        /// (audio is recorded). If you set both <paramref name="hasAudio"/> and <paramref name="hasVideo"/>
+        /// to false, the call to the <see cref="StartArchive"/> method results in an error.
+        /// </param>
+        /// <param name="outputMode">
+        /// Whether all streams in the archive are recorded to a single file (<see cref="OutputMode.COMPOSED"/>,
+        /// the default) or to individual files (<see cref="OutputMode.INDIVIDUAL"/>).
+        /// </param>
+        /// <param name="resolution">
+        /// The resolution for the archive. The default for <see cref="OutputMode.COMPOSED"/> is "640x480".
+        /// You cannot specify the resolution for <see cref="OutputMode.INDIVIDUAL"/>.
+        /// </param>
+        /// <param name="layout">
+        /// The layout that you want to use for your archive. If type is set to <see cref="LayoutType.custom"/>
+        /// you must provide a StyleSheet string to Vonage how to layout your archive.
+        /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the archive are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the archive using the
+        /// <see cref="OpenTok.AddStreamToArchive"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchive"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
+        /// </param>
+        /// <returns>
+        /// The Archive object. This object includes properties defining the archive, including the archive ID.
+        /// </returns>
+        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("Session not valid");
+            }
+            string url = $"v2/project/{ApiKey}/archive";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "sessionId", sessionId }, 
+                { "name", name }, 
+                { "hasVideo", hasVideo }, 
+                { "hasAudio", hasAudio }, 
+                { "outputMode", outputMode.ToString().ToLowerInvariant() }
+            };
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.INDIVIDUAL))
+            {
+                throw new OpenTokArgumentException("Resolution can't be specified for Individual Archives");
+            }
+
+            if (!string.IsNullOrEmpty(resolution) && outputMode.Equals(OutputMode.COMPOSED))
+            {
+                data.Add("resolution", resolution);
+            }
+
+            if (layout != null)
+            {
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet) ||
+                    layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Could not set layout, stylesheet must be set if and only if type is custom");
+                }
+
+                if (layout.ScreenShareType != null && layout.Type != LayoutType.bestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
+                data.Add("layout", layout);
+            }
+
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
+            }
+
+            string response = await Client.PostAsync(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
@@ -324,7 +561,7 @@ namespace OpenTokSDK
         /// <returns>The Archive object corresponding to the archive being STOPPED.</returns>
         public Archive StopArchive(string archiveId)
         {
-            string url = string.Format("v2/project/{0}/archive/{1}/stop", this.ApiKey, archiveId);
+            string url = string.Format("v2/project/{0}/archive/{1}/stop", ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
@@ -352,7 +589,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
-            string url = string.Format("v2/project/{0}/archive?offset={1}", this.ApiKey, offset);
+            string url = string.Format("v2/project/{0}/archive?offset={1}", ApiKey, offset);
             if (count > 0)
             {
                 url = string.Format("{0}&count={1}", url, count);
@@ -379,12 +616,23 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Archive"/> object.</returns>
         public Archive GetArchive(string archiveId)
         {
-            string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
-            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
             string response = Client.Get(url);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
 
+        /// <summary>
+        /// Gets an Archive object for the given archive ID.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <returns>The <see cref="Archive"/> object.</returns>
+        public async Task<Archive> GetArchiveAsync(string archiveId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            string response = await Client.GetAsync(url);
+            return JsonConvert.DeserializeObject<Archive>(response);
+        }
+        
         /// <summary>
         /// Deletes an OpenTok archive.
         /// <para>
@@ -396,9 +644,145 @@ namespace OpenTokSDK
         /// <param name="archiveId">The archive ID of the archive you want to delete.</param>
         public void DeleteArchive(string archiveId)
         {
-            string url = string.Format("v2/project/{0}/archive/{1}", this.ApiKey, archiveId);
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
+        }
+
+        /// <summary>
+        /// Deletes an OpenTok archive.
+        /// <para>
+        /// You can only delete an archive which has a status of "available" or "uploaded". Deleting
+        /// an archive removes its record from the list of archives. For an "available" archive, it
+        /// also removes the archive file, making it unavailable for download.
+        /// </para>
+        /// </summary>
+        /// <param name="archiveId">The archive ID of the archive you want to delete.</param>
+        public Task DeleteArchiveAsync(string archiveId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            var headers = new Dictionary<string, string>();
+            return Client.DeleteAsync(url, headers);
+        }
+
+        /// <summary>
+        /// Adds a stream to a currently running composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the archive.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio
+        /// (true, the default) or not (false).</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video
+        /// (true, the default) or not (false).</param>
+        public void AddStreamToArchive(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Adds a stream to a currently running composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the archive.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the composed archive should include the stream's audio
+        /// (true, the default) or not (false).</param>
+        /// <param name="hasVideo">Whether the composed archive should include the stream's video
+        /// (true, the default) or not (false).</param>
+        public Task AddStreamToArchiveAsync(string archiveId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        public void RemoveStreamFromArchive(string archiveId, string streamId)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "removeStream", streamId } };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a composed archive that was started with the
+        /// <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="archiveId">The archive ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        public Task RemoveStreamFromArchiveAsync(string archiveId, string streamId)
+        {
+            if (string.IsNullOrEmpty(archiveId))
+            {
+                throw new OpenTokArgumentException("The archiveId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object> { { "removeStream", streamId } };
+
+            return Client.PatchAsync(url, headers, data);
         }
 
         /// <summary>
@@ -413,7 +797,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("The sessionId or streamId cannot be null or empty");
             }
-            string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", this.ApiKey, sessionId, streamId);
+            string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", ApiKey, sessionId, streamId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Get(url);
             Stream stream = JsonConvert.DeserializeObject<Stream>(response);
@@ -434,7 +818,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("The sessionId cannot be null or empty");
             }
-            string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
+            string url = string.Format("v2/project/{0}/session/{1}/stream", ApiKey, sessionId);
             string response = Client.Get(url);
             JObject streams = JObject.Parse(response);
             JArray streamsArray = (JArray)streams["items"];
@@ -458,7 +842,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Invalid session Id");
             }
-            string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", this.ApiKey, sessionId, connectionId);
+            string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", ApiKey, sessionId, connectionId);
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
         }
@@ -488,7 +872,7 @@ namespace OpenTokSDK
         /// A list of <see cref="Rtmp"/> objects, defining RTMP streams to be broadcast (up to five).
         /// </param>
         /// <param name="resolution">
-        /// The resolution of the broadcast video. This can be set to either "640x480" or "1280x720".
+        /// The resolution of the broadcast video. Valid resolutions are "640x480", "1280x720", "1920x1080", "480x640", "720x1280", "1080x1920".
         /// </param>
         /// <param name="maxDuration">
         /// The maximum duration for the broadcast, in seconds. The broadcast will automatically
@@ -500,36 +884,55 @@ namespace OpenTokSDK
         /// Specify this BroadcastLayout object to assign the initial layout type for
         /// the broadcast.
         /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the broadcast are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the broadcast using the
+        /// <see cref="OpenTok.AddStreamToBroadcast"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcast"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToBroadcastAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> methods).
+        /// </param>
+        /// <param name="dvr">Whether to enable DVR functionality — rewinding, pausing, and resuming — in players that support it (true),
+        /// or not (false, the default). With DVR enabled,
+        /// the HLS URL will include a ?DVR query string appended to the end. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a></param>
+        /// <param name="lowLatency">Whether to enable low-latency mode for the HLSstream. Some HLS players do not support low-latency mode. 
+        /// This feature is incompatible with DVR mode HLS broadcasts. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency-hls-broadcasts">Low-latency HLS broadcasts</a></param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
-        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null, int maxDuration = 7200, BroadcastLayout layout = null)
+        public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
 
-            if (!String.IsNullOrEmpty(resolution) && resolution != "640x480" && resolution != "1280x720")
-            {
-                throw new OpenTokArgumentException("Resolution value must be either 640x480 (SD) or 1280x720 (HD).");
-            }
-
+            if(!string.IsNullOrEmpty(resolution) && !_validResolutions.Contains(resolution))
+                throw new OpenTokArgumentException("Invalid resolution. See https://www.dev.tokbox.com/developer/rest/#start_broadcast for valid resolutions.", nameof(resolution));
+            
             if (maxDuration < 60 || maxDuration > 36000)
             {
-                throw new OpenTokArgumentException("MaxDuration value must be between 60 and 36000 (inclusive).");
+                throw new OpenTokArgumentException("MaxDuration value must be between 60 and 36000 (inclusive).", nameof(maxDuration));
             }
 
-            if (rtmpList != null && rtmpList.Count() >= 5)
+            if (rtmpList != null && rtmpList.Count >= 5)
             {
-                throw new OpenTokArgumentException("Cannot add more than 5 RTMP properties");
+                throw new OpenTokArgumentException("Cannot add more than 5 RTMP properties", nameof(rtmpList));
             }
 
-            string url = string.Format("v2/project/{0}/broadcast", this.ApiKey);
+            if (dvr && lowLatency.HasValue && lowLatency.Value)
+                throw new OpenTokArgumentException("Cannot set both dvr and lowLatency on HLS.");
+
+            string url = $"v2/project/{ApiKey}/broadcast";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var outputs = new Dictionary<string, object>();
 
             if (hls)
             {
-                outputs.Add("hls", new Object());
+                var hlsParams = new Dictionary<string, bool> {{"dvr", dvr}};
+                if(lowLatency.HasValue) hlsParams.Add("lowLatency", lowLatency.Value);
+
+                outputs.Add("hls", hlsParams);
             }
 
             if (rtmpList != null)
@@ -537,39 +940,43 @@ namespace OpenTokSDK
                 outputs.Add("rtmp", rtmpList);
             }
 
-            var data = new Dictionary<string, object>() {
+            var data = new Dictionary<string, object> {
                 { "sessionId", sessionId },
                 { "maxDuration", maxDuration },
                 { "outputs", outputs }
             };
 
-            if (!String.IsNullOrEmpty(resolution))
+            if (!string.IsNullOrEmpty(resolution))
             {
                 data.Add("resolution", resolution);
             }
 
             if (layout != null)
             {
-                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.Stylesheet)) ||
-                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet)))
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && string.IsNullOrEmpty(layout.Stylesheet) ||
+                    !layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !string.IsNullOrEmpty(layout.Stylesheet))
                 {
                     throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
                 }
-                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+
+                if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
+
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                {
+                    data.Add("layout", layout);
+                }
                 else
                 {
-                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
-                    {
-                        data.Add("layout", layout);
-                    }
-                    else
-                    {
-                        data.Add("layout", layout);
-                    }
+                    data.Add("layout", layout);
                 }
+            }
+
+            if (streamMode.HasValue)
+            {
+                data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
 
             string response = Client.Post(url, headers, data);
@@ -590,7 +997,7 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast StopBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/stop", this.ApiKey, broadcastId);
+            string url = string.Format("v2/project/{0}/broadcast/{1}/stop", ApiKey, broadcastId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
@@ -610,7 +1017,7 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast GetBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}", this.ApiKey, broadcastId);
+            string url = string.Format("v2/project/{0}/broadcast/{1}", ApiKey, broadcastId);
             string response = Client.Get(url);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
@@ -623,7 +1030,7 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/layout", this.ApiKey, broadcastId);
+            string url = string.Format("v2/project/{0}/broadcast/{1}/layout", ApiKey, broadcastId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
@@ -674,7 +1081,8 @@ namespace OpenTokSDK
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
                 }
-                else if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+
+                if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
                     throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
                 }
@@ -697,6 +1105,137 @@ namespace OpenTokSDK
             return true;
         }
 
+
+        /// <summary>
+        /// Adds a stream to a currently running broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the broadcast.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default)
+        /// or not (false).</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default)
+        /// or not (false).</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public void AddStreamToBroadcast(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Adds a stream to a currently running broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual. You can call the method repeatedly
+        /// with the same stream ID, to toggle the stream's audio or video in the broadcast.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <param name="hasAudio">Whether the broadcast should include the stream's audio (true, the default)
+        /// or not (false).</param>
+        /// <param name="hasVideo">Whether the broadcast should include the stream's video (true, the default)
+        /// or not (false).</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public Task AddStreamToBroadcastAsync(string broadcastId, string streamId, bool hasAudio = true, bool hasVideo = true)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"addStream", streamId},
+                {"hasAudio", hasAudio},
+                {"hasVideo", hasVideo}
+            };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public void RemoveStreamFromBroadcast(string broadcastId, string streamId)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"removeStream", streamId}
+            };
+
+            Client.Patch(url, headers, data);
+        }
+
+        /// <summary>
+        /// Removes a stream from a broadcast that was started with the
+        /// the <c>streamMode</c> set to StreamMode.Manual.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public Task RemoveStreamFromBroadcastAsync(string broadcastId, string streamId)
+        {
+            if (string.IsNullOrEmpty(broadcastId))
+            {
+                throw new OpenTokArgumentException("The broadcastId cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty");
+            }
+
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                {"removeStream", streamId}
+            };
+
+            return Client.PatchAsync(url, headers, data);
+        }
+
         /// <summary>
         /// Sets the layout class list for streams in a session. Layout classes are used in
         /// the layout for composed archives and live streaming broadcasts. For more information, see
@@ -711,7 +1250,7 @@ namespace OpenTokSDK
         /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
-            string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
+            string url = string.Format("v2/project/{0}/session/{1}/stream", ApiKey, sessionId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
@@ -750,8 +1289,8 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.");
             }
             string url = String.IsNullOrEmpty(connectionId) ?
-                            string.Format("v2/project/{0}/session/{1}/signal", this.ApiKey, sessionId) :
-                            string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", this.ApiKey, sessionId, connectionId);
+                            string.Format("v2/project/{0}/session/{1}/signal", ApiKey, sessionId) :
+                            string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", ApiKey, sessionId, connectionId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -845,14 +1384,14 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session Id is not valid");
             }
 
-            string url = $"v2/project/{this.ApiKey}/dial";
+            string url = $"v2/project/{ApiKey}/dial";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
                 { "sessionId", sessionId },
                 { "token", token },
-                { "sip", new { 
+                { "sip", new {
                         uri = sipUri,
                         from = options?.From,
                         headers = options?.Headers,
@@ -860,7 +1399,7 @@ namespace OpenTokSDK
                         secure = options?.Secure,
                         video = options?.Video,
                         observeForceMute = options?.ObserveForceMute
-                    } 
+                    }
                 }
             };
 
@@ -904,7 +1443,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session Id is not valid");
             }
 
-            string url = $"v2/project/{this.ApiKey}/dial";
+            string url = $"v2/project/{ApiKey}/dial";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
@@ -925,7 +1464,7 @@ namespace OpenTokSDK
             var response = await Client.PostAsync(url, headers, data);
             return JsonConvert.DeserializeObject<Sip>(response);
         }
-        
+
         /// <summary>
         /// Force the publisher of a specific stream to mute its published audio.
         /// </summary>
@@ -948,7 +1487,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
             }
 
-            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             Client.Post(url, headers, null);
@@ -976,12 +1515,12 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
             }
 
-            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             await Client.PostAsync(url, headers, null);
         }
-        
+
         /// <summary>
         /// Forces all streams (except for an optional list of streams) in a session to mute
         /// published audio.
@@ -1035,7 +1574,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
 
-            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/mute";
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };

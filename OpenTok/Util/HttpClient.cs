@@ -57,11 +57,19 @@ namespace OpenTokSDK.Util
         {
             return Get(url, new Dictionary<string, string>());
         }
-
+        
         public virtual string Get(string url, Dictionary<string, string> headers)
         {
             headers.Add("Method", "GET");
             return DoRequest(url, headers, null);
+        }
+
+        public virtual Task<string> GetAsync(string url, Dictionary<string, string> headers = null)
+        {
+            if(headers == null) headers = new Dictionary<string, string>();
+
+            headers.Add("Method", "GET");
+            return DoRequestAsync(url, headers, null);
         }
 
         public virtual string Post(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
@@ -82,10 +90,28 @@ namespace OpenTokSDK.Util
             return DoRequest(url, headers, data);
         }
 
+        public virtual string Patch(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "PATCH");
+            return DoRequest(url, headers, data);
+        }
+
+        public virtual Task<string> PatchAsync(string url, Dictionary<string, string> headers, Dictionary<string, object> data)
+        {
+            headers.Add("Method", "PATCH");
+            return DoRequestAsync(url, headers, data);
+        }
+
         public virtual string Delete(string url, Dictionary<string, string> headers)
         {
             headers.Add("Method", "DELETE");
             return DoRequest(url, headers, null);
+        }
+
+        public virtual Task<string> DeleteAsync(string url, Dictionary<string, string> headers)
+        {
+            headers.Add("Method", "DELETE");
+            return DoRequestAsync(url, headers, null);
         }
 
         public string DoRequest(string url, Dictionary<string, string> specificHeaders,
@@ -153,8 +179,6 @@ namespace OpenTokSDK.Util
                 {
                     throw new OpenTokWebException("Error with request submission (TLS1.1 or other network/protocol issue)", e);
                 }
-
-                OpenTokUtils.ValidateTlsVersion(e);
 
                 OpenTokUtils.ValidateTlsVersion(e);
 
