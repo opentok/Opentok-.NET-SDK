@@ -171,5 +171,23 @@
 	<Reference Include="System.Web" />
 	<Reference Include="Microsoft.CSharp" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <None Update="Data\DialTests\DialAsyncCorrectHeaders-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialCorrectHeaders-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialCorrectData-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialCorrectResponse-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialAsyncCorrectResponse-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   
 </Project>

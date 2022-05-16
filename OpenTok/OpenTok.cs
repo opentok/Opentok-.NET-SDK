@@ -1372,7 +1372,7 @@ namespace OpenTokSDK
         /// <c>"sip:user@sip.partner.com;transport=tls"</c>. This is an example of insecure call negotiation:
         /// <c>"sip:user@sip.partner.com"</c>.</param>
         /// <param name="options">Optional parameters for SIP dialing.</param>
-        public void Dial(string sessionId, string token, string sipUri, DialOptions options = null)
+        public Sip Dial(string sessionId, string token, string sipUri, DialOptions options = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -1402,7 +1402,9 @@ namespace OpenTokSDK
                     }
                 }
             };
-            Client.Post(url, headers, data);
+
+            string response = Client.Post(url, headers, data);
+            return JsonConvert.DeserializeObject<Sip>(response);
         }
 
         /// <summary>
@@ -1429,7 +1431,7 @@ namespace OpenTokSDK
         /// <c>"sip:user@sip.partner.com;transport=tls"</c>. This is an example of insecure call negotiation:
         /// <c>"sip:user@sip.partner.com"</c>.</param>
         /// <param name="options">Optional parameters for SIP dialing.</param>
-        public Task DialAsync(string sessionId, string token, string sipUri, DialOptions options = null)
+        public async Task<Sip> DialAsync(string sessionId, string token, string sipUri, DialOptions options = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -1459,7 +1461,8 @@ namespace OpenTokSDK
                     }
                 }
             };
-            return Client.PostAsync(url, headers, data);
+            var response = await Client.PostAsync(url, headers, data);
+            return JsonConvert.DeserializeObject<Sip>(response);
         }
 
         /// <summary>
@@ -1585,7 +1588,7 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAll"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMute()</c> method
-        ///  to remove the mute state of a session, so that new published streams are not
+        /// to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>
@@ -1615,11 +1618,11 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAllAsync"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMuteAsync()</c> method
-        //  to remove the mute state of a session, so that new published streams are not
+        ///  to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>
-        /// Also see the <see cref="DisableForceMutec"/> method.
+        /// Also see the <see cref="DisableForceMute"/> method.
         /// </para>
         /// <param name="sessionId">The session ID.</param>
         /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>
