@@ -1081,7 +1081,7 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Allows you to Dynamically change the layout of a composed archive while it's being recorded
+        /// Allows you to dynamically change the layout of a composed archive while it's being recorded
         /// see <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a>
         /// for details regarding customizing a layout.
         /// </summary>
@@ -1127,7 +1127,7 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Allows you to Dynamically change the layout of a composed archive while it's being recorded
+        /// Allows you to dynamically change the layout of a composed archive while it's being recorded
         /// see <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a>
         /// for details regarding customizing a layout.
         /// </summary>
