@@ -558,7 +558,7 @@ namespace OpenTokSDK
         /// </para>
         /// </summary>
         /// <param name="archiveId">The archive ID of the archive you want to stop recording.</param>
-        /// <returns>The Archive object corresponding to the archive being STOPPED.</returns>
+        /// <returns>The Archive object corresponding to the archive being stopped.</returns>
         public Archive StopArchive(string archiveId)
         {
             string url = string.Format("v2/project/{0}/archive/{1}/stop", ApiKey, archiveId);
@@ -576,7 +576,7 @@ namespace OpenTokSDK
         /// </para>
         /// </summary>
         /// <param name="archiveId">The archive ID of the archive you want to stop recording.</param>
-        /// <returns>The Archive object corresponding to the archive being STOPPED.</returns>
+        /// <returns>The Archive object corresponding to the archive being stopped.</returns>
         public async Task<Archive> StopArchiveAsync(string archiveId)
         {
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/stop";
