@@ -218,6 +218,22 @@ namespace OpenTokSDK
         }
 
         /// <summary>
+        /// Stops the OpenTok archive if it is being recorded.
+        /// <para>
+        /// Archives automatically stop recording after 120 minutes or when all clients have
+        /// disconnected from the session being archived.
+        /// </para>
+        /// </summary>
+        public async Task StopAsync()
+        {
+            if (_opentok != null)
+            {
+                Archive archive = await _opentok.StopArchiveAsync(Id.ToString());
+                Status = archive.Status;
+            }
+        }
+
+        /// <summary>
         /// Deletes the OpenTok archive.
         /// <para>
         /// You can only delete an archive which has a status of "available" or "uploaded". Deleting
