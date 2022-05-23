@@ -12,6 +12,7 @@ using JWT.Serializers;
 using OpenTokSDK.Constants;
 using OpenTokSDK.Exception;
 using System.Threading.Tasks;
+#pragma warning disable CS1591
 
 namespace OpenTokSDK.Util
 {
