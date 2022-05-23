@@ -1237,6 +1237,236 @@ namespace OpenTokSDKTest
             var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(() => opentok.SetArchiveLayoutAsync("12345", layout));
             Assert.Contains("Invalid layout, when ScreenShareType is set, Type must be bestFit", exception.Message);
             Assert.Equal("layout", exception.ParamName);
+
+        // Stop Archive
+
+        [Fact]
+        public void StopArchive()
+        {
+            Guid archiveId = new Guid("30b3ebf1-ba36-4f5b-8def-6f70d9986fe9");
+            string returnString = GetResponseJson();
+            
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = opentok.StopArchive(archiveId.ToString());
+
+            Assert.NotNull(archive);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(archiveId, archive.Id);
+            Assert.Equal(ArchiveStatus.STOPPED, archive.Status);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(
+                    url => url.Equals($"v2/project/{ApiKey}/archive/{archiveId}/stop")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public void StopArchiveFromArchiveObject()
+        {
+            Guid archiveId = new Guid("30b3ebf1-ba36-4f5b-8def-6f70d9986fe9");
+            string returnString = GetResponseJson();
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            Archive archive = new Archive(opentok);
+            archive.Id = archiveId;
+            archive.SessionId = "SESSIONID";
+            archive.Stop();
+
+            Assert.NotNull(archive);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(archiveId, archive.Id);
+            Assert.Equal(ArchiveStatus.STOPPED, archive.Status);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(
+                    url => url.Equals($"v2/project/{ApiKey}/archive/{archiveId}/stop")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StopArchiveAsync()
+        {
+            string archiveId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = GetResponseJson();
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Archive archive = await opentok.StopArchiveAsync(archiveId);
+
+            Assert.NotNull(archive);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(archiveId, archive.Id.ToString());
+
+            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/stop";
+
+            mockClient.Verify(httpClient => httpClient
+                .PostAsync(It.Is<string>(
+                    url => url.Equals(expectedUrl)), 
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task StopArchiveAsyncFromArchiveObject()
+        {
+            Guid archiveId = new Guid("30b3ebf1-ba36-4f5b-8def-6f70d9986fe9");
+            string returnString = GetResponseJson();
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            Archive archive = new Archive(opentok);
+            archive.Id = archiveId;
+            archive.SessionId = "SESSIONID";
+            await archive.StopAsync();
+
+            Assert.NotNull(archive);
+            Assert.Equal("SESSIONID", archive.SessionId);
+            Assert.Equal(archiveId, archive.Id);
+
+            mockClient.Verify(httpClient => httpClient.PostAsync(It.Is<string>(
+                    url => url.Equals($"v2/project/{ApiKey}/archive/{archiveId}/stop")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        // List Archives
+
+        [Fact]
+        public void ListArchives()
+        {
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            ArchiveList archives = opentok.ListArchives();
+
+            Assert.NotNull(archives);
+            Assert.Equal(6, archives.Count);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/archive?offset=0"))), Times.Once());
+        }
+
+        [Fact]
+        public void ListArchivesWithValidSessionId()
+        {
+            var sessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4";
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            ArchiveList archives = opentok.ListArchives(sessionId: sessionId);
+
+            Assert.NotNull(archives);
+            Assert.Equal(6, archives.Count);
+
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/archive?offset=0&sessionId={sessionId}"))), Times.Once());
+        }
+
+        [Fact]
+        public void ListArchivesBadCount()
+        {
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.ListArchives(count: -5));
+            Assert.Equal("count cannot be smaller than 0", exception.Message);
+        }
+
+        [Fact]
+        public void ListArchivesBadSessionId()
+        {
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.ListArchives(sessionId: "This-is-not-a-valid-session-id"));
+            Assert.Equal("Session Id is not valid", exception.Message);
+        }
+
+        [Fact]
+        public async Task ListArchivesAsync()
+        {
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            ArchiveList archives = await opentok.ListArchivesAsync();
+
+            Assert.NotNull(archives);
+            Assert.Equal(6, archives.Count);
+
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/archive?offset=0")), null), Times.Once());
+        }
+
+        [Fact]
+        public async Task ListArchivesAsyncWithValidSessionId()
+        {
+            var sessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4";
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            ArchiveList archives = await opentok.ListArchivesAsync(sessionId: sessionId);
+
+            Assert.NotNull(archives);
+            Assert.Equal(6, archives.Count);
+
+            mockClient.Verify(httpClient => 
+                httpClient.GetAsync(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/archive?offset=0&sessionId={sessionId}")), null), Times.Once());
+        }
+
+        [Fact]
+        public async Task ListArchivesAsyncBadCount()
+        {
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            var exception =
+                await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.ListArchivesAsync(count: -5));
+            Assert.Equal("count cannot be smaller than 0", exception.Message);
+        }
+
+        [Fact]
+        public async Task ListArchivesAsyncBadSessionId()
+        {
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+                await opentok.ListArchivesAsync(sessionId: "This-is-not-a-valid-session-id"));
+
+            Assert.Equal("Session Id is not valid", exception.Message);
         }
     }
 }

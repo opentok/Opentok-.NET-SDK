@@ -151,6 +151,10 @@ You can stop the recording of a started Archive using a `OpenTokSDK.OpenTok` ins
 // Stop an Archive from an archive ID (fetched from database)
 var archive = OpenTok.StopArchive(archiveId);
 ```
+or
+```charp
+var archive = OpenTok.StopArchiveAsync(archiveId);
+```
 
 To get an `OpenTokSDK.Archive` instance (and all the information about it) from an archive ID, use the
 `OpenTokSDK.OpenTok` instance's `GetArchive(archiveId)` method.
@@ -192,15 +196,19 @@ paginate the Archives you receive using the offset and count parameters. This wi
 ```csharp
 // Get a list with the first 50 archives created by the API Key
 var archives = OpenTok.ListArchives();
+var archives = OpenTok.ListArchivesAsync();
 
 // Get a list of the first 50 archives created by the API Key
 var archives = OpenTok.ListArchives(0, 50);
+var archives = OpenTok.ListArchivesAsync(0, 50);
 
 // Get a list of the next 50 archives
 var archives = OpenTok.ListArchives(50, 50);
+var archives = OpenTok.ListArchivesAsync(50, 50);
 
 // Get a list of the first 50 archives created for the given sessionId
 var archives = OpenTok.ListArchives(sessionId:sessionId);
+var archives = OpenTok.ListArchivesAsync(sessionId:sessionId);
 ```
 
 Note that you can also create an automatically archived session, by passing in `ArchiveMode.ALWAYS`
