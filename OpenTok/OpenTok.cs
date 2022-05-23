@@ -1060,10 +1060,31 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast StopBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/stop", ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
+            return JsonConvert.DeserializeObject<Broadcast>(response);
+        }
+
+        /// <summary>
+        /// Use this method to stop a live broadcast of an OpenTok session.
+        /// Note that broadcasts automatically stop 120 minutes after they are started.
+        /// <para>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        /// </para>
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
+        /// <returns>
+        /// The <see cref="Broadcast"/> object. This object includes properties defining the broadcast,
+        /// including the broadcast ID.
+        /// </returns>
+        public async Task<Broadcast> StopBroadcastAsync(string broadcastId)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Broadcast>(response);
         }
 
@@ -1080,8 +1101,26 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast GetBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}", ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
             string response = Client.Get(url);
+            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /// <summary>
+        /// Use this method to get a live streaming broadcast object of an OpenTok session.
+        /// </summary>
+        /// <para>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        /// </para>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
+        /// <returns>
+        /// The <see cref="Broadcast"/> object. This object includes properties defining the broadcast,
+        /// including the broadcast ID.
+        /// </returns>
+        public async Task<Broadcast> GetBroadcastAsync(string broadcastId)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
+            string response = await Client.GetAsync(url);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
 

@@ -576,64 +576,6 @@ namespace OpenTokSDKTest
                 Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
             }
         }
-        
-        [Fact]
-        public void StopBroadcastTest()
-        {
-            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
-            string returnString = "{\n" +
-                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
-                                  " \"sessionId\" : \"SESSIONID\",\n" +
-                                  " \"projectId\" : 123456,\n" +
-                                  " \"createdAt\" : 1395183243556,\n" +
-                                  " \"updatedAt\" : 1395183243556,\n" +
-                                  " \"resolution\" : \"640x480\",\n" +
-                                  " \"broadcastUrls\": null \n" +
-                                " }";
-            var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
-
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-            opentok.Client = mockClient.Object;
-            Broadcast broadcast = opentok.StopBroadcast(broadcastId);
-
-            Assert.NotNull(broadcast);
-            Assert.Equal(broadcastId, broadcast.Id.ToString());
-            Assert.NotNull(broadcast.Id);
-            
-
-            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/broadcast/" + broadcastId + "/stop")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
-        }
-
-        [Fact]
-        public void GetBroadcastTest()
-        {
-            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
-            string returnString = "{\n" +
-                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
-                                  " \"sessionId\" : \"SESSIONID\",\n" +
-                                  " \"projectId\" : 123456,\n" +
-                                  " \"createdAt\" : 1395183243556,\n" +
-                                  " \"updatedAt\" : 1395183243556,\n" +
-                                  " \"resolution\" : \"640x480\",\n" +
-                                  " \"status\" : \"started\",\n" +
-                                  " \"broadcastUrls\": { \n" +
-                                    " \"hls\": \"http://server/fakepath/playlist.m3u8\", \n" +
-                                  " } \n" +
-                                " }";
-            var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
-
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-            opentok.Client = mockClient.Object;
-            Broadcast broadcast = opentok.GetBroadcast(broadcastId);
-
-            Assert.NotNull(broadcast);
-            Assert.Equal(broadcastId, broadcast.Id.ToString());
-            Assert.NotNull(broadcast.Id);
-            
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals("v2/project/" + this.apiKey + "/broadcast/" + broadcastId))), Times.Once());
-        }
 
         [Fact]
         public void SetStreamClassListsTest()
