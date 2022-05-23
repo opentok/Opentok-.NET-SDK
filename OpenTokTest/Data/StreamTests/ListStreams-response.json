@@ -1,0 +1,19 @@
+{
+  "count": 2,
+  "items": [
+    {
+      "id": "ef546c5a-4fd7-4e59-ab3d-f1cfb4148d1d",
+      "name": "johndoe",
+      "layoutClassList": [ "layout1" ],
+      "videoType": "screen"
+    },
+    {
+      "createdAt": 1394321113000,
+      "duration": 1294,
+      "id": "1f546c5a-4fd7-4e59-ab3d-f1cfb4148d1d",
+      "name": "janedoe",
+      "layoutClassList": [ "layout2" ],
+      "videoType": "camera"
+    }
+  ]
+}

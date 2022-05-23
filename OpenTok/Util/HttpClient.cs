@@ -21,20 +21,23 @@ namespace OpenTokSDK.Util
     /// </summary>
     public class HttpClient
     {
-        private int apiKey;
-        private string apiSecret;
-        private string apiUrl;
+        private readonly int _apiKey;
+        private readonly string _apiSecret;
+        private readonly string _apiUrl;
+        private readonly DateTime _unixEpoch = new DateTime(
+            1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
+        );
 
-        public bool debug = false;
-
+        /// <summary>
+        /// Turns on and off debug logging
+        /// </summary>
+        public bool Debug { get; set; } = false;
+    
         /// <summary>
         /// Timeout in milliseconds for the HttpWebRequests sent by the client.
         /// </summary>
         public int? RequestTimeout { get; set; }
-        private readonly DateTime unixEpoch = new DateTime(
-          1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
-        );
-
+        
        
         internal string LastRequest { get; private set; }
 
@@ -42,15 +45,15 @@ namespace OpenTokSDK.Util
 
         internal HttpClient(int apiKey, string apiSecret)
         {
-            this.apiKey = apiKey;
-            this.apiSecret = apiSecret;
+            _apiKey = apiKey;
+            _apiSecret = apiSecret;
         }
 
         public HttpClient(int apiKey, string apiSecret, string apiUrl = "")
         {
-            this.apiKey = apiKey;
-            this.apiSecret = apiSecret;
-            this.apiUrl = apiUrl;
+            _apiKey = apiKey;
+            _apiSecret = apiSecret;
+            _apiUrl = apiUrl;
         }
 
         public virtual string Get(string url)
@@ -143,15 +146,14 @@ namespace OpenTokSDK.Util
                     switch (response.StatusCode)
                     {
                         case HttpStatusCode.OK:
-                            using (var stream = new StreamReader(response.GetResponseStream()))
+                            using (var stream = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException("Response stream null")))
                             {
                                 return stream.ReadToEnd();
                             }
                         case HttpStatusCode.NoContent:
                             return "";
                         default:
-                            throw new OpenTokWebException("Response returned with unexpected status code " +
-                                                          response.StatusCode.ToString());
+                            throw new OpenTokWebException($"Response returned with unexpected status code {response.StatusCode}");
                     }
                 }
             }
@@ -167,9 +169,9 @@ namespace OpenTokSDK.Util
                     DebugLog("Response Status Description: " + response.StatusDescription);
                     DebugLogHeaders(response.Headers, "Response");
 
-                    if (this.debug)
+                    if (Debug)
                     {
-                        using (var stream = new StreamReader(response.GetResponseStream()))
+                        using (var stream = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException("Response stream null")))
                         {
                             DebugLog("Response Body: " + stream.ReadToEnd());
                         }
@@ -216,7 +218,7 @@ namespace OpenTokSDK.Util
                     switch (response.StatusCode)
                     {
                         case HttpStatusCode.OK:
-                            using (var stream = new StreamReader(response.GetResponseStream()))
+                            using (var stream = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException("Response stream null")))
                             {
                                 return await stream.ReadToEndAsync();
                             }
@@ -239,9 +241,9 @@ namespace OpenTokSDK.Util
                     DebugLog("Response Status Description: " + response.StatusDescription);
                     DebugLogHeaders(response.Headers, "Response");
 
-                    if (this.debug)
+                    if (Debug)
                     {
-                        using (var stream = new StreamReader(response.GetResponseStream()))
+                        using (var stream = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException("Response stream null")))
                         {
                             var body = await stream.ReadToEndAsync();
                             DebugLog($"Response Body: {body}");
@@ -264,7 +266,7 @@ namespace OpenTokSDK.Util
 
         private void SendData(HttpWebRequest request, string data)
         {
-            LastRequest = data.ToString();
+            LastRequest = data;
 
             using (StreamWriter stream = new StreamWriter(request.GetRequestStream()))
             {
@@ -282,7 +284,7 @@ namespace OpenTokSDK.Util
 
         private HttpWebRequest CreateRequest(string url, Dictionary<string, string> headers, string data)
         {
-            Uri uri = new Uri(string.Format("{0}/{1}", apiUrl, url));
+            Uri uri = new Uri(string.Format("{0}/{1}", _apiUrl, url));
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             if (RequestTimeout != null)
             {
@@ -355,7 +357,7 @@ namespace OpenTokSDK.Util
             IDateTimeProvider provider = new UtcDateTimeProvider();
             var now = provider.GetNow();
 
-            int secondsSinceEpoch = (int)Math.Round((now - unixEpoch).TotalSeconds);
+            int secondsSinceEpoch = (int)Math.Round((now - _unixEpoch).TotalSeconds);
             return secondsSinceEpoch;
         }
 
@@ -384,14 +386,14 @@ namespace OpenTokSDK.Util
         private Dictionary<string, string> GetCommonHeaders()
         {
             return new Dictionary<string, string>
-            {   { "X-OPENTOK-AUTH", GenerateJwt(apiKey, apiSecret) },
+            {   { "X-OPENTOK-AUTH", GenerateJwt(_apiKey, _apiSecret) },
                 { "X-TB-VERSION", "1" },
             };
         }
 
         private void DebugLog(string message)
         {
-            if (this.debug)
+            if (Debug)
             {
                 var now = Convert.ToString(CurrentTime());
                 Console.WriteLine("[{0}] {1}", now, message);
@@ -400,7 +402,7 @@ namespace OpenTokSDK.Util
 
         private void DebugLogHeaders(WebHeaderCollection headers, string label)
         {
-            if (this.debug)
+            if (Debug)
             {
                 for (int i = 0; i < headers.Count; ++i)
                 {
