@@ -13,6 +13,10 @@
     <None Remove="Data\ArchiveTests\GetArchiveWithUnknownPropertiesAsync-response.json" />
     <None Remove="Data\ArchiveTests\GetExpiredArchive-response.json" />
     <None Remove="Data\ArchiveTests\GetExpiredArchiveAsync-response.json" />
+    <None Remove="Data\ArchiveTests\ListArchives-response.json" />
+    <None Remove="Data\ArchiveTests\ListArchivesAsync-response.json" />
+    <None Remove="Data\ArchiveTests\ListArchivesAsyncWithValidSessionId-response.json" />
+    <None Remove="Data\ArchiveTests\ListArchivesWithValidSessionId-response.json" />
     <None Remove="Data\ArchiveTests\StartArchive-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveAsync-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveAsyncAutoStreamMode-response.json" />
@@ -39,7 +43,16 @@
     <None Remove="Data\ArchiveTests\StartArchiveVoiceOnly-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveWithHDResolution-response.json" />
     <None Remove="Data\ArchiveTests\StartArchiveWithSDResolution-response.json" />
+    <None Remove="Data\ArchiveTests\StopArchive-response.json" />
+    <None Remove="Data\ArchiveTests\StopArchiveAsync-response.json" />
+    <None Remove="Data\ArchiveTests\StopArchiveAsyncFromArchiveObject-response.json" />
+    <None Remove="Data\ArchiveTests\StopArchiveFromArchiveObject-response.json" />
+    <None Remove="Data\BroadcastTests\GetBroadcast-response.json" />
+    <None Remove="Data\BroadcastTests\GetBroadcastAsync-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcast-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithAutoStreamMode-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcastWithDvr-response.json" />
+    <None Remove="Data\BroadcastTests\StartBroadcastWithLowLatency-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json" />
     <None Remove="Data\StreamTests\GetStream-response.json" />
     <None Remove="Data\StreamTests\GetStreamAsync-response.json" />
@@ -47,8 +60,34 @@
     <None Remove="Data\StreamTests\GetStreamEmpty-response.json" />
     <None Remove="Data\StreamTests\ListStreams-response.json" />
     <None Remove="Data\StreamTests\ListStreamsAsync-response.json" />
+    <None Remove="Data\BroadcastTests\StopBroadcast-response.json" />
+    <None Remove="Data\BroadcastTests\StopBroadcastAsync-response.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\ArchiveTests\ListArchivesAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\ListArchivesAsyncWithValidSessionId-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\ListArchivesWithValidSessionId-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\ListArchives-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StopArchiveAsyncFromArchiveObject-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StopArchiveFromArchiveObject-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StopArchiveAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StopArchive-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\GetArchiveAsync-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -145,6 +184,27 @@
     <Content Include="Data\ArchiveTests\StartArchiveWithSDResolution-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\BroadcastTests\GetBroadcastAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\GetBroadcast-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StopBroadcastAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StopBroadcast-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcast-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcastWithLowLatency-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\BroadcastTests\StartBroadcastWithDvr-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\BroadcastTests\StartBroadcastWithAutoStreamMode-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -182,6 +242,24 @@
   <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp3.1' ">
 	<Reference Include="System.Web" />
 	<Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <None Update="Data\DialTests\DialAsyncCorrectHeaders-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialCorrectHeaders-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialCorrectData-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialCorrectResponse-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\DialTests\DialAsyncCorrectResponse-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   
 </Project>

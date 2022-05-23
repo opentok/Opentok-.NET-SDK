@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System;
+using Moq;
 using OpenTokSDK;
 using OpenTokSDK.Exception;
 using OpenTokSDK.Util;
@@ -92,6 +93,8 @@ namespace OpenTokSDKTest
             string token = "1234567890";
             string sipUri = "SIPURI";
 
+            var responseJson = GetResponseJson();
+
             Dictionary<string, string> headersSent = null;
             Dictionary<string, object> dataSent = null;
 
@@ -102,7 +105,8 @@ namespace OpenTokSDKTest
                 {
                     headersSent = headers;
                     dataSent = data;
-                });
+                })
+                .Returns(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
@@ -120,6 +124,8 @@ namespace OpenTokSDKTest
             string token = "1234567890";
             string sipUri = "SIPURI";
 
+            string responseJson = GetResponseJson();
+
             Dictionary<string, string> headersSent = null;
             Dictionary<string, object> dataSent = null;
 
@@ -130,7 +136,8 @@ namespace OpenTokSDKTest
                 {
                     headersSent = headers;
                     dataSent = data;
-                });
+                })
+                .ReturnsAsync(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
@@ -147,6 +154,8 @@ namespace OpenTokSDKTest
             // arrange
             string token = "1234567890";
             string sipUri = "SIPURI";
+
+            string responseJson = GetResponseJson();
 
             DialOptions dialOptions = new DialOptions
             {
@@ -168,7 +177,8 @@ namespace OpenTokSDKTest
                 {
                     headersSent = headers;
                     dataSent = data;
-                });
+                })
+                .Returns(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
@@ -240,6 +250,77 @@ namespace OpenTokSDKTest
             Assert.Equal(dialOptions.Secure, sip.secure);
             Assert.Equal(dialOptions.Video, sip.video);
             Assert.Equal(dialOptions.ObserveForceMute, sip.observeForceMute);
+        }
+
+        [Fact]
+        public void DialCorrectResponse()
+        {
+            // arrange
+            string token = "1234567890";
+            string sipUri = "SIPURI";
+
+            var expectedUrl = $"v2/project/{ApiKey}/dial";
+            var responseJson = GetResponseJson();
+
+            var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
+            mockClient
+                .Setup(httpClient => httpClient.Post(expectedUrl, It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .Returns(responseJson)
+                .Verifiable();
+
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            // act
+            opentok.Dial(SessionId, token, sipUri);
+
+
+            // act
+            var response = opentok.Dial(SessionId, token, sipUri);
+
+            // assert
+            Assert.NotNull(response);
+            Assert.Equal(new Guid("b0a5a8c7-dc38-459f-a48d-a7f2008da853"), response.Id);
+            Assert.Equal(new Guid("e9f8c166-6c67-440d-994a-04fb6dfed007"), response.ConnectionId);
+            Assert.Equal(new Guid("482bce73-f882-40fd-8ca5-cb74ff416036"), response.StreamId);
+            mockClient.Verify();
+
+            // assert
+            mockClient.Verify();
+        }
+
+        [Fact]
+        public async Task DialAsyncCorrectResponse()
+        {
+            // arrange
+            string token = "1234567890";
+            string sipUri = "SIPURI";
+
+            var expectedUrl = $"v2/project/{ApiKey}/dial";
+            var responseJson = GetResponseJson();
+
+            var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
+            mockClient
+                .Setup(httpClient => httpClient.PostAsync(expectedUrl, It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson)
+                .Verifiable();
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            
+            // act
+            var response = await opentok.DialAsync(SessionId, token, sipUri);
+
+            // assert
+            Assert.NotNull(response);
+            Assert.Equal(new Guid("a0a5a8c7-dc38-459f-a48d-a7f2008da853"), response.Id);
+            Assert.Equal(new Guid("b9f8c166-6c67-440d-994a-04fb6dfed007"), response.ConnectionId);
+            Assert.Equal(new Guid("182bce73-f882-40fd-8ca5-cb74ff416036"), response.StreamId);
+            mockClient.Verify();
+
+            // assert
+            mockClient.Verify();
         }
     }
 }

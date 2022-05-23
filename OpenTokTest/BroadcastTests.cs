@@ -16,18 +16,7 @@ namespace OpenTokSDKTest
         public void StartBroadcast()
         {
             string sessionId = "SESSIONID";
-            string returnString = "{\n" +
-                                  " \"id\" : \"30b3ebf1-ba36-4f5b-8def-6f70d9986fe9\",\n" +
-                                  " \"sessionId\" : \"SESSIONID\",\n" +
-                                  " \"projectId\" : 123456,\n" +
-                                  " \"createdAt\" : 1395183243556,\n" +
-                                  " \"updatedAt\" : 1395183243556,\n" +
-                                  " \"resolution\" : \"640x480\",\n" +
-                                  " \"status\" : \"started\",\n" +
-                                  " \"broadcastUrls\": { \n" +
-                                  " \"hls\": \"http://server/fakepath/playlist.m3u8\", \n" +
-                                  " } \n" +
-                                  " }";
+            string returnString = GetResponseJson();
 
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
@@ -62,15 +51,7 @@ namespace OpenTokSDKTest
                                 " }";
             var mockClient = new Mock<HttpClient>();
             var expectedUrl = $"v2/project/{ApiKey}/broadcast";
-            var outputs = new Dictionary<string, object> { { "hls", new object() } };
-            var data = new Dictionary<string, object>
-            {
-                { "sessionId", sessionId },
-                { "maxDuration", 7200 },
-                { "outputs", outputs }
-            };
             var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit);
-            data.Add("layout", layout);
 
             mockClient.Setup(httpClient => httpClient.Post(
                 expectedUrl,
@@ -274,7 +255,7 @@ namespace OpenTokSDKTest
         {
             string sessionId = "SESSIONID";
             string responseJson = GetResponseJson();
-            
+
             Dictionary<string, object> dataSent = null;
 
             var mockClient = new Mock<HttpClient>();
@@ -327,6 +308,109 @@ namespace OpenTokSDKTest
             Assert.NotNull(dataSent);
             Assert.True(dataSent.ContainsKey("streamMode"));
             Assert.Equal("auto", dataSent["streamMode"]);
+        }
+
+        [Fact]
+        public void StartBroadcastWithInvalidResolutionThrowsException()
+        {
+            string sessionId = "SESSIONID";
+            string resolution = "300x300";
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.StartBroadcast(sessionId, resolution: resolution));
+            Assert.NotNull(exception);
+            Assert.Contains("Invalid resolution. See https://www.dev.tokbox.com/developer/rest/#start_broadcast for valid resolutions.", exception.Message);
+            Assert.Equal("resolution", exception.ParamName);
+        }
+
+        [Fact]
+        public void StartBroadcastWithDvrAndLowLatencyThrowsException()
+        {
+            string sessionId = "SESSIONID";
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.StartBroadcast(sessionId, dvr: true, lowLatency: true));
+            Assert.NotNull(exception);
+            Assert.Contains("Cannot set both dvr and lowLatency on HLS.", exception.Message);
+        }
+
+        [Fact]
+        public void StartBroadcastWithDvr()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = GetResponseJson();
+
+            Dictionary<string, object> dataSent = null;
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .Callback<string, Dictionary<string, string>, Dictionary<string, object>>((url, headers, data) =>
+                 {
+                     dataSent = data;
+                 })
+                .Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = opentok.StartBroadcast(sessionId, hls: true, dvr: true);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/broadcast")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+
+            Assert.NotNull(broadcast);
+            Assert.NotNull(dataSent);
+            Assert.True(dataSent.ContainsKey("outputs"));
+
+            var outputs = dataSent["outputs"] as IDictionary<string, object>;
+
+            Assert.NotNull(outputs);
+            Assert.True(outputs.ContainsKey("hls"));
+
+            var hls = outputs["hls"] as IDictionary<string, bool>;
+            Assert.NotNull(hls);
+
+            Assert.True(hls["dvr"]);
+            Assert.False(hls.ContainsKey("lowLatency"));
+        }
+
+        [Fact]
+        public void StartBroadcastWithLowLatency()
+        {
+            string sessionId = "SESSIONID";
+            string returnString = GetResponseJson();
+
+            Dictionary<string, object> dataSent = null;
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .Callback<string, Dictionary<string, string>, Dictionary<string, object>>((url, headers, data) =>
+                {
+                    dataSent = data;
+                })
+                .Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = opentok.StartBroadcast(sessionId, hls: true, lowLatency: true);
+
+            mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/broadcast")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+
+            Assert.NotNull(broadcast);
+            Assert.True(broadcast.Settings.Hls.LowLatency);
+            Assert.NotNull(dataSent);
+            Assert.True(dataSent.ContainsKey("outputs"));
+
+            var outputs = dataSent["outputs"] as IDictionary<string, object>;
+
+            Assert.NotNull(outputs);
+            Assert.True(outputs.ContainsKey("hls"));
+
+            var hls = outputs["hls"] as IDictionary<string, bool>;
+            Assert.NotNull(hls);
+
+            Assert.True(hls["lowLatency"]);
+            Assert.False(hls["dvr"]);
         }
 
         // AddStreamToBroadcast
@@ -588,6 +672,109 @@ namespace OpenTokSDKTest
 
             Assert.NotNull(dataSent);
             Assert.Equal(new Dictionary<string, object> { { "removeStream", streamId } }, dataSent);
+        }
+
+
+        // Stop Broadcast
+
+        [Fact]
+        public void StopBroadcast()
+        {
+            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(
+                    It.IsAny<string>(), 
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = opentok.StopBroadcast(broadcastId);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(broadcastId, broadcast.Id);
+            Assert.NotNull(broadcast.Id);
+
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
+            mockClient.Verify(httpClient => httpClient.Post(
+                    It.Is<string>(url => url.Equals(expectedUrl)), 
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.IsAny<Dictionary<string, object>>()),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task StopBroadcastAsync()
+        {
+            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = await opentok.StopBroadcastAsync(broadcastId);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(broadcastId, broadcast.Id);
+            Assert.NotNull(broadcast.Id);
+
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
+            mockClient.Verify(httpClient => httpClient.PostAsync(
+                    It.Is<string>(url => url.Equals(expectedUrl)),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()),
+                Times.Once());
+        }
+
+
+        // Get Broadcast
+
+        [Fact]
+        public void GetBroadcast()
+        {
+            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = opentok.GetBroadcast(broadcastId);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(broadcastId, broadcast.Id);
+            Assert.NotNull(broadcast.Id);
+
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
+            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals(expectedUrl))), Times.Once());
+        }
+
+        [Fact]
+        public async Task GetBroadcastAsync()
+        {
+            string broadcastId = "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9";
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
+                .ReturnsAsync(returnString);
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = await opentok.GetBroadcastAsync(broadcastId);
+
+            Assert.NotNull(broadcast);
+            Assert.Equal(broadcastId, broadcast.Id);
+            Assert.NotNull(broadcast.Id);
+
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
+            mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals(expectedUrl)), null), Times.Once());
         }
     }
 }

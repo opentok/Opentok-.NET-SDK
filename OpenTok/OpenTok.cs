@@ -35,6 +35,18 @@ namespace OpenTokSDK
         public HttpClient Client { internal get; set; }
 
         private bool _debug;
+
+        private IEnumerable<string> _validResolutions = new[]
+        {
+            "640x480",
+            "1280x720",
+            "1920x1080",
+            "480x640",
+            "720x1280",
+            "1080x1920"
+        };
+
+
         /// <summary>
         /// Enables writing request/response details to console.
         /// Don't use in a production environment.
@@ -56,11 +68,11 @@ namespace OpenTokSDK
         /// <param name="apiSecret">Your OpenTok API secret. (See the <a href="https://tokbox.com/account" > TokBox account page</a></param>
         public OpenTok(int apiKey, string apiSecret)
         {
-            this.ApiKey = apiKey;
-            this.ApiSecret = apiSecret;
-            this.OpenTokServer = "https://api.opentok.com";
-            Client = new HttpClient(apiKey, apiSecret, this.OpenTokServer);
-            this.Debug = false;
+            ApiKey = apiKey;
+            ApiSecret = apiSecret;
+            OpenTokServer = "https://api.opentok.com";
+            Client = new HttpClient(apiKey, apiSecret, OpenTokServer);
+            Debug = false;
         }
 
         /// <summary>
@@ -71,11 +83,11 @@ namespace OpenTokSDK
         /// <param name="apiUrl"></param>
         public OpenTok(int apiKey, string apiSecret, string apiUrl)
         {
-            this.ApiKey = apiKey;
-            this.ApiSecret = apiSecret;
-            this.OpenTokServer = apiUrl;
-            Client = new HttpClient(apiKey, apiSecret, this.OpenTokServer);
-            this.Debug = false;
+            ApiKey = apiKey;
+            ApiSecret = apiSecret;
+            OpenTokServer = apiUrl;
+            Client = new HttpClient(apiKey, apiSecret, OpenTokServer);
+            Debug = false;
         }
 
         /// <summary>
@@ -323,7 +335,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
-            Session session = new Session(sessionId, this.ApiKey, this.ApiSecret);
+            Session session = new Session(sessionId, ApiKey, ApiSecret);
             return session.GenerateToken(role, expireTime, data, initialLayoutClassList);
         }
 
@@ -546,13 +558,31 @@ namespace OpenTokSDK
         /// </para>
         /// </summary>
         /// <param name="archiveId">The archive ID of the archive you want to stop recording.</param>
-        /// <returns>The Archive object corresponding to the archive being STOPPED.</returns>
+        /// <returns>The Archive object corresponding to the archive being stopped.</returns>
         public Archive StopArchive(string archiveId)
         {
-            string url = string.Format("v2/project/{0}/archive/{1}/stop", this.ApiKey, archiveId);
+            string url = string.Format("v2/project/{0}/archive/{1}/stop", ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
+            return JsonConvert.DeserializeObject<Archive>(response);
+        }
+
+        /// <summary>
+        /// Stops an OpenTok archive that is being recorded.
+        /// <para>
+        /// Archives automatically stop recording after 120 minutes or when all clients have
+        /// disconnected from the session being archived.
+        /// </para>
+        /// </summary>
+        /// <param name="archiveId">The archive ID of the archive you want to stop recording.</param>
+        /// <returns>The Archive object corresponding to the archive being stopped.</returns>
+        public async Task<Archive> StopArchiveAsync(string archiveId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/stop";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Archive>(response);
         }
 
@@ -577,10 +607,12 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
-            string url = string.Format("v2/project/{0}/archive?offset={1}", this.ApiKey, offset);
+          
+            string url = $"v2/project/{ApiKey}/archive?offset={offset}";
+            
             if (count > 0)
             {
-                url = string.Format("{0}&count={1}", url, count);
+                url = $"{url}&count={count}";
             }
             if (!string.IsNullOrEmpty(sessionId))
             {
@@ -591,6 +623,49 @@ namespace OpenTokSDK
                 url = $"{url}&sessionId={sessionId}";
             }
             string response = Client.Get(url);
+            JObject archives = JObject.Parse(response);
+            JArray archiveArray = (JArray)archives["items"];
+            ArchiveList archiveList = new ArchiveList(archiveArray.ToObject<List<Archive>>(), (int)archives["count"]);
+            return archiveList;
+        }
+
+        /// <summary>
+        /// Returns a List of <see cref="Archive"/> objects, representing archives that are both
+        /// both completed and in-progress, for your API key.
+        /// </summary>
+        /// <param name="offset">
+        /// The index offset of the first archive. 0 is offset of the most recently started archive.
+        /// 1 is the offset of the archive that started prior to the most recent archive.
+        /// </param>
+        /// <param name="count">
+        /// The number of archives to be returned. The maximum number of archives returned is 1000.
+        /// </param>
+        /// <param name="sessionId">
+        /// The session ID.
+        /// </param>
+        /// <returns>A List of <see cref="Archive"/> objects.</returns>
+        public async Task<ArchiveList> ListArchivesAsync(int offset = 0, int count = 0, string sessionId = "")
+        {
+            if (count < 0)
+            {
+                throw new OpenTokArgumentException("count cannot be smaller than 0");
+            }
+
+            string url = $"v2/project/{this.ApiKey}/archive?offset={offset}";
+            if (count > 0)
+            {
+                url = $"{url}&count={count}";
+            }
+
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                if (!OpenTokUtils.ValidateSession(sessionId))
+                {
+                    throw new OpenTokArgumentException("Session Id is not valid");
+                }
+                url = $"{url}&sessionId={sessionId}";
+            }
+            string response = await Client.GetAsync(url);
             JObject archives = JObject.Parse(response);
             JArray archiveArray = (JArray)archives["items"];
             ArchiveList archiveList = new ArchiveList(archiveArray.ToObject<List<Archive>>(), (int)archives["count"]);
@@ -617,7 +692,7 @@ namespace OpenTokSDK
         public async Task<Archive> GetArchiveAsync(string archiveId)
         {
             string url = $"v2/project/{ApiKey}/archive/{archiveId}";
-            string response = await Client.GetAsync(url);
+            string response = await Client.GetAsync(url, null);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
         
@@ -883,7 +958,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Invalid session Id");
             }
-            string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", this.ApiKey, sessionId, connectionId);
+            string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", ApiKey, sessionId, connectionId);
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
         }
@@ -913,7 +988,7 @@ namespace OpenTokSDK
         /// A list of <see cref="Rtmp"/> objects, defining RTMP streams to be broadcast (up to five).
         /// </param>
         /// <param name="resolution">
-        /// The resolution of the broadcast video. This can be set to either "640x480" or "1280x720".
+        /// The resolution of the broadcast video. Valid resolutions are "640x480", "1280x720", "1920x1080", "480x640", "720x1280", "1080x1920".
         /// </param>
         /// <param name="maxDuration">
         /// The maximum duration for the broadcast, in seconds. The broadcast will automatically
@@ -934,29 +1009,35 @@ namespace OpenTokSDK
         /// <see cref="OpenTok.AddStreamToBroadcastAsync"/> and
         /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> methods).
         /// </param>
+        /// <param name="dvr">Whether to enable DVR functionality — rewinding, pausing, and resuming — in players that support it (true),
+        /// or not (false, the default). With DVR enabled,
+        /// the HLS URL will include a ?DVR query string appended to the end. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a></param>
+        /// <param name="lowLatency">Whether to enable low-latency mode for the HLSstream. Some HLS players do not support low-latency mode. 
+        /// This feature is incompatible with DVR mode HLS broadcasts. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency-hls-broadcasts">Low-latency HLS broadcasts</a></param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
-        public Broadcast StartBroadcast(string sessionId, Boolean hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null)
+        public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
 
-            if (!string.IsNullOrEmpty(resolution) && resolution != "640x480" && resolution != "1280x720")
-            {
-                throw new OpenTokArgumentException("Resolution value must be either 640x480 (SD) or 1280x720 (HD).");
-            }
-
+            if(!string.IsNullOrEmpty(resolution) && !_validResolutions.Contains(resolution))
+                throw new OpenTokArgumentException("Invalid resolution. See https://www.dev.tokbox.com/developer/rest/#start_broadcast for valid resolutions.", nameof(resolution));
+            
             if (maxDuration < 60 || maxDuration > 36000)
             {
-                throw new OpenTokArgumentException("MaxDuration value must be between 60 and 36000 (inclusive).");
+                throw new OpenTokArgumentException("MaxDuration value must be between 60 and 36000 (inclusive).", nameof(maxDuration));
             }
 
-            if (rtmpList != null && rtmpList.Count() >= 5)
+            if (rtmpList != null && rtmpList.Count >= 5)
             {
-                throw new OpenTokArgumentException("Cannot add more than 5 RTMP properties");
+                throw new OpenTokArgumentException("Cannot add more than 5 RTMP properties", nameof(rtmpList));
             }
+
+            if (dvr && lowLatency.HasValue && lowLatency.Value)
+                throw new OpenTokArgumentException("Cannot set both dvr and lowLatency on HLS.");
 
             string url = $"v2/project/{ApiKey}/broadcast";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
@@ -964,7 +1045,10 @@ namespace OpenTokSDK
 
             if (hls)
             {
-                outputs.Add("hls", new object());
+                var hlsParams = new Dictionary<string, bool> {{"dvr", dvr}};
+                if(lowLatency.HasValue) hlsParams.Add("lowLatency", lowLatency.Value);
+
+                outputs.Add("hls", hlsParams);
             }
 
             if (rtmpList != null)
@@ -972,7 +1056,7 @@ namespace OpenTokSDK
                 outputs.Add("rtmp", rtmpList);
             }
 
-            var data = new Dictionary<string, object>() {
+            var data = new Dictionary<string, object> {
                 { "sessionId", sessionId },
                 { "maxDuration", maxDuration },
                 { "outputs", outputs }
@@ -1029,10 +1113,31 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast StopBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/stop", this.ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
+            return JsonConvert.DeserializeObject<Broadcast>(response);
+        }
+
+        /// <summary>
+        /// Use this method to stop a live broadcast of an OpenTok session.
+        /// Note that broadcasts automatically stop 120 minutes after they are started.
+        /// <para>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        /// </para>
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
+        /// <returns>
+        /// The <see cref="Broadcast"/> object. This object includes properties defining the broadcast,
+        /// including the broadcast ID.
+        /// </returns>
+        public async Task<Broadcast> StopBroadcastAsync(string broadcastId)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Broadcast>(response);
         }
 
@@ -1049,8 +1154,26 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast GetBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}", this.ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
             string response = Client.Get(url);
+            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /// <summary>
+        /// Use this method to get a live streaming broadcast object of an OpenTok session.
+        /// </summary>
+        /// <para>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        /// </para>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
+        /// <returns>
+        /// The <see cref="Broadcast"/> object. This object includes properties defining the broadcast,
+        /// including the broadcast ID.
+        /// </returns>
+        public async Task<Broadcast> GetBroadcastAsync(string broadcastId)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
+            string response = await Client.GetAsync(url);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
@@ -1062,7 +1185,7 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/layout", this.ApiKey, broadcastId);
+            string url = string.Format("v2/project/{0}/broadcast/{1}/layout", ApiKey, broadcastId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
@@ -1282,7 +1405,7 @@ namespace OpenTokSDK
         /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
-            string url = string.Format("v2/project/{0}/session/{1}/stream", this.ApiKey, sessionId);
+            string url = string.Format("v2/project/{0}/session/{1}/stream", ApiKey, sessionId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
@@ -1321,8 +1444,8 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.");
             }
             string url = String.IsNullOrEmpty(connectionId) ?
-                            string.Format("v2/project/{0}/session/{1}/signal", this.ApiKey, sessionId) :
-                            string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", this.ApiKey, sessionId, connectionId);
+                            string.Format("v2/project/{0}/session/{1}/signal", ApiKey, sessionId) :
+                            string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", ApiKey, sessionId, connectionId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -1404,7 +1527,7 @@ namespace OpenTokSDK
         /// <c>"sip:user@sip.partner.com;transport=tls"</c>. This is an example of insecure call negotiation:
         /// <c>"sip:user@sip.partner.com"</c>.</param>
         /// <param name="options">Optional parameters for SIP dialing.</param>
-        public void Dial(string sessionId, string token, string sipUri, DialOptions options = null)
+        public Sip Dial(string sessionId, string token, string sipUri, DialOptions options = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -1416,7 +1539,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session Id is not valid");
             }
 
-            string url = $"v2/project/{this.ApiKey}/dial";
+            string url = $"v2/project/{ApiKey}/dial";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
@@ -1434,7 +1557,9 @@ namespace OpenTokSDK
                     }
                 }
             };
-            Client.Post(url, headers, data);
+
+            string response = Client.Post(url, headers, data);
+            return JsonConvert.DeserializeObject<Sip>(response);
         }
 
         /// <summary>
@@ -1461,7 +1586,7 @@ namespace OpenTokSDK
         /// <c>"sip:user@sip.partner.com;transport=tls"</c>. This is an example of insecure call negotiation:
         /// <c>"sip:user@sip.partner.com"</c>.</param>
         /// <param name="options">Optional parameters for SIP dialing.</param>
-        public Task DialAsync(string sessionId, string token, string sipUri, DialOptions options = null)
+        public async Task<Sip> DialAsync(string sessionId, string token, string sipUri, DialOptions options = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -1473,7 +1598,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session Id is not valid");
             }
 
-            string url = $"v2/project/{this.ApiKey}/dial";
+            string url = $"v2/project/{ApiKey}/dial";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
@@ -1491,7 +1616,8 @@ namespace OpenTokSDK
                     }
                 }
             };
-            return Client.PostAsync(url, headers, data);
+            var response = await Client.PostAsync(url, headers, data);
+            return JsonConvert.DeserializeObject<Sip>(response);
         }
 
         /// <summary>
@@ -1516,7 +1642,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
             }
 
-            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             Client.Post(url, headers, null);
@@ -1544,7 +1670,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
             }
 
-            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             await Client.PostAsync(url, headers, null);
@@ -1603,7 +1729,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
 
-            string url = $"v2/project/{this.ApiKey}/session/{sessionId}/mute";
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };
@@ -1617,7 +1743,7 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAll"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMute()</c> method
-        ///  to remove the mute state of a session, so that new published streams are not
+        /// to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>
@@ -1647,11 +1773,11 @@ namespace OpenTokSDK
         /// <para>
         /// After you call the <see cref="ForceMuteAllAsync"/> method, any streams published after
         /// the call are published with audio muted. Call the <c>DisableForceMuteAsync()</c> method
-        //  to remove the mute state of a session, so that new published streams are not
+        ///  to remove the mute state of a session, so that new published streams are not
         /// automatically muted.
         /// </para>
         /// <para>
-        /// Also see the <see cref="DisableForceMutec"/> method.
+        /// Also see the <see cref="DisableForceMute"/> method.
         /// </para>
         /// <param name="sessionId">The session ID.</param>
         /// <exception cref="OpenTokArgumentException">Thrown when the session ID is invalid.</exception>

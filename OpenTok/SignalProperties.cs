@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-
-namespace OpenTokSDK
+﻿namespace OpenTokSDK
 {
     /// <summary>
     /// Defines signal payload for the Signal API.
@@ -13,15 +9,25 @@ namespace OpenTokSDK
         {
 
         }
+
+        /// <summary>
+        /// Defines signal payload for the Signal API.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="type"></param>
         public SignalProperties(string data = null, string type = null)
         {
             this.data = data;
             this.type = type;
         }
+
+        /// <summary>
+        /// Defines signal payload for the Signal API.
+        /// </summary>
+        /// <param name="data"></param>
         public SignalProperties(string data = null)
         {
             this.data = data;
-
         }
 
         public string data { get; set; }
