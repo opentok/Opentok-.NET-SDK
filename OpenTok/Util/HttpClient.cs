@@ -290,7 +290,7 @@ namespace OpenTokSDK.Util
 
         private HttpWebRequest CreateRequest(string url, Dictionary<string, string> headers, string data)
         {
-            Uri uri = new Uri($"{apiUrl}/{url}");
+            Uri uri = new Uri($"{_apiUrl}/{url}");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             if (RequestTimeout != null)
             {

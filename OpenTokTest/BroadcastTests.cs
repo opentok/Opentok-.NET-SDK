@@ -782,11 +782,12 @@ namespace OpenTokSDKTest
             };
             var opentok = new OpenTok(ApiKey, ApiSecret);
 
-            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.SetBroadcastLayoutAsync("12345", layout));
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+                await opentok.SetBroadcastLayoutAsync("12345", layout));
             Assert.Contains("Could not set the layout. Either an invalid JSON or an invalid layout options.",
                 exception.Message);
             Assert.Equal("layout", exception.ParamName);
-
+        }
 
         // Stop Broadcast
 
