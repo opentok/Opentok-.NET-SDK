@@ -53,11 +53,11 @@ namespace OpenTokSDK
         /// </summary>
         public bool Debug
         {
-            get { return _debug; }
+            get => _debug;
             set
             {
                 _debug = value;
-                Client.debug = _debug;
+                Client.Debug = _debug;
             }
         }
 
@@ -558,13 +558,31 @@ namespace OpenTokSDK
         /// </para>
         /// </summary>
         /// <param name="archiveId">The archive ID of the archive you want to stop recording.</param>
-        /// <returns>The Archive object corresponding to the archive being STOPPED.</returns>
+        /// <returns>The Archive object corresponding to the archive being stopped.</returns>
         public Archive StopArchive(string archiveId)
         {
             string url = string.Format("v2/project/{0}/archive/{1}/stop", ApiKey, archiveId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
+            return JsonConvert.DeserializeObject<Archive>(response);
+        }
+
+        /// <summary>
+        /// Stops an OpenTok archive that is being recorded.
+        /// <para>
+        /// Archives automatically stop recording after 120 minutes or when all clients have
+        /// disconnected from the session being archived.
+        /// </para>
+        /// </summary>
+        /// <param name="archiveId">The archive ID of the archive you want to stop recording.</param>
+        /// <returns>The Archive object corresponding to the archive being stopped.</returns>
+        public async Task<Archive> StopArchiveAsync(string archiveId)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/stop";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Archive>(response);
         }
 
@@ -589,10 +607,11 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
-            string url = string.Format("v2/project/{0}/archive?offset={1}", ApiKey, offset);
+            string url = $"v2/project/{ApiKey}/archive?offset={offset}";
+            
             if (count > 0)
             {
-                url = string.Format("{0}&count={1}", url, count);
+                url = $"{url}&count={count}";
             }
             if (!string.IsNullOrEmpty(sessionId))
             {
@@ -603,6 +622,49 @@ namespace OpenTokSDK
                 url = $"{url}&sessionId={sessionId}";
             }
             string response = Client.Get(url);
+            JObject archives = JObject.Parse(response);
+            JArray archiveArray = (JArray)archives["items"];
+            ArchiveList archiveList = new ArchiveList(archiveArray.ToObject<List<Archive>>(), (int)archives["count"]);
+            return archiveList;
+        }
+
+        /// <summary>
+        /// Returns a List of <see cref="Archive"/> objects, representing archives that are both
+        /// both completed and in-progress, for your API key.
+        /// </summary>
+        /// <param name="offset">
+        /// The index offset of the first archive. 0 is offset of the most recently started archive.
+        /// 1 is the offset of the archive that started prior to the most recent archive.
+        /// </param>
+        /// <param name="count">
+        /// The number of archives to be returned. The maximum number of archives returned is 1000.
+        /// </param>
+        /// <param name="sessionId">
+        /// The session ID.
+        /// </param>
+        /// <returns>A List of <see cref="Archive"/> objects.</returns>
+        public async Task<ArchiveList> ListArchivesAsync(int offset = 0, int count = 0, string sessionId = "")
+        {
+            if (count < 0)
+            {
+                throw new OpenTokArgumentException("count cannot be smaller than 0");
+            }
+
+            string url = $"v2/project/{this.ApiKey}/archive?offset={offset}";
+            if (count > 0)
+            {
+                url = $"{url}&count={count}";
+            }
+
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                if (!OpenTokUtils.ValidateSession(sessionId))
+                {
+                    throw new OpenTokArgumentException("Session Id is not valid");
+                }
+                url = $"{url}&sessionId={sessionId}";
+            }
+            string response = await Client.GetAsync(url);
             JObject archives = JObject.Parse(response);
             JArray archiveArray = (JArray)archives["items"];
             ArchiveList archiveList = new ArchiveList(archiveArray.ToObject<List<Archive>>(), (int)archives["count"]);
@@ -627,9 +689,9 @@ namespace OpenTokSDK
         /// <param name="archiveId">The archive ID.</param>
         /// <returns>The <see cref="Archive"/> object.</returns>
         public async Task<Archive> GetArchiveAsync(string archiveId)
-        {
+        { 
             string url = $"v2/project/{ApiKey}/archive/{archiveId}";
-            string response = await Client.GetAsync(url);
+            string response = await Client.GetAsync(url, null);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
         
@@ -793,13 +855,44 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Stream"/> object.</returns>
         public Stream GetStream(string sessionId, string streamId)
         {
-            if (String.IsNullOrEmpty(sessionId) || String.IsNullOrEmpty(streamId))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                throw new OpenTokArgumentException("The sessionId or streamId cannot be null or empty");
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
             }
-            string url = string.Format("v2/project/{0}/session/{1}/stream/{2}", ApiKey, sessionId, streamId);
-            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty", nameof(streamId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}";
             string response = Client.Get(url);
+            Stream stream = JsonConvert.DeserializeObject<Stream>(response);
+            Stream streamCopy = new Stream();
+            streamCopy.CopyStream(stream);
+            return streamCopy;
+        }
+
+        /// <summary>
+        /// Gets a Stream object for the given stream ID.
+        /// </summary>
+        /// <param name="sessionId">The session ID of the OpenTok session.</param>
+        /// <param name="streamId">The stream ID.</param>
+        /// <returns>The <see cref="Stream"/> object.</returns>
+        public async Task<Stream> GetStreamAsync(string sessionId, string streamId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
+            }
+
+            if (string.IsNullOrEmpty(streamId))
+            {
+                throw new OpenTokArgumentException("The streamId cannot be null or empty", nameof(streamId));
+            }
+
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}";
+            string response = await Client.GetAsync(url);
             Stream stream = JsonConvert.DeserializeObject<Stream>(response);
             Stream streamCopy = new Stream();
             streamCopy.CopyStream(stream);
@@ -812,14 +905,36 @@ namespace OpenTokSDK
         /// </summary>
         /// <param name="sessionId">The session ID corresponding to the session.</param>
         /// <returns>A List of <see cref="Stream"/> objects.</returns>
+        /// <exception cref="OpenTokArgumentException"></exception>
         public StreamList ListStreams(string sessionId)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                throw new OpenTokArgumentException("The sessionId cannot be null or empty");
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
             }
-            string url = string.Format("v2/project/{0}/session/{1}/stream", ApiKey, sessionId);
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
             string response = Client.Get(url);
+            JObject streams = JObject.Parse(response);
+            JArray streamsArray = (JArray)streams["items"];
+            StreamList streamList = new StreamList(streamsArray.ToObject<List<Stream>>(), (int)streams["count"]);
+            return streamList;
+        }
+
+        /// <summary>
+        /// Returns a List of <see cref="Stream"/> objects, representing streams that are in-progress,
+        /// for the session ID.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session.</param>
+        /// <returns>A List of <see cref="Stream"/> objects.</returns>
+        /// <exception cref="OpenTokArgumentException"></exception>
+        public async Task<StreamList> ListStreamsAsync(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
+            }
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            string response = await Client.GetAsync(url);
             JObject streams = JObject.Parse(response);
             JArray streamsArray = (JArray)streams["items"];
             StreamList streamList = new StreamList(streamsArray.ToObject<List<Stream>>(), (int)streams["count"]);
@@ -997,10 +1112,30 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast StopBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/stop", ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            string response = Client.Post(url, headers, new Dictionary<string, object>());
+            return JsonConvert.DeserializeObject<Broadcast>(response);
+        }
+
+        /// <summary>
+        /// Use this method to stop a live broadcast of an OpenTok session.
+        /// Note that broadcasts automatically stop 120 minutes after they are started.
+        /// <para>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        /// </para>
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
+        /// <returns>
+        /// The <see cref="Broadcast"/> object. This object includes properties defining the broadcast,
+        /// including the broadcast ID.
+        /// </returns>
+        public async Task<Broadcast> StopBroadcastAsync(string broadcastId)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
-            string response = Client.Post(url, headers, new Dictionary<string, object>());
+            string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Broadcast>(response);
         }
 
@@ -1017,8 +1152,26 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast GetBroadcast(string broadcastId)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}", ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
             string response = Client.Get(url);
+            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /// <summary>
+        /// Use this method to get a live streaming broadcast object of an OpenTok session.
+        /// </summary>
+        /// <para>
+        /// For more information on broadcasting, see the <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        /// </para>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session</param>
+        /// <returns>
+        /// The <see cref="Broadcast"/> object. This object includes properties defining the broadcast,
+        /// including the broadcast ID.
+        /// </returns>
+        public async Task<Broadcast> GetBroadcastAsync(string broadcastId)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
+            string response = await Client.GetAsync(url);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
@@ -1030,40 +1183,79 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
-            string url = string.Format("v2/project/{0}/broadcast/{1}/layout", ApiKey, broadcastId);
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
             {
-                if ((layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && String.IsNullOrEmpty(layout.Stylesheet)) ||
-                    (!layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !String.IsNullOrEmpty(layout.Stylesheet)))
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && string.IsNullOrEmpty(layout.Stylesheet) ||
+                    !layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !string.IsNullOrEmpty(layout.Stylesheet))
                 {
-                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.");
+                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.", nameof(layout));
                 }
-                else if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+
+                if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
-                else
+
+                data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
+                
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
                 {
-                    data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
-                    if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
-                    {
-                        data.Add("stylesheet", layout.Stylesheet);
-                    }
-                    if (layout.ScreenShareType != null)
-                    {
-                        data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
-                    }
+                    data.Add("stylesheet", layout.Stylesheet);
+                }
+
+                if (layout.ScreenShareType != null)
+                {
+                    data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
                 }
             }
 
             Client.Put(url, headers, data);
         }
 
+        /// <summary>
+        /// Sets the layout type for the broadcast. For a description of layout types, see
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts">Configuring the video layout for OpenTok live streaming broadcasts</a>.
+        /// </summary>
+        /// <param name="broadcastId">The broadcast ID of the broadcasting session.</param>
+        /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
+        public async Task SetBroadcastLayoutAsync(string broadcastId, BroadcastLayout layout)
+        {
+            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>();
+            if (layout != null)
+            {
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && string.IsNullOrEmpty(layout.Stylesheet) ||
+                    !layout.Type.Equals(BroadcastLayout.LayoutType.Custom) && !string.IsNullOrEmpty(layout.Stylesheet))
+                {
+                    throw new OpenTokArgumentException("Could not set the layout. Either an invalid JSON or an invalid layout options.", nameof(layout));
+                }
+
+                if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
+                {
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                }
+
+                data.Add("type", OpenTokUtils.convertToCamelCase(layout.Type.ToString()));
+
+                if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
+                {
+                    data.Add("stylesheet", layout.Stylesheet);
+                }
+                if (layout.ScreenShareType != null)
+                {
+                    data.Add("screenShareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
+                }
+            }
+
+            await Client.PutAsync(url, headers, data);
+        }
 
         /// <summary>
-        /// Allows you to Dynamically change the layout of a composed archive while it's being recorded
+        /// Allows you to dynamically change the layout of a composed archive while it's being recorded
         /// see <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a>
         /// for details regarding customizing a layout.
         /// </summary>
@@ -1075,16 +1267,17 @@ namespace OpenTokSDK
             string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
+            
             if (layout != null)
             {
                 if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
                 {
-                    throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided");
+                    throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided", nameof(layout));
                 }
 
                 if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
                 {
-                    throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set");
+                    throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set", nameof(layout));
                 }
 
                 data.Add("type", layout.Type.ToString());
@@ -1092,15 +1285,17 @@ namespace OpenTokSDK
                 {
                     data.Add("stylesheet", layout.StyleSheet);
                 }
+
                 if (layout.ScreenShareType != null)
                 {
                     if (layout.Type != LayoutType.bestFit)
                     {
-                        throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit");
+                        throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit", nameof(layout));
                     }
                     data.Add("screenshareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
                 }
             }
+
             Client.Put(url, headers, data);
             return true;
         }
@@ -1234,6 +1429,52 @@ namespace OpenTokSDK
             };
 
             return Client.PatchAsync(url, headers, data);
+        }
+
+        /// <summary>
+        /// Allows you to dynamically change the layout of a composed archive while it's being recorded
+        /// see <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a>
+        /// for details regarding customizing a layout.
+        /// </summary>
+        /// <param name="archiveId"></param>
+        /// <param name="layout"></param>
+        /// <returns></returns>
+        public async Task<bool> SetArchiveLayoutAsync(string archiveId, ArchiveLayout layout)
+        {
+            string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>();
+
+            if (layout != null)
+            {
+                if (layout.Type == LayoutType.custom && string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Invalid layout, layout is custom but no stylesheet provided", nameof(layout));
+                }
+
+                if (layout.Type != LayoutType.custom && !string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    throw new OpenTokArgumentException("Invalid layout, layout is not custom, but stylesheet is set", nameof(layout));
+                }
+
+                data.Add("type", layout.Type.ToString());
+                if (!string.IsNullOrEmpty(layout.StyleSheet))
+                {
+                    data.Add("stylesheet", layout.StyleSheet);
+                }
+
+                if (layout.ScreenShareType != null)
+                {
+                    if (layout.Type != LayoutType.bestFit)
+                    {
+                        throw new OpenTokArgumentException("Invalid layout, when ScreenShareType is set, Type must be bestFit", nameof(layout));
+                    }
+                    data.Add("screenshareType", OpenTokUtils.convertToCamelCase(layout.ScreenShareType.ToString()));
+                }
+            }
+
+            await Client.PutAsync(url, headers, data);
+            return true;
         }
 
         /// <summary>
