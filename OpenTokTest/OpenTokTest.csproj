@@ -54,6 +54,7 @@
     <None Remove="Data\BroadcastTests\StartBroadcastWithDvr-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithLowLatency-response.json" />
     <None Remove="Data\BroadcastTests\StartBroadcastWithManualStreamMode-response.json" />
+
     <None Remove="Data\StreamTests\GetStream-response.json" />
     <None Remove="Data\StreamTests\GetStreamAsync-response.json" />
     <None Remove="Data\StreamTests\GetStreamAsyncEmpty-response.json" />

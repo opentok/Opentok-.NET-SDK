@@ -408,6 +408,36 @@ namespace OpenTokSDKTest
         }
 
         [Fact(Skip = "This tests a private method, private methods should be free to be changed or refactored.")]
+        public void TestSetArchiveScreenShareType()
+        {
+            var opentok = new OpenTok(apiKey, apiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType = ScreenShareLayoutType.Pip };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var archiveId = "123456789";
+            var expectedUrl = $"v2/project/{apiKey}/archive/{archiveId}/layout";
+            var mockClient = new Mock<HttpClient>();
+            opentok.Client = mockClient.Object;
+            mockClient.Setup(c => c.Put(expectedUrl, headers, It.Is<Dictionary<string, object>>(x => (string)x["type"] == "bestFit" && (string)x["screenshareType"] == "pip")));
+            Assert.True(opentok.SetArchiveLayout(archiveId, layout));
+        }
+
+        [Fact]
+        public void TestSetArchiveScreenShareTypeInvalid()
+        {
+            var opentok = new OpenTok(apiKey, apiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.Pip };
+            try
+            {
+                opentok.SetArchiveLayout("12345", layout);
+                Assert.True(false, "Failing because we should have had an exception");
+            }
+            catch (OpenTokArgumentException ex)
+            {
+                Assert.Equal("Invalid layout, when ScreenShareType is set, Type must be bestFit", ex.Message);
+            }
+        }
+
+        [Fact]
         public void TestArchiveCustomLayout()
         {
             var expected = @"{""sessionId"":""abcd12345"",""name"":""an_archive_name"",""hasVideo"":true,""hasAudio"":true,""outputMode"":""composed"",""layout"":{""type"":""custom"",""stylesheet"":""stream.instructor {position: absolute; width: 100%;  height:50%;}""}}";
@@ -604,9 +634,6 @@ namespace OpenTokSDKTest
             }
             return tokenData;
         }
-        
-
-        
 
         [Fact]
         public void TestStartBroadcastScreenShareInvalidType()

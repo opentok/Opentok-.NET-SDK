@@ -19,6 +19,7 @@ namespace OpenTokSDKTest
             string responseJson = GetResponseJson();
 
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                     It.IsAny<Dictionary<string, object>>()))
                 .Returns(responseJson);
@@ -42,6 +43,7 @@ namespace OpenTokSDKTest
             string responseJson = GetResponseJson();
 
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
@@ -65,6 +67,7 @@ namespace OpenTokSDKTest
         {
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+            
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -85,6 +88,7 @@ namespace OpenTokSDKTest
         {
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
@@ -109,6 +113,7 @@ namespace OpenTokSDKTest
             string resolution = "640x480";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -132,12 +137,14 @@ namespace OpenTokSDKTest
             string resolution = "640x480";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+            
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
+
             Archive archive =
                 await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
 
@@ -155,6 +162,7 @@ namespace OpenTokSDKTest
         public void StartArchiveScreenShareInvalidType()
         {
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+
             ArchiveLayout layout = new ArchiveLayout
                 {Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.BestFit};
 
@@ -185,6 +193,7 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -214,12 +223,14 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
+
             var layout = new ArchiveLayout
             {
                 Type = LayoutType.custom,
@@ -245,8 +256,10 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
+
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
             var layout = new ArchiveLayout
@@ -254,6 +267,7 @@ namespace OpenTokSDKTest
                 Type = LayoutType.verticalPresentation,
                 StyleSheet = ""
             };
+            
             Archive archive = opentok.StartArchive(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution,
                 layout: layout);
             Assert.NotNull(archive);
@@ -271,6 +285,7 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
@@ -302,8 +317,10 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
+
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
             var layout = new ArchiveLayout
@@ -328,6 +345,7 @@ namespace OpenTokSDKTest
             string responseJson = GetResponseJson();
 
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
@@ -355,6 +373,7 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -377,14 +396,15 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
-            var layout = new ArchiveLayout {Type = LayoutType.custom};
 
+            var layout = new ArchiveLayout {Type = LayoutType.custom};
             var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
                 await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution,
                     layout: layout));
@@ -400,6 +420,7 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -423,12 +444,14 @@ namespace OpenTokSDKTest
             string resolution = "1280x720";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
             opentok.Client = mockClient.Object;
+
             Archive archive =
                 await opentok.StartArchiveAsync(sessionId, outputMode: OutputMode.COMPOSED, resolution: resolution);
 
@@ -449,6 +472,7 @@ namespace OpenTokSDKTest
             string resolution = "640x480";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -468,6 +492,7 @@ namespace OpenTokSDKTest
             string resolution = "640x480";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+            
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
@@ -487,6 +512,7 @@ namespace OpenTokSDKTest
             string resolution = "640x480";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -510,6 +536,7 @@ namespace OpenTokSDKTest
             string resolution = "640x480";
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
@@ -534,6 +561,7 @@ namespace OpenTokSDKTest
         {
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                 It.IsAny<Dictionary<string, object>>())).Returns(responseJson);
 
@@ -555,6 +583,7 @@ namespace OpenTokSDKTest
         {
             string responseJson = GetResponseJson();
             var mockClient = new Mock<HttpClient>();
+            
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson);
@@ -581,6 +610,7 @@ namespace OpenTokSDKTest
             Dictionary<string, object> dataSent = null;
 
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                     It.IsAny<Dictionary<string, object>>()))
                 .Returns(responseJson)
@@ -612,6 +642,7 @@ namespace OpenTokSDKTest
             Dictionary<string, object> dataSent = null;
 
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson)
@@ -643,6 +674,7 @@ namespace OpenTokSDKTest
             Dictionary<string, object> dataSent = null;
 
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                     It.IsAny<Dictionary<string, object>>()))
                 .Returns(responseJson)
@@ -674,6 +706,7 @@ namespace OpenTokSDKTest
             Dictionary<string, object> dataSent = null;
 
             var mockClient = new Mock<HttpClient>();
+
             mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
                     It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
                 .ReturnsAsync(responseJson)
@@ -822,6 +855,7 @@ namespace OpenTokSDKTest
             mockClient
                 .Setup(httpClient => httpClient.PatchAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
                     It.IsAny<Dictionary<string, object>>()))
+
                 .Callback<string, Dictionary<string, string>, Dictionary<string, object>>((url, headers, data) =>
                 {
                     headersSent = headers;
@@ -980,6 +1014,7 @@ namespace OpenTokSDKTest
             string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
             string returnString = GetResponseJson(new Dictionary<string, string>
                 {{"archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8"}});
+
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
@@ -1015,6 +1050,7 @@ namespace OpenTokSDKTest
             string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
             string returnString = GetResponseJson(new Dictionary<string, string>
                 {{"archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8"}});
+
             var mockClient = new Mock<HttpClient>();
             mockClient
                 .Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
@@ -1075,6 +1111,7 @@ namespace OpenTokSDKTest
             string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
             string returnString = GetResponseJson(new Dictionary<string, string>
                 {{"archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8"}});
+
             var mockClient = new Mock<HttpClient>();
             mockClient
                 .Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
@@ -1100,6 +1137,7 @@ namespace OpenTokSDKTest
             string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
             string returnString = GetResponseJson(new Dictionary<string, string>
                 {{"archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8"}});
+
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
 
@@ -1121,6 +1159,7 @@ namespace OpenTokSDKTest
             string archiveId = "936da01f-9abd-4d9d-80c7-02af85c822a8";
             string returnString = GetResponseJson(new Dictionary<string, string>
                 {{"archiveId", "936da01f-9abd-4d9d-80c7-02af85c822a8"}});
+
             var mockClient = new Mock<HttpClient>();
             mockClient
                 .Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
