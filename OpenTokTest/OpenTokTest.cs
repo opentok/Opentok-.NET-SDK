@@ -426,15 +426,11 @@ namespace OpenTokSDKTest
         {
             var opentok = new OpenTok(apiKey, apiSecret);
             var layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.Pip };
-            try
-            {
-                opentok.SetArchiveLayout("12345", layout);
-                Assert.True(false, "Failing because we should have had an exception");
-            }
-            catch (OpenTokArgumentException ex)
-            {
-                Assert.Equal("Invalid layout, when ScreenShareType is set, Type must be bestFit", ex.Message);
-            }
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.SetArchiveLayout("12345", layout));
+            
+            Assert.Contains("Invalid layout, when ScreenShareType is set, Type must be bestFit", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
         }
 
         [Fact]
