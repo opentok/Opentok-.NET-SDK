@@ -674,6 +674,120 @@ namespace OpenTokSDKTest
             Assert.Equal(new Dictionary<string, object> { { "removeStream", streamId } }, dataSent);
         }
 
+        // Set Broadcast Layout
+
+        [Fact]
+        public void SetBroadcastLayoutScreenShareType()
+        {
+            var broadcastId = "12345";
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit);
+            var expectedHeaders = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+
+            var expectedContent = new Dictionary<string, object>
+            {
+                {"type","bestFit" },
+                {"screenShareType", "bestFit"}
+            };
+
+            var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
+            mockClient.Setup(x => x.Put(expectedUrl, expectedHeaders, expectedContent))
+                .Returns("")
+                .Verifiable();
+
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            opentok.SetBroadcastLayout(broadcastId, layout);
+
+            mockClient.Verify(c => c.Put(expectedUrl, expectedHeaders, expectedContent));
+        }
+
+        [Fact]
+        public void SetBroadcastLayoutScreenShareTypeCustom()
+        {
+            var broadcastId = "12345";
+            var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
+            var layout = new BroadcastLayout(BroadcastLayout.LayoutType.Custom)
+            {
+                Stylesheet = "test"
+            };
+
+            var expectedHeaders = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var expectedContent = new Dictionary<string, object>
+            {
+                {"type","custom" },
+                {"stylesheet", "test"}
+            };
+
+            var mockClient = new Mock<HttpClient>(MockBehavior.Strict);
+            mockClient.Setup(x => x.Put(expectedUrl, expectedHeaders, expectedContent))
+                .Returns("")
+                .Verifiable();
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+
+            opentok.SetBroadcastLayout(broadcastId, layout);
+
+            mockClient.Verify(c => c.Put(expectedUrl, expectedHeaders, expectedContent));
+        }
+
+        [Fact]
+        public void SetBroadcastLayoutScreenShareTypeInvalid()
+        {
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit) { Type = BroadcastLayout.LayoutType.Pip };
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.SetBroadcastLayout("12345", layout));
+            Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}",
+                exception.Message);
+        }
+
+        [Fact]
+        public async Task SetBroadcastLayoutAsyncScreenShareTypeInvalid()
+        {
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit) { Type = BroadcastLayout.LayoutType.Pip };
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.SetBroadcastLayoutAsync("12345", layout));
+            Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}",
+                exception.Message);
+        }
+
+        [Fact]
+        public void SetBroadcastLayoutTypeAndStylesheetInvalid()
+        {
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit)
+            {
+                Type = BroadcastLayout.LayoutType.Custom,
+                Stylesheet = null
+            };
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.SetBroadcastLayout("12345", layout));
+            Assert.Contains("Could not set the layout. Either an invalid JSON or an invalid layout options.",
+                exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+
+        [Fact]
+        public async Task SetBroadcastLayoutAsyncTypeAndStylesheetInvalid()
+        {
+            var layout = new BroadcastLayout(ScreenShareLayoutType.BestFit)
+            {
+                Type = BroadcastLayout.LayoutType.Custom,
+                Stylesheet = null
+            };
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+                await opentok.SetBroadcastLayoutAsync("12345", layout));
+            Assert.Contains("Could not set the layout. Either an invalid JSON or an invalid layout options.",
+                exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
 
         // Stop Broadcast
 
