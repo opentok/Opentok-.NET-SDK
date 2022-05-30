@@ -1562,13 +1562,15 @@ namespace OpenTokSDK
         /// <param name="connectionId">An optional parameter used to send the signal to a specific connection in a session.</param>
         public void Signal(string sessionId, SignalProperties signalProperties, string connectionId = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
-            string url = String.IsNullOrEmpty(connectionId) ?
-                            string.Format("v2/project/{0}/session/{1}/signal", ApiKey, sessionId) :
-                            string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", ApiKey, sessionId, connectionId);
+            
+            string url = String.IsNullOrEmpty(connectionId) 
+                ? $"v2/project/{ApiKey}/session/{sessionId}/signal"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/signal";
+            
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -1576,6 +1578,32 @@ namespace OpenTokSDK
                 { "type", signalProperties.type }
             };
             Client.Post(url, headers, data);
+        }
+        
+        /// <summary>
+        /// Sends a signal to clients (or a specific client) connected to an OpenTok session.
+        /// </summary>
+        /// <param name="sessionId">The OpenTok sessionId where the signal will be sent.</param>
+        /// <param name="signalProperties">This signalProperties defines the payload for the signal.</param>
+        /// <param name="connectionId">An optional parameter used to send the signal to a specific connection in a session.</param>
+        public async Task SignalAsync(string sessionId, SignalProperties signalProperties, string connectionId = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+            
+            string url = String.IsNullOrEmpty(connectionId) 
+                ? $"v2/project/{ApiKey}/session/{sessionId}/signal"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/signal";
+            
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "data", signalProperties.data },
+                { "type", signalProperties.type }
+            };
+            await Client.PostAsync(url, headers, data);
         }
 
         /// <summary>
