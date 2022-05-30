@@ -1491,30 +1491,67 @@ namespace OpenTokSDK
         /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
-            string url = string.Format("v2/project/{0}/session/{1}/stream", ApiKey, sessionId);
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
-            if (streams == null || streams.Count() == 0)
+            if (streams == null || !streams.Any())
             {
                 throw new OpenTokArgumentException("The stream list must include at least one item.");
             }
-            else
+
+            foreach (StreamProperties stream in streams)
             {
-                foreach (StreamProperties stream in streams)
-                {
-                    items.Add(
-                        new
-                        {
-                            id = stream.Id,
-                            layoutClassList = stream.LayoutClassList
-                        }
-                    );
-                }
+                items.Add(
+                    new
+                    {
+                        id = stream.Id,
+                        layoutClassList = stream.LayoutClassList
+                    }
+                );
             }
             data.Add("items", items);
 
             Client.Put(url, headers, data);
+        }
+        
+        /// <summary>
+        /// Sets the layout class list for streams in a session. Layout classes are used in
+        /// the layout for composed archives and live streaming broadcasts. For more information, see
+        /// <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a> and
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts" > Configuring video layout for OpenTok live streaming broadcasts</a>.
+        /// <para>
+        /// You can set the initial layout class list for streams published by a client when you generate
+        /// used by the client. See the <see cref="GenerateToken"/> method.
+        /// </para>
+        /// </summary>
+        /// <param name="sessionId">The sessionId</param>
+        /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
+        public async Task SetStreamClassListsAsync(string sessionId, List<StreamProperties> streams)
+        {
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var items = new List<object>();
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            
+            if (streams == null || !streams.Any())
+            {
+                throw new OpenTokArgumentException("The stream list must include at least one item.");
+            }
+
+            foreach (StreamProperties stream in streams)
+            {
+                items.Add(
+                    new
+                    {
+                        id = stream.Id,
+                        layoutClassList = stream.LayoutClassList
+                    }
+                );
+            }
+            data.Add("items", items);
+
+            await Client.PutAsync(url, headers, data);
         }
 
         /// <summary>

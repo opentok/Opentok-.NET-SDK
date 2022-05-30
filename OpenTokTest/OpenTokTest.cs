@@ -647,26 +647,6 @@ namespace OpenTokSDKTest
                 Assert.Equal($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", ex.Message);
             }
         }
-
-        [Fact]
-        public void SetStreamClassListsTest()
-        {
-            string sessionId = "SESSIONID";
-            string streamId = "STREAMID";
-            List<StreamProperties> streamPropertiesList = new List<StreamProperties>();
-            StreamProperties streamProperties = new StreamProperties(streamId);
-            streamProperties.addLayoutClass("focus");
-            streamPropertiesList.Add(streamProperties);
-
-            var mockClient = new Mock<HttpClient>();
-            mockClient.Setup(httpClient => httpClient.Put(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns("This function should not return anything");
-
-            OpenTok opentok = new OpenTok(apiKey, apiSecret);
-            opentok.Client = mockClient.Object;
-            opentok.SetStreamClassLists(sessionId, streamPropertiesList);
-            
-            mockClient.Verify(httpClient => httpClient.Put(It.Is<string>(url => url.Equals("v2/project/" + apiKey + "/session/" + sessionId + "/stream")), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
-        }
     }
 }
 
