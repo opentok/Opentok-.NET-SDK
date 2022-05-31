@@ -1428,6 +1428,60 @@ namespace OpenTokSDKTest
             Assert.Equal("layout", exception.ParamName);
         }
 
+        [Fact]
+        public void SetArchiveScreenShareTypeInvalid()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.Pip };
+
+            var exception = Assert.Throws<OpenTokArgumentException>(() => opentok.SetArchiveLayout("12345", layout));
+            
+            Assert.StartsWith("Invalid layout, when ScreenShareType is set, Type must be bestFit", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+        
+        [Fact]
+        public async Task SetArchiveScreenShareTypeInvalidAsync()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.pip, ScreenShareType = ScreenShareLayoutType.Pip };
+
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.SetArchiveLayoutAsync("12345", layout));
+            
+            Assert.StartsWith("Invalid layout, when ScreenShareType is set, Type must be bestFit", exception.Message);
+            Assert.Equal("layout", exception.ParamName);
+        }
+        
+        [Fact]
+        public void SetArchiveScreenShareType()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType = ScreenShareLayoutType.Pip };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var archiveId = "123456789";
+            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+            var mockClient = new Mock<HttpClient>();
+            opentok.Client = mockClient.Object;
+            mockClient.Setup(c => c.Put(expectedUrl, headers, It.Is<Dictionary<string, object>>(x => (string)x["type"] == "bestFit" && (string)x["screenshareType"] == "pip")));
+            Assert.True(opentok.SetArchiveLayout(archiveId, layout));
+        }
+        
+        [Fact]
+        public async Task SetArchiveScreenShareTypeAsync()
+        {
+            var opentok = new OpenTok(ApiKey, ApiSecret);
+            var layout = new ArchiveLayout { Type = LayoutType.bestFit, ScreenShareType = ScreenShareLayoutType.Pip };
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var archiveId = "123456789";
+            var expectedUrl = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+            var mockClient = new Mock<HttpClient>();
+            opentok.Client = mockClient.Object;
+            mockClient.Setup(c => c.Put(expectedUrl, headers, It.Is<Dictionary<string, object>>(x => (string)x["type"] == "bestFit" && (string)x["screenshareType"] == "pip")));
+
+            var response = await opentok.SetArchiveLayoutAsync(archiveId, layout);
+            Assert.True(response);
+        }
+        
         // Stop Archive
 
         [Fact]
@@ -1548,7 +1602,7 @@ namespace OpenTokSDKTest
         }
 
         // List Archives
-
+        
         [Fact]
         public void ListArchives()
         {
