@@ -137,8 +137,9 @@ the `OpenTok.StartArchive()` method.
 You can also disable audio or video recording by setting the `hasAudio` or `hasVideo` parameter of
 the `OpenTok.StartArchive()` method `false`.
 
-You can also set the resolution of the recording to high definition by setting the `resolution` parameter of
-the `OpenTok.StartArchive()` method to `"1280x720"`. Please note that you cannot specify the `resolution` when you set the `outputMode` parameter to `OutputMode.INDIVIDUAL`.
+You can also set the resolution of the recording to high definition by setting the `resolution` parameter of the `OpenTok.StartArchive()` method.
+Accepted values are "640x480" (SD landscape, the default), "1280x720" (HD landscape), "1920x1080" (FHD landscape), "480x640" (SD portrait), "720x1280" (HD portrait), or "1080x1920" (FHD portrait). 
+Please note that you cannot specify the `resolution` when you set the `outputMode` parameter to `OutputMode.INDIVIDUAL`.
 
 By default, all streams are recorded to a single (composed) file. You can record the different
 streams in the session to individual files (instead of a single composed file) by setting the
