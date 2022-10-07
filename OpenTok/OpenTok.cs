@@ -397,7 +397,7 @@ namespace OpenTokSDK
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -430,6 +430,11 @@ namespace OpenTokSDK
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
+            }
+
+            if (multiArchiveTag is object)
+            {
+                data.Add("multiArchiveTag", multiArchiveTag);
             }
 
             if (streamMode.HasValue)
@@ -499,7 +504,7 @@ namespace OpenTokSDK
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
+        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -539,6 +544,11 @@ namespace OpenTokSDK
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
+            }
+            
+            if (multiArchiveTag is object)
+            {
+                data.Add("multiArchiveTag", multiArchiveTag);
             }
 
             if (streamMode.HasValue)
