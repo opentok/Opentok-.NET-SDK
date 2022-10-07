@@ -77,6 +77,12 @@
     <Content Include="Data\ArchiveTests\ListArchives-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveWithMultiArchiveTag-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\ArchiveTests\StartArchiveWithMultiArchiveTagAsync-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\ArchiveTests\StopArchiveAsyncFromArchiveObject-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
