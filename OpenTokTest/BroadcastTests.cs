@@ -412,6 +412,30 @@ namespace OpenTokSDKTest
             Assert.True(hls["lowLatency"]);
             Assert.False(hls["dvr"]);
         }
+        
+        [Fact]
+        public void StartBroadcastWithMultiBroadcastTag()
+        {
+            string multiBroadcastTagName = "multiBroadcastTag";
+            string multiBroadcastTag = "TestBroadcastTag";
+            string sessionId = "SESSIONID";
+            string returnString = GetResponseJson();
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>())).Returns(returnString);
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            Broadcast broadcast = opentok.StartBroadcast(sessionId, multiBroadcastTag: multiBroadcastTag);
+            Assert.NotNull(broadcast);
+            Assert.Equal(multiBroadcastTag, broadcast.MultiBroadcastTag);
+            Assert.NotNull(broadcast.Id);
+            Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+            mockClient.Verify(httpClient => httpClient.Post(
+                It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/broadcast")), 
+                It.IsAny<Dictionary<string, string>>(), 
+                It.Is<Dictionary<string, object>>(dictionary => 
+                    dictionary.ContainsKey(multiBroadcastTagName) && dictionary[multiBroadcastTagName].ToString() == multiBroadcastTag)), 
+                Times.Once());
+        }
 
         // AddStreamToBroadcast
 

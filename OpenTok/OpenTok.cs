@@ -1025,7 +1025,7 @@ namespace OpenTokSDK
         /// This feature is incompatible with DVR mode HLS broadcasts. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency-hls-broadcasts">Low-latency HLS broadcasts</a></param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null)
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -1097,6 +1097,11 @@ namespace OpenTokSDK
                 {
                     data.Add("layout", layout);
                 }
+            }
+            
+            if (multiBroadcastTag is object)
+            {
+                data.Add("multiBroadcastTag", multiBroadcastTag);
             }
 
             if (streamMode.HasValue)
