@@ -743,7 +743,7 @@ namespace OpenTokSDKTest
             OpenTok opentok = this.BuildOpenTok(mockClient.Object);
             Archive archive = opentok.StartArchive(SessionId, multiArchiveTag: multiArchiveTag);
             Assert.NotNull(archive);
-            Assert.Equal(SessionId, archive.SessionId);
+            Assert.Equal(multiArchiveTag, archive.MultiArchiveTag);
             Assert.NotEqual(Guid.Empty, archive.Id);
             mockClient.Verify(
                 httpClient => httpClient.Post(
@@ -767,7 +767,7 @@ namespace OpenTokSDKTest
             OpenTok opentok = this.BuildOpenTok(mockClient.Object);
             Archive archive = await opentok.StartArchiveAsync(SessionId, multiArchiveTag: multiArchiveTag);
             Assert.NotNull(archive);
-            Assert.Equal(SessionId, archive.SessionId);
+            Assert.Equal(multiArchiveTag, archive.MultiArchiveTag);
             Assert.NotEqual(Guid.Empty, archive.Id);
             mockClient.Verify(
                 httpClient => httpClient.PostAsync(
