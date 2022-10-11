@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using EnumsNET;
 using OpenTokSDK.Exception;
 
 namespace OpenTokSDK.Render
@@ -182,6 +184,21 @@ namespace OpenTokSDK.Render
                 throw new OpenTokException(InvalidResolution);
             }
         }
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, object> ToDataDictionary() =>
+            new Dictionary<string, object>
+            {
+                {"sessionId", this.SessionId},
+                {"token", this.Token},
+                {"url", this.Url},
+                {"statusCallbackUrl", this.StatusCallbackUrl},
+                {"maxDuration", this.MaxDuration},
+                {"resolution", this.Resolution.AsString(EnumFormat.Description)},
+                {"properties", this.Properties},
+            };
 
         /// <summary>
         ///     Initial configuration of Publisher properties for the composed output stream.
