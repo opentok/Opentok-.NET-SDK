@@ -47,9 +47,9 @@ namespace OpenTokSDK.Render
         private readonly ScreenResolution[] allowedResolutions =
         {
             ScreenResolution.HighDefinitionLandscape,
+            ScreenResolution.HighDefinitionPortrait,
             ScreenResolution.StandardDefinitionLandscape,
             ScreenResolution.StandardDefinitionPortrait,
-            ScreenResolution.FullHighDefinitionLandscape,
         };
 
         /// <summary>

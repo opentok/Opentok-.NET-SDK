@@ -107,7 +107,7 @@ namespace OpenTokSDKTest.Render
         }
 
         [Theory]
-        [InlineData(ScreenResolution.HighDefinitionPortrait)]
+        [InlineData(ScreenResolution.FullHighDefinitionLandscape)]
         [InlineData(ScreenResolution.FullHighDefinitionPortrait)]
         public void StartRenderRequest_ShouldThrowOpenTokException_GivenResolutionIsNotAllowed(
             ScreenResolution resolution)
