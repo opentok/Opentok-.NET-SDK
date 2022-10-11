@@ -3,6 +3,7 @@
 namespace OpenTokSDK.Render
 {
     /// <summary>
+    /// TODO
     /// </summary>
     public struct StartRenderResponse
     {
@@ -31,22 +32,22 @@ namespace OpenTokSDK.Render
             this.StreamId = streamId;
         }
 
-        public string Id { get; set; }
+        public string Id { get; }
 
-        public string SessionId { get; set; }
+        public string SessionId { get; }
 
-        public string ProjectId { get; set; }
+        public string ProjectId { get; }
 
-        public int CreatedAt { get; set; }
+        public int CreatedAt { get; }
 
-        public int UpdatedAt { get; set; }
+        public int UpdatedAt { get; }
 
-        public Uri Url { get; set; }
+        public Uri Url { get; }
 
-        public ScreenResolution Resolution { get; set; }
+        public ScreenResolution Resolution { get; }
 
-        public string Status { get; set; }
+        public string Status { get; }
 
-        public string StreamId { get; set; }
+        public string StreamId { get; }
     }
 }
