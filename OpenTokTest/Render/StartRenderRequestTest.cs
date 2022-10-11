@@ -134,12 +134,12 @@ namespace OpenTokSDKTest.Render
         }
 
         [Theory]
-        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 1200, ScreenResolution.StandardDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 60, ScreenResolution.StandardDefinitionPortrait)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 36000, ScreenResolution.HighDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 15647, ScreenResolution.HighDefinitionPortrait)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", null, ScreenResolution.StandardDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 36000, null)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 1200, ScreenResolution.StandardDefinitionLandscape)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 60, ScreenResolution.StandardDefinitionPortrait)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 36000, ScreenResolution.HighDefinitionLandscape)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 15647, ScreenResolution.HighDefinitionPortrait)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", null, ScreenResolution.StandardDefinitionLandscape)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 36000, null)]
         public void StartRenderRequest_ShouldReturnInstance(string sessionId, string token, string url, string callbackUrl, string streamName, int? maxDuration, ScreenResolution? resolution)
         {
             var request = StartRenderRequestDataBuilder
