@@ -52,7 +52,7 @@ namespace OpenTokSDKTest.Render
             return this;
         }
 
-        public StartRenderRequestDataBuilder WithResolution(ScreenResolution value)
+        public StartRenderRequestDataBuilder WithResolution(ScreenResolution? value)
         {
             this.resolution = value;
             return this;
@@ -102,7 +102,7 @@ namespace OpenTokSDKTest.Render
                 this.streamName);
         }
 
-        public StartRenderRequestDataBuilder WithMaxDuration(int value)
+        public StartRenderRequestDataBuilder WithMaxDuration(int? value)
         {
             this.maxDuration = value;
             return this;
