@@ -7,7 +7,7 @@ using OpenTokSDK.Exception;
 namespace OpenTokSDK.Render
 {
     /// <summary>
-    /// Request for start a rendering.
+    /// Represents a request for starting a rendering.
     /// </summary>
     public class StartRenderRequest
     {
