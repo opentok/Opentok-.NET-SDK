@@ -132,5 +132,33 @@ namespace OpenTokSDKTest.Render
             var exception = Assert.Throws<OpenTokException>(Act);
             Assert.Equal(StartRenderRequest.PublisherProperty.OverflowStreamName, exception.Message);
         }
+
+        [Theory]
+        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 1200, ScreenResolution.StandardDefinitionLandscape)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 60, ScreenResolution.StandardDefinitionPortrait)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 36000, ScreenResolution.HighDefinitionLandscape)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 15647, ScreenResolution.HighDefinitionPortrait)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", null, ScreenResolution.StandardDefinitionLandscape)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "http://www.example.com/callback", "stream", 36000, null)]
+        public void StartRenderRequest_ShouldReturnInstance(string sessionId, string token, string url, string callbackUrl, string streamName, int? maxDuration, ScreenResolution? resolution)
+        {
+            var request = StartRenderRequestDataBuilder
+                .Build()
+                .WithSessionId(sessionId)
+                .WithToken(token)
+                .WithUrl(new Uri(url))
+                .WithStatusCallbackUrl(new Uri(callbackUrl))
+                .WithStreamName(streamName)
+                .WithMaxDuration(maxDuration)
+                .WithResolution(resolution)
+                .Create();
+            Assert.Equal(sessionId, request.SessionId);
+            Assert.Equal(token, request.Token);
+            Assert.Equal(url, request.Url.AbsoluteUri);
+            Assert.Equal(callbackUrl, request.StatusCallbackUrl.AbsoluteUri);
+            Assert.Equal(streamName, request.Properties.Name);
+            Assert.Equal(maxDuration ?? 7200, request.MaxDuration);
+            Assert.Equal(resolution ?? ScreenResolution.HighDefinitionLandscape, request.Resolution);
+        }
     }
 }
