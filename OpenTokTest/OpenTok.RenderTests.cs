@@ -17,31 +17,68 @@ namespace OpenTokSDKTest
         private readonly Fixture fixture;
         private readonly Mock<HttpClient> mockClient;
         private readonly OpenTok sut;
+        private readonly int apiKey;
 
         public OpenTokRenderTests()
         {
             this.fixture = new Fixture();
+            this.apiKey = this.fixture.Create<int>();
             this.mockClient = new Mock<HttpClient>();
-            this.sut = new OpenTok(this.fixture.Create<int>(), this.fixture.Create<string>())
+            
+            this.sut = new OpenTok(this.apiKey, this.fixture.Create<string>())
             {
                 Client = this.mockClient.Object,
             };
         }
 
         [Fact]
-        public async Task StartRenderAsync_ShouldReturnAFuckingResponse_GivenThisTestHasNoValue()
+        public async Task StartRenderAsync_ShouldInitiateRendering()
         {
+            var expectedUrl = $"v2/project/{this.apiKey}/render";
             var expectedResponse = this.fixture.Create<StartRenderResponse>();
             var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
             var request = StartRenderRequestDataBuilder.Build().Create();
             this.mockClient.Setup(httpClient => httpClient.PostAsync(
-                    It.Is<string>(url => url.EndsWith(OpenTok.StartRenderEndpoint)),
+                    expectedUrl,
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.Is<Dictionary<string, object>>(dictionary =>
+                        dictionary.SequenceEqual(request.ToDataDictionary()))))
+                .ReturnsAsync(serializedResponse);
+            _ = await this.sut.StartRenderAsync(request);
+            this.mockClient.Verify(httpClient => httpClient.PostAsync(
+                    It.Is<string>(url => url == expectedUrl),
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is<Dictionary<string, object>>(dictionary =>
+                    dictionary.SequenceEqual(request.ToDataDictionary()))), 
+                Times.Once);
+        }
+        
+        [Fact]
+        public async Task StartRenderAsync_ShouldReturnResponse()
+        {
+            var expectedUrl = $"v2/project/{this.apiKey}/render";
+            var expectedResponse = this.fixture.Create<StartRenderResponse>();
+            var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
+            var request = StartRenderRequestDataBuilder.Build().Create();
+            this.mockClient.Setup(httpClient => httpClient.PostAsync(
+                    expectedUrl,
                     It.IsAny<Dictionary<string, string>>(),
                     It.Is<Dictionary<string, object>>(dictionary =>
                         dictionary.SequenceEqual(request.ToDataDictionary()))))
                 .ReturnsAsync(serializedResponse);
             var response = await this.sut.StartRenderAsync(request);
             Assert.Equal(expectedResponse, response);
+        }
+
+        [Fact]
+        public async Task StopRenderAsync_ShouldDeleteRendering()
+        {
+            var renderId = this.fixture.Create<string>();
+            await this.sut.StopRenderAsync(renderId);
+            this.mockClient.Verify(httpClient => httpClient.DeleteAsync(
+                    $"v2/project/{this.apiKey}/render/{renderId}",
+                    It.Is<Dictionary<string, string>>(dictionary => dictionary.Count == 0)), 
+                Times.Once);
         }
     }
 }
