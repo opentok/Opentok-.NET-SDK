@@ -61,6 +61,15 @@ namespace OpenTokSDKTest.Render
             Assert.Equal(2049, uri.AbsoluteUri.Length);
             Assert.Equal(StartRenderRequest.InvalidUrl, exception.Message);
         }
+        
+        [Fact]
+        public void StartRenderRequest_ShouldReturnInstance_GivenUrlHasMaximumLength()
+        {
+            var filler = string.Join(string.Empty, Enumerable.Range(0, 2020).Select(_ => 'a').ToArray());
+            var uri = new Uri($"https://www.example.com?p={filler}/");
+            var request = StartRenderRequestDataBuilder.Build().WithUrl(uri).Create();
+            Assert.Equal(uri, request.Url);
+        }
 
         [Fact]
         public void StartRenderRequest_ShouldThrowOpenTokException_GivenMaxDurationIsLowerThan60()
@@ -105,6 +114,15 @@ namespace OpenTokSDKTest.Render
             Assert.Equal(2049, uri.AbsoluteUri.Length);
             Assert.Equal(StartRenderRequest.InvalidStatusCallbackUrl, exception.Message);
         }
+        
+        [Fact]
+        public void StartRenderRequest_ShouldReturnInstance_GivenStatusCallbackUrlHasMaximumLength()
+        {
+            var filler = string.Join(string.Empty, Enumerable.Range(0, 2020).Select(_ => 'a').ToArray());
+            var uri = new Uri($"https://www.example.com?p={filler}/");
+            var request = StartRenderRequestDataBuilder.Build().WithStatusCallbackUrl(uri).Create();
+            Assert.Equal(uri, request.StatusCallbackUrl);
+        }
 
         [Theory]
         [InlineData(ScreenResolution.FullHighDefinitionLandscape)]
@@ -132,14 +150,22 @@ namespace OpenTokSDKTest.Render
             var exception = Assert.Throws<OpenTokException>(Act);
             Assert.Equal(StartRenderRequest.PublisherProperty.OverflowStreamName, exception.Message);
         }
+        
+        [Fact]
+        public void StartRenderRequest_ShouldReturnInstance_GivenStreamNameHasMaximumLength()
+        {
+            var streamName = string.Join(string.Empty, Enumerable.Range(0, 200).Select(_ => 'a').ToArray());
+            var request = StartRenderRequestDataBuilder.Build().WithStreamName(streamName).Create();
+            Assert.Equal(streamName, request.Properties.Name);
+        }
 
         [Theory]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 1200, ScreenResolution.StandardDefinitionLandscape)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 60, ScreenResolution.StandardDefinitionPortrait)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 36000, ScreenResolution.HighDefinitionLandscape)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 15647, ScreenResolution.HighDefinitionPortrait)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", null, ScreenResolution.StandardDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 36000, null)]
+        [InlineData("sessionId", "token", "https://www.example.com/", "https://hel.fr/", "stream", null, ScreenResolution.StandardDefinitionLandscape)]
+        [InlineData("sessionId", "token", "https://hel.fr/", "https://www.example.com/callback", "stream", 36000, null)]
         public void StartRenderRequest_ShouldReturnInstance(string sessionId, string token, string url, string callbackUrl, string streamName, int? maxDuration, ScreenResolution? resolution)
         {
             var request = StartRenderRequestDataBuilder
