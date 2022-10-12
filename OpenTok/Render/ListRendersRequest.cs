@@ -20,12 +20,12 @@ namespace OpenTokSDK.Render
         /// <summary>
         ///     Indicates the provided count is negative.
         /// </summary>
-        public const string NegaviteCount = "Count cannot be negative.";
+        public const string NegativeCount = "Count cannot be negative.";
 
         /// <summary>
         ///     Indicates the provided offset is negative.
         /// </summary>
-        public const string NegaviteOffset = "Offset cannot be negative.";
+        public const string NegativeOffset = "Offset cannot be negative.";
 
         /// <summary>
         ///     Initializes a ListRendersRequest with default values. Count will be 50.
@@ -78,7 +78,7 @@ namespace OpenTokSDK.Render
 
             if (count < MinimumCount)
             {
-                throw new OpenTokException(NegaviteCount);
+                throw new OpenTokException(NegativeCount);
             }
         }
 
@@ -86,7 +86,7 @@ namespace OpenTokSDK.Render
         {
             if (offset < MinimumOffset)
             {
-                throw new OpenTokException(NegaviteOffset);
+                throw new OpenTokException(NegativeOffset);
             }
         }
     }

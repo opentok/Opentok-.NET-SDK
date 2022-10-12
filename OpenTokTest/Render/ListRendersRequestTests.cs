@@ -19,7 +19,7 @@ namespace OpenTokSDKTest.Render
         {
             void Act() => new ListRendersRequest(-1);
             var exception = Assert.Throws<OpenTokException>(Act);
-            Assert.Equal(ListRendersRequest.NegaviteCount, exception.Message);
+            Assert.Equal(ListRendersRequest.NegativeCount, exception.Message);
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace OpenTokSDKTest.Render
         {
             void Act() => new ListRendersRequest(-1, 1);
             var exception = Assert.Throws<OpenTokException>(Act);
-            Assert.Equal(ListRendersRequest.NegaviteOffset, exception.Message);
+            Assert.Equal(ListRendersRequest.NegativeOffset, exception.Message);
         }
 
         [Theory]
