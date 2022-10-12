@@ -89,5 +89,20 @@ namespace OpenTokSDK.Render
                 throw new OpenTokException(NegativeOffset);
             }
         }
+
+        /// <summary>
+        ///     TODO
+        /// </summary>
+        /// <returns>TODO</returns>
+        public string ToQueryParameters()
+        {
+            var parameters = $"count={this.Count}";
+            if (this.Offset.HasValue)
+            {
+                parameters += $"&offset={this.Offset}";
+            }
+
+            return parameters;
+        }
     }
 }

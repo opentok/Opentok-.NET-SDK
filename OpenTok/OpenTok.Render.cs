@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTokSDK.Render;
@@ -30,12 +29,28 @@ namespace OpenTokSDK
         /// <param name="renderId">TODO</param>
         public async Task StopRenderAsync(string renderId) =>
             await this.Client.DeleteAsync(
-                this.BuildUrlWithQuery(RenderEndpoint, renderId),
+                this.BuildUrlWithRouteParameter(RenderEndpoint, renderId),
                 new Dictionary<string, string>());
+
+        /// <summary>
+        ///     TODO
+        /// </summary>
+        /// <param name="request">TODO</param>
+        /// <returns>TODO</returns>
+        public async Task<ListRendersResponse> ListRendersAsync(ListRendersRequest request)
+        {
+            var url = this.BuildUrlWithQueryParameter(RenderEndpoint, request.ToQueryParameters());
+            var response = await this.Client.GetAsync(url);
+            return JsonConvert.DeserializeObject<ListRendersResponse>(response);
+        }
 
         private string BuildUrl(string endpoint) => $"v2/project/{ApiKey}{endpoint}";
 
-        private string BuildUrlWithQuery(string endpoint, string query) => $"{this.BuildUrl(endpoint)}/{query}";
+        private string BuildUrlWithRouteParameter(string endpoint, string routeParameter) =>
+            $"{this.BuildUrl(endpoint)}/{routeParameter}";
+
+        private string BuildUrlWithQueryParameter(string endpoint, string queryParameter) =>
+            $"{this.BuildUrl(endpoint)}?{queryParameter}";
 
         private static Dictionary<string, string> GetHeaderDictionary(string contentType) =>
             new Dictionary<string, string> {{"Content-Type", contentType}};
