@@ -44,7 +44,18 @@ namespace OpenTokSDK
             return JsonConvert.DeserializeObject<ListRendersResponse>(response);
         }
 
-        private string BuildUrl(string endpoint) => $"v2/project/{ApiKey}{endpoint}";
+        /// <summary>
+        ///     TODO
+        /// </summary>
+        /// <param name="renderId">TODO</param>
+        public async Task<GetRenderResponse> GetRenderAsync(string renderId)
+        {
+            var url = this.BuildUrlWithRouteParameter(RenderEndpoint, renderId);
+            var response = await this.Client.GetAsync(url);
+            return JsonConvert.DeserializeObject<GetRenderResponse>(response);
+        }
+
+        private string BuildUrl(string endpoint) => $"v2/project/{this.ApiKey}{endpoint}";
 
         private string BuildUrlWithRouteParameter(string endpoint, string routeParameter) =>
             $"{this.BuildUrl(endpoint)}/{routeParameter}";
