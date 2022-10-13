@@ -114,5 +114,17 @@ namespace OpenTokSDKTest
             Assert.Equal(expectedResponse.Count, response.Count);
             Assert.True(expectedResponse.Items.SequenceEqual(response.Items));
         }
+        
+        [Fact]
+        public async Task GetRenderAsync_ShouldReturnResponse()
+        {
+            var expectedResponse = this.fixture.Create<GetRenderResponse>();
+            var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
+            var renderId = this.fixture.Create<string>();
+            var expectedUrl = $"v2/project/{this.apiKey}/render/{renderId}";
+            this.mockClient.Setup(httpClient => httpClient.GetAsync(expectedUrl, null)).ReturnsAsync(serializedResponse);
+            var response = await this.sut.GetRenderAsync(renderId);
+            Assert.Equal(expectedResponse, response);
+        }
     }
 }

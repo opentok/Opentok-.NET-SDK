@@ -3,12 +3,12 @@
 namespace OpenTokSDK.Render
 {
     /// <summary>
-    /// 
+    /// TODO
     /// </summary>
     public struct ListRenderItem
     {
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         /// <param name="id"></param>
         /// <param name="sessionId"></param>
@@ -36,52 +36,52 @@ namespace OpenTokSDK.Render
         }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public string SessionId { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public string ProjectId { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public int CreatedAt { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public int UpdatedAt { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public Uri Url { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public ScreenResolution Resolution { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public string Status { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public string StreamId { get; set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         public string Reason { get; set; }
     }
