@@ -59,7 +59,7 @@ namespace OpenTokSDK.AudioStreamer
         /// <summary>
         ///     Options for configuring the connect call for WebSocket.
         /// </summary>
-        public WebSocket Socket { get; set; }
+        public WebSocket Socket { get; }
 
         private static void ValidateSessionId(string sessionId)
         {
@@ -139,5 +139,17 @@ namespace OpenTokSDK.AudioStreamer
                 }
             }
         }
+        
+        /// <summary>
+        /// Converts request to dictionary.
+        /// </summary>
+        /// <returns>Dictionary containing instance values.</returns>
+        public Dictionary<string, object> ToDataDictionary() =>
+            new Dictionary<string, object>
+            {
+                {"sessionId", this.SessionId},
+                {"token", this.Token},
+                {"webSocket", this.Socket},
+            };
     }
 }

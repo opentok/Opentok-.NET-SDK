@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using OpenTokSDK.AudioStreamer;
 using OpenTokSDK.Exception;
 using Xunit;
@@ -49,11 +51,11 @@ namespace OpenTokSDKTest.AudioStreamer
             var request = ConnectRequestDataBuilder.Build().WithUri(uri).Create();
             Assert.Equal(uri, request.Socket.Uri);
         }
-        
+
         [Fact]
         public void ConnectRequest_ShouldReturnInstance_GivenUrlHasMinimumLength()
         {
-            var uri = new Uri($"https://localh/");
+            var uri = new Uri("https://localh/");
             var request = ConnectRequestDataBuilder.Build().WithUri(uri).Create();
             Assert.Equal(uri, request.Socket.Uri);
         }
@@ -77,7 +79,7 @@ namespace OpenTokSDKTest.AudioStreamer
         public void ConnectRequest_ShouldHaveEmptyHeaders_GivenHeadersAreNotProvided() =>
             Assert.Empty(ConnectRequestDataBuilder.Build().Create()
                 .Socket.Headers);
-        
+
         [Fact]
         public void ConnectRequest_ShouldHaveDefaultAudioRate_GivenAudioRateIsNotProvided() =>
             Assert.Equal(16000, ConnectRequestDataBuilder.Build().Create()
@@ -145,6 +147,31 @@ namespace OpenTokSDKTest.AudioStreamer
             Assert.Equal(url, request.Socket.Uri.AbsoluteUri);
             Assert.Equal(streams, request.Socket.Streams);
             Assert.Empty(request.Socket.Headers);
+        }
+
+        [Theory]
+        [InlineData("sessionId", "token", "https://www.example.com/", new[] {"test"}, "key", "value", 1500)]
+        public void ToDataDictionary_ShouldReturnValuesAsDictionary(string sessionId, string token, string url,
+            string[] streams,
+            string key, string value, int audioRate)
+        {
+            var headers = new Dictionary<string, string> {{key, value}};
+            var expectedSerialized = JsonConvert.SerializeObject(new Dictionary<string, object>
+            {
+                {"sessionId", sessionId},
+                {"token", token},
+                {"webSocket", new ConnectRequest.WebSocket(new Uri(url), streams, headers, audioRate)},
+            });
+            var builder = ConnectRequestDataBuilder
+                .Build()
+                .WithSessionId(sessionId)
+                .WithToken(token)
+                .WithUri(new Uri(url))
+                .WithHeader(key, value)
+                .WithAudioRate(audioRate);
+            streams.Aggregate(builder, (dataBuilder, stream) => dataBuilder.WithStream(stream));
+            var result = builder.Create().ToDataDictionary();
+            Assert.Equal(expectedSerialized, JsonConvert.SerializeObject(result));
         }
     }
 }
