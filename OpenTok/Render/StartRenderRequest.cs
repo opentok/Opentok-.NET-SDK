@@ -198,7 +198,7 @@ namespace OpenTokSDK.Render
                 {"statusCallbackUrl", this.StatusCallbackUrl},
                 {"maxDuration", this.MaxDuration},
                 {"resolution", this.Resolution.AsString(EnumFormat.Description)},
-                {"properties", this.Properties},
+                {"properties", this.Properties.ToDataDictionary()},
             };
 
         /// <summary>
@@ -246,6 +246,12 @@ namespace OpenTokSDK.Render
                     throw new OpenTokException(OverflowStreamName);
                 }
             }
+
+            public Dictionary<string, object> ToDataDictionary() =>
+                new Dictionary<string, object>
+                {
+                    {"name", this.Name},
+                };
         }
     }
 }

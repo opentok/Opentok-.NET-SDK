@@ -12,7 +12,7 @@ namespace OpenTokSDK.Render
         /// </summary>
         /// <param name="count">TODO</param>
         /// <param name="items">TODO</param>
-        public ListRendersResponse(int count, IEnumerable<ListRenderItem> items)
+        public ListRendersResponse(int count, IEnumerable<RenderItem> items)
         {
             this.Count = count;
             this.Items = items;
@@ -26,6 +26,6 @@ namespace OpenTokSDK.Render
         /// <summary>
         /// TODO
         /// </summary>
-        public IEnumerable<ListRenderItem> Items { get; set; }
+        public IEnumerable<RenderItem> Items { get; set; }
     }
 }

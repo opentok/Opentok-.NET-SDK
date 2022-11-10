@@ -14,13 +14,13 @@ namespace OpenTokSDK
         /// </summary>
         /// <param name="request">TODO</param>
         /// <returns>TODO</returns>
-        public async Task<StartRenderResponse> StartRenderAsync(StartRenderRequest request)
+        public async Task<RenderItem> StartRenderAsync(StartRenderRequest request)
         {
             var response = await this.Client.PostAsync(
                 this.BuildUrl(RenderEndpoint),
                 GetHeaderDictionary("application/json"),
                 request.ToDataDictionary());
-            return JsonConvert.DeserializeObject<StartRenderResponse>(response);
+            return JsonConvert.DeserializeObject<RenderItem>(response);
         }
 
         /// <summary>
@@ -48,11 +48,11 @@ namespace OpenTokSDK
         ///     TODO
         /// </summary>
         /// <param name="renderId">TODO</param>
-        public async Task<GetRenderResponse> GetRenderAsync(string renderId)
+        public async Task<RenderItem> GetRenderAsync(string renderId)
         {
             var url = this.BuildUrlWithRouteParameter(RenderEndpoint, renderId);
             var response = await this.Client.GetAsync(url);
-            return JsonConvert.DeserializeObject<GetRenderResponse>(response);
+            return JsonConvert.DeserializeObject<RenderItem>(response);
         }
 
         private string BuildUrl(string endpoint) => $"v2/project/{this.ApiKey}{endpoint}";
