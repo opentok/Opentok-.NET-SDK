@@ -91,9 +91,9 @@ namespace OpenTokSDK.Render
         }
 
         /// <summary>
-        ///     TODO
+        ///     Converts the request to query parameters.
         /// </summary>
-        /// <returns>TODO</returns>
+        /// <returns>The query parameters equivalent.</returns>
         public string ToQueryParameters()
         {
             var parameters = $"count={this.Count}";

@@ -3,14 +3,14 @@
 namespace OpenTokSDK.Render
 {
     /// <summary>
-    /// TODO
+    /// Represents a response from a ListRenders request.
     /// </summary>
     public struct ListRendersResponse
     {
         /// <summary>
-        /// TODO
+        /// Constructor.
         /// </summary>
-        /// <param name="count">TODO</param>
+        /// <param name="count">Count </param>
         /// <param name="items">TODO</param>
         public ListRendersResponse(int count, IEnumerable<RenderItem> items)
         {
@@ -19,12 +19,12 @@ namespace OpenTokSDK.Render
         }
 
         /// <summary>
-        /// TODO
+        /// Number of rendering items.
         /// </summary>
         public int Count { get; set; }
 
         /// <summary>
-        /// TODO
+        /// Rendering items contained in the response.
         /// </summary>
         public IEnumerable<RenderItem> Items { get; set; }
     }
