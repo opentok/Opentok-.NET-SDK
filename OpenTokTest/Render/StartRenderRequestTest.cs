@@ -216,7 +216,7 @@ namespace OpenTokSDKTest.Render
                 {"statusCallbackUrl", new Uri(callbackUrl)},
                 {"maxDuration", maxDuration},
                 {"resolution", resolution.AsString(EnumFormat.Description)},
-                {"properties", new StartRenderRequest.PublisherProperty(streamName)},
+                {"properties", new StartRenderRequest.PublisherProperty(streamName).ToDataDictionary()},
             });
             var result = StartRenderRequestDataBuilder
                 .Build()

@@ -36,25 +36,29 @@ namespace OpenTokSDKTest
             const string contentTypeKey = "Content-Type";
             const string contentType = "application/json";
             var expectedUrl = $"v2/project/{this.apiKey}/render";
-            var expectedResponse = this.fixture.Create<StartRenderResponse>();
+            var expectedResponse = this.fixture.Create<RenderItem>();
             var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
             var request = StartRenderRequestDataBuilder.Build().Create();
             this.mockClient.Setup(httpClient => httpClient.PostAsync(
                     expectedUrl,
-                    It.Is<Dictionary<string, string>>(dictionary =>
-                        dictionary.ContainsKey(contentTypeKey) && dictionary[contentTypeKey] == contentType),
-                    It.Is<Dictionary<string, object>>(dictionary =>
-                        dictionary.SequenceEqual(request.ToDataDictionary()))))
+                    MatchesContentTypeDictionary(contentTypeKey, contentType),
+                    Matches(request.ToDataDictionary())))
                 .ReturnsAsync(serializedResponse);
             _ = await this.sut.StartRenderAsync(request);
             this.mockClient.Verify(httpClient => httpClient.PostAsync(
                     It.Is<string>(url => url == expectedUrl),
-                    It.Is<Dictionary<string, string>>(dictionary =>
-                        dictionary.ContainsKey(contentTypeKey) && dictionary[contentTypeKey] == contentType),
-                    It.Is<Dictionary<string, object>>(dictionary =>
-                        dictionary.SequenceEqual(request.ToDataDictionary()))),
+                    MatchesContentTypeDictionary(contentTypeKey, contentType),
+                    Matches(request.ToDataDictionary())),
                 Times.Once);
         }
+
+        private static Dictionary<string, string> MatchesContentTypeDictionary(string contentTypeKey,
+            string contentType) =>
+            It.Is<Dictionary<string, string>>(dictionary =>
+                dictionary.ContainsKey(contentTypeKey) && dictionary[contentTypeKey] == contentType);
+
+        private static T Matches<T>(T input) where T : class =>
+            It.Is<T>(element => JsonConvert.SerializeObject(element) == JsonConvert.SerializeObject(input));
 
         [Fact]
         public async Task StartRenderAsync_ShouldReturnResponse()
@@ -62,15 +66,13 @@ namespace OpenTokSDKTest
             const string contentTypeKey = "Content-Type";
             const string contentType = "application/json";
             var expectedUrl = $"v2/project/{this.apiKey}/render";
-            var expectedResponse = this.fixture.Create<StartRenderResponse>();
+            var expectedResponse = this.fixture.Create<RenderItem>();
             var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
             var request = StartRenderRequestDataBuilder.Build().Create();
             this.mockClient.Setup(httpClient => httpClient.PostAsync(
                     expectedUrl,
-                    It.Is<Dictionary<string, string>>(dictionary =>
-                        dictionary.ContainsKey(contentTypeKey) && dictionary[contentTypeKey] == contentType),
-                    It.Is<Dictionary<string, object>>(dictionary =>
-                        dictionary.SequenceEqual(request.ToDataDictionary()))))
+                    MatchesContentTypeDictionary(contentTypeKey, contentType),
+                    Matches(request.ToDataDictionary())))
                 .ReturnsAsync(serializedResponse);
             var response = await this.sut.StartRenderAsync(request);
             Assert.Equal(expectedResponse, response);
@@ -114,15 +116,16 @@ namespace OpenTokSDKTest
             Assert.Equal(expectedResponse.Count, response.Count);
             Assert.True(expectedResponse.Items.SequenceEqual(response.Items));
         }
-        
+
         [Fact]
         public async Task GetRenderAsync_ShouldReturnResponse()
         {
-            var expectedResponse = this.fixture.Create<GetRenderResponse>();
+            var expectedResponse = this.fixture.Create<RenderItem>();
             var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
             var renderId = this.fixture.Create<string>();
             var expectedUrl = $"v2/project/{this.apiKey}/render/{renderId}";
-            this.mockClient.Setup(httpClient => httpClient.GetAsync(expectedUrl, null)).ReturnsAsync(serializedResponse);
+            this.mockClient.Setup(httpClient => httpClient.GetAsync(expectedUrl, null))
+                .ReturnsAsync(serializedResponse);
             var response = await this.sut.GetRenderAsync(renderId);
             Assert.Equal(expectedResponse, response);
         }
