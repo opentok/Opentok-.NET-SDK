@@ -1,0 +1,137 @@
+@page "/host"
+@using BlazorTestApp.Data
+@using OpenTokSDK
+@inject IJSRuntime JS
+@inject OpenTokService service
+<PageTitle>Host</PageTitle>
+
+<div class="container bump-me">
+
+    <div class="body-content">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Host</h3>
+            </div>
+            <div class="panel-body">
+                Publishers
+                <div id="publisher"></div>
+            </div>
+            <div class="panel-body">
+                Subscribers
+                <div id="subscribers">
+                </div>
+            </div>
+            <div class="panel-footer">
+                <EditForm Model="@UserInput">
+                    <div class="form-group">
+                        <p class="help-block">Archive Options:</p>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="hasAudio" @bind="UserInput.HasAudio">Audio
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="hasVideo" @bind="UserInput.HasVideo">Video
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="help-block">Output Mode:</p>
+                        <InputRadioGroup TValue="string" @bind-Value="UserInput.OutputMode">
+                            <InputRadio Value="@("composed")"/>Composed
+                            <InputRadio Value="@("individual")"/>Individual
+                        </InputRadioGroup>
+                    </div>
+                </EditForm>
+                <button class="btn btn-danger start" onclick="@StartArchivingAsync">Start archiving</button>
+                <button class="btn btn-success stop" onclick="@StopArchivingAsync">Stop archiving</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Instructions</h3>
+        </div>
+        <div class="panel-body">
+            <p>
+                Click <strong>Start archiving</strong> to begin archiving this session.
+                All publishers in the session will be included, and all publishers that
+                join the session will be included as well.
+            </p>
+            <p>
+                Click <strong>Stop archiving</strong> to end archiving this session.
+                You can then go to <a href="/history">past archives</a> to
+                view your archive (once its status changes to available).
+            </p>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>When</th>
+                    <th>You will see</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td style="vertical-align: middle;">Archiving is started</td>
+                    <td>
+                        <img src="/Content/img/archiving-on-message.png">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: middle;">Archiving remains on</td>
+                    <td>
+                        <img src="/Content/img/archiving-on-idle.png">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: middle;">Archiving is stopped</td>
+                    <td>
+                        <img src="/Content/img/archiving-off.png">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private string sessionId = string.Empty;
+    private Guid archiveId = Guid.Empty;
+    private HostInput UserInput { get; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (!firstRender) return;
+        var session = service.CreateSession();
+        sessionId = session.Id;
+        var apiKey = service.OpenTok.ApiKey.ToString();
+        var token = session.GenerateToken();
+        await JS.InvokeVoidAsync("initializeSession", apiKey, sessionId, token);
+    }
+
+    private async Task StartArchivingAsync()
+    {
+        var archive = await service.OpenTok.StartArchiveAsync(
+            sessionId,
+            ".NET Archiving Sample App",
+            UserInput.HasVideo,
+            UserInput.HasAudio,
+            GetOutputMode(UserInput.OutputMode)
+            );
+        archiveId = archive.Id;
+    }
+
+    private OutputMode GetOutputMode(string value) => value == "composed" ? OutputMode.COMPOSED : OutputMode.INDIVIDUAL;
+
+    private async Task StopArchivingAsync()
+    {
+        if (archiveId != Guid.Empty)
+        {
+            await service.OpenTok.StopArchiveAsync(archiveId.ToString());
+        }
+    }
+
+}

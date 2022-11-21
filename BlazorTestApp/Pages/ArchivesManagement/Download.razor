@@ -1,0 +1,26 @@
+@page "/archives/download"
+@page "/archives/download/{id:guid}"
+@using BlazorTestApp.Data
+@inject OpenTokService Service
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JavascriptRuntime
+<PageTitle>Download</PageTitle>
+<h3>Redirecting to your archive...</h3>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (Id != Guid.Empty)
+        {
+            var archive = await Service.OpenTok.GetArchiveAsync(Id.ToString());
+            await JavascriptRuntime.InvokeVoidAsync("open", archive.Url, "_blank");
+        }
+        NavigationManager.NavigateTo("/archives");
+    }
+
+}

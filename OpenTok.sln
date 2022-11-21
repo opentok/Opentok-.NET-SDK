@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTok", "OpenTok\OpenTok.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTokTest", "OpenTokTest\OpenTokTest.csproj", "{034F54A8-74D7-4EA5-A923-DC45F709A826}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorTestApp", "BlazorTestApp\BlazorTestApp.csproj", "{04682DC0-9ED0-4B3A-A6A1-283932D578C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{034F54A8-74D7-4EA5-A923-DC45F709A826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{034F54A8-74D7-4EA5-A923-DC45F709A826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{034F54A8-74D7-4EA5-A923-DC45F709A826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04682DC0-9ED0-4B3A-A6A1-283932D578C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04682DC0-9ED0-4B3A-A6A1-283932D578C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04682DC0-9ED0-4B3A-A6A1-283932D578C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04682DC0-9ED0-4B3A-A6A1-283932D578C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

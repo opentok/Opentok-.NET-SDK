@@ -1,0 +1,25 @@
+@page "/archives/delete"
+@page "/archives/delete/{id:guid}"
+@using BlazorTestApp.Data
+@inject OpenTokService Service
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JavascriptRuntime
+<PageTitle>Delete</PageTitle>
+<h3>Deleting your archive...</h3>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (Id != Guid.Empty)
+        {
+            await Service.OpenTok.DeleteArchiveAsync(Id.ToString());
+        }
+        NavigationManager.NavigateTo("/archives");
+    }
+
+}
