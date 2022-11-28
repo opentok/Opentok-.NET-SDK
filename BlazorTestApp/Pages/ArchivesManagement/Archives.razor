@@ -2,6 +2,8 @@
 @using BlazorTestApp.Data
 @using OpenTokSDK
 @inject OpenTokService Service
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JavascriptRuntime
 <PageTitle>Archives</PageTitle>
 
 <div class="container bump-me">
@@ -30,15 +32,6 @@
                             <tr data-item-id="@archive.Id">
                                 <td>
                                     @archive.Name
-                                    @* @if (archive.Status == ArchiveStatus.AVAILABLE && archive.Url.Length > 0) *@
-                                    @* { *@
-                                    @*     <a href="/archives/download/@archive.Id">@archive.Name</a> *@
-                                    @*     <button class="btn btn-primary" onclick="@(async () => await DownloadArchiveAsync(archive.Id))">Download</button> *@
-                                    @* } *@
-                                    @* else *@
-                                    @* { *@
-                                    @*     <a>Untitled</a> *@
-                                    @* } *@
                                 </td>
                                 <td>
                                     @{
@@ -53,8 +46,6 @@
                                     {
                                         <button class="btn btn-primary" onclick="@(async () => await DownloadArchiveAsync(archive.Id))">Download</button>
                                         <button class="btn btn-danger" onclick="@(async () => await DeleteArchiveAsync(archive.Id))">Delete</button>
-
-                                        //<a href="/archives/delete/@archive.Id">Delete</a>
                                     }
                                     else
                                     {
@@ -98,10 +89,14 @@
 
     private async Task DownloadArchiveAsync(Guid archiveId)
     {
+        var archive = await Service.OpenTok.GetArchiveAsync(archiveId.ToString());
+        await JavascriptRuntime.InvokeVoidAsync("open", archive.Url, "_blank");
     }
 
     private async Task DeleteArchiveAsync(Guid archiveId)
     {
+        await Service.OpenTok.DeleteArchiveAsync(archiveId.ToString());
+        NavigationManager.NavigateTo(NavigationManager.Uri, true);
     }
 
 }
