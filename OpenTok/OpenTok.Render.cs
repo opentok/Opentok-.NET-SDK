@@ -10,10 +10,10 @@ namespace OpenTokSDK
         private const string RenderEndpoint = "/render";
 
         /// <summary>
-        ///     TODO
+        /// Starts a new rendering.
         /// </summary>
-        /// <param name="request">TODO</param>
-        /// <returns>TODO</returns>
+        /// <param name="request">The rendering request.</param>
+        /// <returns>The generated rendering.</returns>
         public async Task<RenderItem> StartRenderAsync(StartRenderRequest request)
         {
             var response = await this.Client.PostAsync(
@@ -24,19 +24,19 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        ///     TODO
+        /// Stops a rendering.
         /// </summary>
-        /// <param name="renderId">TODO</param>
+        /// <param name="renderId">The Id of the rendering.</param>
         public async Task StopRenderAsync(string renderId) =>
             await this.Client.DeleteAsync(
                 this.BuildUrlWithRouteParameter(RenderEndpoint, renderId),
                 new Dictionary<string, string>());
 
         /// <summary>
-        ///     TODO
+        /// Retrieves all rendering matching the provided request.
         /// </summary>
-        /// <param name="request">TODO</param>
-        /// <returns>TODO</returns>
+        /// <param name="request">The request containing filtering options.</param>
+        /// <returns>The list of rendering.</returns>
         public async Task<ListRendersResponse> ListRendersAsync(ListRendersRequest request)
         {
             var url = this.BuildUrlWithQueryParameter(RenderEndpoint, request.ToQueryParameters());
@@ -45,9 +45,9 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        ///     TODO
+        /// Retrieves a rendering.
         /// </summary>
-        /// <param name="renderId">TODO</param>
+        /// <param name="renderId">The Id of the rendering.</param>
         public async Task<RenderItem> GetRenderAsync(string renderId)
         {
             var url = this.BuildUrlWithRouteParameter(RenderEndpoint, renderId);
