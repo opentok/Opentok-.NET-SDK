@@ -1,7 +1,8 @@
 @page "/archives"
 @using BlazorTestApp.Data
 @using OpenTokSDK
-@inject OpenTokService Service
+@using System.Globalization
+@inject IVideoService Service
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JavascriptRuntime
 <PageTitle>Archives</PageTitle>
@@ -30,26 +31,20 @@
                         @foreach (var archive in archives)
                         {
                             <tr data-item-id="@archive.Id">
-                                <td>
-                                    @archive.Name
-                                </td>
-                                <td>
-                                    @{
-                                        var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-                                        @epoch.AddMilliseconds(archive.CreatedAt).ToString()
-                                    }
-                                </td>
+                                <td>@archive.Name</td>
+                                <td>@GetMinimumDate().AddMilliseconds(archive.CreatedAt).ToString(CultureInfo.InvariantCulture)</td>
                                 <td>@archive.Duration seconds</td>
                                 <td>@archive.Status</td>
                                 <td>
+                                    @if (archive.Status == ArchiveStatus.EXPIRED)
+                                    {
+                                        @:Expired
+                                    }
+
                                     @if (archive.Status == ArchiveStatus.AVAILABLE)
                                     {
-                                        <button class="btn btn-primary" onclick="@(async () => await DownloadArchiveAsync(archive.Id))">Download</button>
+                                        <button class="btn btn-primary" onclick="@(async () => await OpenArchiveAsync(archive.Id))">Open</button>
                                         <button class="btn btn-danger" onclick="@(async () => await DeleteArchiveAsync(archive.Id))">Delete</button>
-                                    }
-                                    else
-                                    {
-                                        @: &nbsp;
                                     }
                                 </td>
                             </tr>
@@ -60,9 +55,7 @@
                 }
                 else
                 {
-                    <p>
-                        Loading archives...
-                    </p>
+                    <p>Loading archives...</p>
                 }
             </div>
         </div>
@@ -73,30 +66,26 @@
 
     private IEnumerable<Archive> archives = new List<Archive>();
     private int archiveCount;
-    private string showPrevious = string.Empty;
-    private string showNext = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var openTokArchives = await Service.OpenTok.ListArchivesAsync(count: 1000);
-        if (openTokArchives != null)
-        {
-            archiveCount = openTokArchives.TotalCount;
-            archives = openTokArchives.ToList();
-        }
+        var openTokArchives = await Service.ListArchivesAsync();
+        archiveCount = openTokArchives.TotalCount;
+        archives = openTokArchives.ToList();
     }
 
-    private async Task DownloadArchiveAsync(Guid archiveId)
+    private async Task OpenArchiveAsync(Guid archiveId)
     {
-        var archive = await Service.OpenTok.GetArchiveAsync(archiveId.ToString());
+        var archive = await Service.GetArchiveAsync(archiveId);
         await JavascriptRuntime.InvokeVoidAsync("open", archive.Url, "_blank");
     }
 
     private async Task DeleteArchiveAsync(Guid archiveId)
     {
-        await Service.OpenTok.DeleteArchiveAsync(archiveId.ToString());
+        await Service.DeleteArchiveAsync(archiveId);
         NavigationManager.NavigateTo(NavigationManager.Uri, true);
     }
 
+    private static DateTime GetMinimumDate() => new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 }

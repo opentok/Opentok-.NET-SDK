@@ -1,8 +1,7 @@
 @page "/host"
 @using BlazorTestApp.Data
-@using OpenTokSDK
-@inject IJSRuntime JS
-@inject OpenTokService service
+@inject IJSRuntime JavascriptRuntime
+@inject IVideoService VideoService
 <PageTitle>Host</PageTitle>
 
 <div class="container bump-me">
@@ -23,27 +22,8 @@
                 </div>
             </div>
             <div class="panel-footer">
-                <EditForm Model="@UserInput">
-                    <div class="form-group">
-                        <p class="help-block">Archive Options:</p>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" name="hasAudio" @bind="UserInput.HasAudio">Audio
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" name="hasVideo" @bind="UserInput.HasVideo">Video
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <p class="help-block">Output Mode:</p>
-                        <InputRadioGroup TValue="string" @bind-Value="UserInput.OutputMode">
-                            <InputRadio Value="@("composed")"/>Composed
-                            <InputRadio Value="@("individual")"/>Individual
-                        </InputRadioGroup>
-                    </div>
-                </EditForm>
-                <button class="btn btn-danger start" onclick="@StartArchivingAsync">Start archiving</button>
-                <button class="btn btn-success stop" onclick="@StopArchivingAsync">Stop archiving</button>
+                <button class="btn btn-success" onclick="@StartArchivingAsync" disabled="@isArchiving">Start archiving</button>
+                <button class="btn btn-danger" onclick="@StopArchivingAsync" disabled="@(!isArchiving)">Stop archiving</button>
             </div>
         </div>
     </div>
@@ -60,7 +40,7 @@
             </p>
             <p>
                 Click <strong>Stop archiving</strong> to end archiving this session.
-                You can then go to <a href="/history">past archives</a> to
+                You can then go to <a href="/archives">past archives</a> to
                 view your archive (once its status changes to available).
             </p>
             <table class="table">
@@ -99,38 +79,34 @@
 
     private string sessionId = string.Empty;
     private Guid archiveId = Guid.Empty;
-    private HostInput UserInput { get; } = new();
+    private bool isArchiving;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
         if (!firstRender) return;
-        var session = service.CreateSession();
+        var session = VideoService.CreateSession();
         sessionId = session.Id;
-        var apiKey = service.OpenTok.ApiKey.ToString();
-        var token = session.GenerateToken();
-        await JS.InvokeVoidAsync("initializeSession", apiKey, sessionId, token);
+        await JavascriptRuntime.InvokeVoidAsync(
+            "initializeSession",
+            VideoService.GetApiKey().ToString(),
+            sessionId,
+            session.GenerateToken());
     }
 
     private async Task StartArchivingAsync()
     {
-        var archive = await service.OpenTok.StartArchiveAsync(
-            sessionId,
-            ".NET Archiving Sample App",
-            UserInput.HasVideo,
-            UserInput.HasAudio,
-            GetOutputMode(UserInput.OutputMode)
-            );
+        isArchiving = true;
+        var archive = await VideoService.StartArchiveAsync(sessionId);
         archiveId = archive.Id;
     }
 
-    private OutputMode GetOutputMode(string value) => value == "composed" ? OutputMode.COMPOSED : OutputMode.INDIVIDUAL;
-
     private async Task StopArchivingAsync()
     {
+        isArchiving = false;
         if (archiveId != Guid.Empty)
         {
-            await service.OpenTok.StopArchiveAsync(archiveId.ToString());
+            await VideoService.StopArchiveAsync(archiveId);
         }
     }
 

@@ -1,7 +1,7 @@
 @page "/participant"
 @using BlazorTestApp.Data
-@inject IJSRuntime JS
-@inject OpenTokService service
+@inject IJSRuntime JavascriptRuntime
+@inject IVideoService VideoService
 <PageTitle>Participant</PageTitle>
 
 <div class="container bump-me">
@@ -72,18 +72,17 @@
 </div>
 
 @code {
-
     private string sessionId = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
         if (!firstRender) return;
-        var session = service.CreateSession();
+        var session = VideoService.CreateSession();
         sessionId = session.Id;
-        var apiKey = service.OpenTok.ApiKey.ToString();
+        var apiKey = VideoService.GetApiKey().ToString();
         var token = session.GenerateToken();
-        await JS.InvokeVoidAsync("initializeSession", apiKey, sessionId, token);
+        await JavascriptRuntime.InvokeVoidAsync("initializeSession", apiKey, sessionId, token);
     }
 
 }
