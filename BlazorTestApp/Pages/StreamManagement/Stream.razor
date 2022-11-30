@@ -1,5 +1,7 @@
-@page "/host"
+@page "/stream"
 @using BlazorTestApp.Data
+@using OpenTokSDK
+@using LanguageExt
 @inject IJSRuntime JavascriptRuntime
 @inject IVideoService VideoService
 <PageTitle>Host</PageTitle>
@@ -7,6 +9,9 @@
 <div class="container bump-me">
 
     <div class="body-content">
+
+        <button class="btn btn-primary" onclick="@StartStreamAsync">Start stream</button>
+        <button class="btn btn-secondary" onclick="@StopStreamAsync">Stop stream</button>
 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -22,13 +27,12 @@
                 </div>
             </div>
             <div class="panel-footer">
-                <button class="btn btn-success" onclick="@StartArchivingAsync" disabled="@isArchiving">Start archiving</button>
-                <button class="btn btn-danger" onclick="@StopArchivingAsync" disabled="@(!isArchiving)">Stop archiving</button>
+
             </div>
         </div>
     </div>
 
-    <div class="panel panel-default">
+    <div class="panel panel-default" hidden="@(!isStreamAdmin)">
         <div class="panel-heading">
             <h3 class="panel-title">Instructions</h3>
         </div>
@@ -42,6 +46,10 @@
                 Click <strong>Stop archiving</strong> to end archiving this session.
                 You can then go to <a href="/archives">past archives</a> to
                 view your archive (once its status changes to available).
+            </p>
+            <p>
+                <button class="btn btn-success" onclick="@StartArchivingAsync" disabled="@isArchiving">Start archiving</button>
+                <button class="btn btn-danger" onclick="@StopArchivingAsync" disabled="@(!isArchiving)">Stop archiving</button>
             </p>
             <table class="table">
                 <thead>
@@ -77,37 +85,50 @@
 
 @code {
 
-    private string sessionId = string.Empty;
-    private Guid archiveId = Guid.Empty;
+    private Option<Archive> currentArchive = Option<Archive>.None;
     private bool isArchiving;
+    private bool isStreamAdmin;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        await base.OnAfterRenderAsync(firstRender);
-        if (!firstRender) return;
-        var session = VideoService.CreateSession();
-        sessionId = session.Id;
-        await JavascriptRuntime.InvokeVoidAsync(
-            "initializeSession",
-            VideoService.GetApiKey().ToString(),
-            sessionId,
-            session.GenerateToken());
+        base.OnInitialized();
+        isStreamAdmin = IsStreamAdmin();
     }
 
-    private async Task StartArchivingAsync()
-    {
-        isArchiving = true;
-        var archive = await VideoService.StartArchiveAsync(sessionId);
-        archiveId = archive.Id;
-    }
+    private bool IsStreamAdmin() => VideoService
+        .GetCredentials()
+        .Map(credentials => credentials.IsNewSession)
+        .Match(isNew => !isNew, () => false);
 
-    private async Task StopArchivingAsync()
-    {
-        isArchiving = false;
-        if (archiveId != Guid.Empty)
-        {
-            await VideoService.StopArchiveAsync(archiveId);
-        }
-    }
+    private async Task StartStreamAsync() => await VideoService
+        .GetSessionInformation()
+        .IfSomeAsync(InitializeStreamAsync);
+
+    private async Task InitializeStreamAsync(SessionInformation session) => await JavascriptRuntime.InvokeVoidAsync(
+        "initializeStream", session.ApiKey, session.Credentials.SessionId, session.Credentials.Token);
+
+    private async Task StopStreamAsync() => await JavascriptRuntime.InvokeVoidAsync("disposeStream");
+
+    private async Task StartArchivingAsync() => await VideoService
+        .GetCredentials()
+        .Do(_ => NotifyArchivingStarted())
+        .Map(credentials => credentials.SessionId)
+        .MapAsync(StartArchiveAsync)
+        .IfSome(AssignArchive);
+
+    private Task<Archive> StartArchiveAsync(string sessionId) => VideoService.StartArchiveAsync(sessionId);
+
+    private void AssignArchive(Archive archive) => currentArchive = archive;
+
+    private void NotifyArchivingStarted() => isArchiving = true;
+
+    private async Task StopArchivingAsync() => await currentArchive
+        .Do(_ => NotifyArchivingStopped())
+        .Map(archive => archive.Id)
+        .IfSomeAsync(StopArchiveAsync);
+
+    private async Task StopArchiveAsync(Guid id) => await VideoService.StopArchiveAsync(id);
+
+    private void NotifyArchivingStopped() => isArchiving = false;
 
 }

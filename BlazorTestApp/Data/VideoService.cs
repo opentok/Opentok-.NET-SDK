@@ -1,11 +1,14 @@
 using System.Net;
+using LanguageExt;
 using OpenTokSDK;
+using static LanguageExt.Prelude;
 
 namespace BlazorTestApp.Data;
 
 public class VideoService : IVideoService
 {
     private readonly OpenTok openTok;
+    private Option<SessionCredentials> credentials = Option<SessionCredentials>.None;
 
     public VideoService(OpenTokOptions options)
     {
@@ -13,11 +16,21 @@ public class VideoService : IVideoService
         this.openTok = new OpenTok(Convert.ToInt32(options.ApiKey), options.ApiSecret);
     }
 
-    public Session CreateSession() => this.openTok.CreateSession(mediaMode: MediaMode.ROUTED);
+    public void CreateSession() =>
+        Some(this.openTok.CreateSession(mediaMode: MediaMode.ROUTED))
+            .Bind(SessionCredentials.FromExistingSession)
+            .IfSome(this.JoinSession);
+
+    public void JoinSession(SessionCredentials sessionCredentials) => this.credentials = sessionCredentials;
 
     public async Task DeleteArchiveAsync(Guid archiveId) => await this.openTok.DeleteArchiveAsync(archiveId.ToString());
 
     public int GetApiKey() => this.openTok.ApiKey;
+
+    public Option<SessionCredentials> GetCredentials() => this.credentials;
+
+    public Option<SessionInformation> GetSessionInformation() => this.credentials
+        .Map(cred => new SessionInformation(cred, this.GetApiKey().ToString()));
 
     public async Task StopArchiveAsync(Guid archiveId) => await this.openTok.StopArchiveAsync(archiveId.ToString());
 

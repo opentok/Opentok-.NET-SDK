@@ -20,9 +20,6 @@
         <Content Update="wwwroot\content\img\archiving-on-message.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Update="wwwroot\css\sample.css">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -35,6 +32,11 @@
         <_ContentIncludedByDefault Remove="Pages\Host.razor"/>
         <_ContentIncludedByDefault Remove="Pages\Index.razor"/>
         <_ContentIncludedByDefault Remove="Pages\Participant.razor"/>
+        <_ContentIncludedByDefault Remove="Pages\ParticipantManagement\Participant.razor"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="LanguageExt.Core" Version="4.4.0"/>
     </ItemGroup>
 
 </Project>

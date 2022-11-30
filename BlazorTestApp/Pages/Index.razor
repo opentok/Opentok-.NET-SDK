@@ -1,9 +1,66 @@
 ﻿@page "/"
+@using BlazorTestApp.Data
+@using LanguageExt
+@inject IVideoService VideoService
+<PageTitle>Video Sample App</PageTitle>
 
-<PageTitle>Index</PageTitle>
+<div class="container">
+    <div class="item-title">
+        <h1>Welcome to Vonage's Video Sample App!</h1>
+    </div>
+    <div class="item-create" hidden="@IsSessionAvailable">
+        <p>
+            <button class="btn btn-primary" onclick="@CreateSession">Create new session</button>
+        </p>
+    </div>
+    <div class="item-join" hidden="@IsSessionAvailable">
+        <p>
+            Existing session Id:
+            <input type="text" @bind="@joinSessionId"/>
+        </p>
+        <p>
+            Token:
+            <input type="text" @bind="@joinToken"/>
+        </p>
+        <p>
+            <button class="btn btn-primary" onclick="@JoinSession">Join existing session</button>
+        </p>
+    </div>
+    <div class="item-session" hidden="@(!IsSessionAvailable)">
+        <p>
+            Session Id: @SessionId
+        </p>
+    </div>
+</div>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+@code {
+    private Option<string> sessionId = Option<string>.None;
+    private string joinSessionId = "1_MX40NzU4MTQyMX5-MTY2OTc5NjcyMTcxNX4za1ZwbVhMNHpBd09GdnBTNG50K201eTh-fg";
+    private string joinToken = "T1==cGFydG5lcl9pZD00NzU4MTQyMSZzaWc9ZDVhY2EyNWNhM2JlMDU5MDE5MDA2N2MxZjYyODEyZGZkZDNmMTRkYzpzZXNzaW9uX2lkPTFfTVg0ME56VTRNVFF5TVg1LU1UWTJPVGM1TmpjeU1UY3hOWDR6YTFad2JWaE1OSHBCZDA5R2RuQlRORzUwSzIwMWVUaC1mZyZjcmVhdGVfdGltZT0xNjY5Nzk4MTk5Jm5vbmNlPTAuNTQ2OTkxNDQ3MTc0NzQ2OCZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNjY5ODAxNzk4JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+    private bool IsSessionAvailable => sessionId.IsSome;
+    private string SessionId => sessionId.Match(session => session, () => string.Empty);
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        sessionId = VideoService.GetCredentials().Map(credentials => credentials.SessionId);
+    }
+
+    private void CreateSession()
+    {
+        VideoService.CreateSession();
+        AssignSessionId();
+    }
+
+    private void JoinSession() => SessionCredentials
+        .FromNewSession(joinSessionId, joinToken)
+        .Do(VideoService.JoinSession)
+        .Do(_ => AssignSessionId());
+
+    private void AssignSessionId() => sessionId = VideoService
+        .GetCredentials()
+        .Map(credentials => credentials.SessionId);
+
+}

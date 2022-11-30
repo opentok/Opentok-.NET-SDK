@@ -1,6 +1,8 @@
-window.initializeSession = (apiKey, sessionId, token) => {
-    var session = OT.initSession(apiKey, sessionId),
-        publisher = OT.initPublisher('publisher')
+var session, publisher;
+
+window.initializeStream = (apiKey, sessionId, token) => {
+    session = OT.initSession(apiKey, sessionId)
+    publisher = OT.initPublisher('publisher')
     session.connect(token, function (error) {
         if (error) {
             console.error('Failed to connect', error);
@@ -25,10 +27,15 @@ window.initializeSession = (apiKey, sessionId, token) => {
         });
     });
 
-    window.onbeforeunload = function () {
-        publisher.publishVideo(false);
-        session.unpublish(publisher);
-        publisher.destroy();
-    }
-
 };
+
+window.disposeStream = () => {
+    publisher.publishVideo(false);
+    session.disconnect();
+    session.unpublish(publisher);
+    publisher.destroy();
+};
+
+window.onbeforeunload = function () {
+    disposeStream();
+}

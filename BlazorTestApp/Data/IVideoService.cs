@@ -1,10 +1,13 @@
+using LanguageExt;
 using OpenTokSDK;
 
 namespace BlazorTestApp.Data;
 
 public interface IVideoService
 {
-    Session CreateSession();
+    void CreateSession();
+
+    void JoinSession(SessionCredentials sessionCredentials);
 
     Task DeleteArchiveAsync(Guid archiveId);
 
@@ -17,4 +20,8 @@ public interface IVideoService
     Task<Archive> StartArchiveAsync(string sessionId);
 
     int GetApiKey();
+
+    Option<SessionCredentials> GetCredentials();
+
+    Option<SessionInformation> GetSessionInformation();
 }

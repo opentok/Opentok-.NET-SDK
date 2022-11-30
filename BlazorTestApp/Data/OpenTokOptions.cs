@@ -2,18 +2,16 @@ namespace BlazorTestApp.Data;
 
 public class OpenTokOptions
 {
-    public OpenTokOptions(string apiKey, string apiSecret, string sessionId)
+    public OpenTokOptions(string apiKey, string apiSecret)
     {
         this.ApiKey = apiKey;
         this.ApiSecret = apiSecret;
-        this.SessionId = sessionId;
     }
 
     public OpenTokOptions()
     {
     }
 
-    public string ApiKey { get; set; }
-    public string ApiSecret { get; set; }
-    public string SessionId { get; set; }
+    public string ApiKey { get; set; } = string.Empty;
+    public string ApiSecret { get; set; } = string.Empty;
 }
