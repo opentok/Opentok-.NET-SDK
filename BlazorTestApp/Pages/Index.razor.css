@@ -1,7 +1,7 @@
 .container {
     display: grid;
     grid-template-columns: 50% 50%;
-    grid-template-rows: auto auto auto 100%;
+    grid-template-rows: 100px auto auto 100%;
 }
 
 .item-title {
@@ -30,4 +30,26 @@
     grid-column-end: 3;
     grid-row-start: 3;
     grid-row-end: 3;
+}
+
+input {
+    width: 100%;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+}
+
+.textarea-session {
+    height: 100px;
+}
+
+.textarea-token {
+    height: 200px;
 }

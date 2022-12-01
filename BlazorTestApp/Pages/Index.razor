@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using BlazorTestApp.Data
 @using LanguageExt
+@inject IJSRuntime JavascriptRuntime
 @inject IVideoService VideoService
 <PageTitle>Video Sample App</PageTitle>
 
@@ -15,21 +16,24 @@
     </div>
     <div class="item-join" hidden="@IsSessionAvailable">
         <p>
-            Existing session Id:
-            <input type="text" @bind="@joinSessionId"/>
-        </p>
-        <p>
-            Token:
-            <input type="text" @bind="@joinToken"/>
-        </p>
-        <p>
             <button class="btn btn-primary" onclick="@JoinSession">Join existing session</button>
+        </p>
+        <p>Existing session Id</p>
+        <p>
+            <textarea type="text" @bind="@joinSessionId" class="textarea-session"></textarea>
+        </p>
+        <p>Token</p>
+        <p>
+            <textarea type="text" @bind="@joinToken" class="textarea-token"></textarea>
         </p>
     </div>
     <div class="item-session" hidden="@(!IsSessionAvailable)">
-        <p>
-            Session Id: @SessionId
-        </p>
+        <p>Congratulations! You're all set!</p>
+        <p>Here's your Session Id:</p>
+        <div class="form-inline">
+            <textarea type="text" class="textarea-session" readonly>@SessionId</textarea>
+            <button type="button" class="btn btn-primary" @onclick="CopyTextToClipboard">Copy to clipboard</button>
+        </div>
     </div>
 </div>
 
@@ -62,5 +66,7 @@
     private void AssignSessionId() => sessionId = VideoService
         .GetCredentials()
         .Map(credentials => credentials.SessionId);
+
+    private async Task CopyTextToClipboard() => await JavascriptRuntime.InvokeVoidAsync("clipboardCopy.copyText", SessionId);
 
 }

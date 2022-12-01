@@ -1,5 +1,6 @@
 using LanguageExt;
 using OpenTokSDK;
+using OpenTokSDK.Render;
 
 namespace BlazorTestApp.Data;
 
@@ -24,4 +25,8 @@ public interface IVideoService
     Option<SessionCredentials> GetCredentials();
 
     Option<SessionInformation> GetSessionInformation();
+
+    Task<Option<RenderItem>> StartExperienceComposerAsync(string url, string streamName);
+
+    Task StopExperienceComposerAsync(RenderItem rendering);
 }

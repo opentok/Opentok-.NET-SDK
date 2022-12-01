@@ -1,0 +1,17 @@
+textarea {
+    width: 100%;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+}
+
+.textarea-session {
+    height: 80px;
+}
+
+.panel-body {
+    padding-bottom: 25px;
+}

@@ -1,38 +1,47 @@
 @page "/stream"
 @using BlazorTestApp.Data
 @using OpenTokSDK
+@using OpenTokSDK.Render
 @using LanguageExt
 @inject IJSRuntime JavascriptRuntime
 @inject IVideoService VideoService
-<PageTitle>Host</PageTitle>
+<PageTitle>Publish your stream</PageTitle>
 
-<div class="container bump-me">
+<div class="container">
 
-    <div class="body-content">
-
-        <button class="btn btn-primary" onclick="@StartStreamAsync">Start stream</button>
-        <button class="btn btn-secondary" onclick="@StopStreamAsync">Stop stream</button>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Host</h3>
-            </div>
-            <div class="panel-body">
-                Publishers
-                <div id="publisher"></div>
-            </div>
-            <div class="panel-body">
-                Subscribers
-                <div id="subscribers">
-                </div>
-            </div>
-            <div class="panel-footer">
-
-            </div>
+    <div class="panel-body">
+        <h3 class="panel-title">Your stream</h3>
+        <p>This part only contains your stream.</p>
+        <p>Click <strong>Start stream</strong> to publish your stream to the session. Your stream includes both audio and video.</p>
+        <p>Click <strong>Stop stream</strong> to stop publishing your stream.</p>
+        <p>
+            <button class="btn btn-primary" onclick="@StartStreamAsync" disabled="@isStreaming">Start stream</button>
+            <button class="btn btn-secondary" onclick="@StopStreamAsync" disabled="@(!isStreaming)">Stop stream</button>
+        </p>
+        <div id="publisher"></div>
+    </div>
+    <hr>
+    <div class="panel-body">
+        <h3 class="panel-title">Other streams</h3>
+        <p>This part contains all other streams from your session, meaning people and experience composer.</p>
+        <div id="subscribers">
         </div>
     </div>
-
-    <div class="panel panel-default" hidden="@(!isStreamAdmin)">
+    <hr hidden="@(!isStreamAdmin || !isStreaming)">
+    <div class="panel-body" hidden="@(!isStreamAdmin || !isStreaming)">
+        <div class="panel-heading">
+            <h3 class="panel-title">Experience Composer</h3>
+        </div>
+        <p>
+            <textarea type="text" @bind="@experienceComposerUrl" class="textarea-session"></textarea>
+        </p>
+        <p>
+            <button type="button" class="btn btn-success" onclick="@CaptureFeedAsync" disabled="@isCapturingFeed">Capture feed</button>
+            <button type="button" class="btn btn-danger" onclick="@DisposeFeedAsync" disabled="@(!isCapturingFeed)">Stop feed</button>
+        </p>
+    </div>
+    <hr hidden="@(!isStreamAdmin || !isStreaming)">
+    <div class="panel-body" hidden="@(!isStreamAdmin || !isStreaming)">
         <div class="panel-heading">
             <h3 class="panel-title">Instructions</h3>
         </div>
@@ -88,6 +97,9 @@
     private Option<Archive> currentArchive = Option<Archive>.None;
     private bool isArchiving;
     private bool isStreamAdmin;
+    private string experienceComposerUrl = "https://miro.com/app/board/uXjVOozTgCo=/?share_link_id=196081073888";
+    private bool isStreaming;
+    private Option<RenderItem> currentRendering = Option<RenderItem>.None;
 
     protected override void OnInitialized()
     {
@@ -102,12 +114,19 @@
 
     private async Task StartStreamAsync() => await VideoService
         .GetSessionInformation()
+        .Do(_ => NotifyStreamingStarted())
         .IfSomeAsync(InitializeStreamAsync);
 
     private async Task InitializeStreamAsync(SessionInformation session) => await JavascriptRuntime.InvokeVoidAsync(
         "initializeStream", session.ApiKey, session.Credentials.SessionId, session.Credentials.Token);
 
-    private async Task StopStreamAsync() => await JavascriptRuntime.InvokeVoidAsync("disposeStream");
+    private async Task StopStreamAsync()
+    {
+        NotifyStreamingStopped();
+        await DisposeStreamAsync();
+    }
+
+    private async Task DisposeStreamAsync() => await JavascriptRuntime.InvokeVoidAsync("disposeStream");
 
     private async Task StartArchivingAsync() => await VideoService
         .GetCredentials()
@@ -130,5 +149,25 @@
     private async Task StopArchiveAsync(Guid id) => await VideoService.StopArchiveAsync(id);
 
     private void NotifyArchivingStopped() => isArchiving = false;
+
+    private void NotifyStreamingStarted() => isStreaming = true;
+
+    private void NotifyStreamingStopped() => isStreaming = false;
+
+    private void NotifyCapturingFeedStarted() => isCapturingFeed = true;
+
+    private void NotifyCapturingFeedStopped() => isCapturingFeed = false;
+
+    private async Task CaptureFeedAsync()
+    {
+        currentRendering = await VideoService.StartExperienceComposerAsync(experienceComposerUrl, "Name");
+        NotifyCapturingFeedStarted();
+    }
+
+    private async Task DisposeFeedAsync() => await currentRendering
+        .Do(_ => NotifyCapturingFeedStopped())
+        .IfSomeAsync(rendering => VideoService.StopExperienceComposerAsync(rendering));
+
+    private bool isCapturingFeed;
 
 }
