@@ -19,10 +19,10 @@ public class VideoService : IVideoService
 
     public void CreateSession() =>
         Some(this.openTok.CreateSession(mediaMode: MediaMode.ROUTED))
-            .Bind(SessionCredentials.FromExistingSession)
-            .IfSome(this.JoinSession);
+            .Bind(SessionCredentials.FromCreatedSession)
+            .IfSome(this.AssignCredentials);
 
-    public void JoinSession(SessionCredentials sessionCredentials) => this.credentials = sessionCredentials;
+    public void AssignCredentials(SessionCredentials sessionCredentials) => this.credentials = sessionCredentials;
 
     public async Task DeleteArchiveAsync(Guid archiveId) => await this.openTok.DeleteArchiveAsync(archiveId.ToString());
 

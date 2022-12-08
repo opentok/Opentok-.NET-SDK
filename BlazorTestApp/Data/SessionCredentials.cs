@@ -5,7 +5,7 @@ namespace BlazorTestApp.Data;
 
 public record SessionCredentials(string SessionId, string Token, bool IsNewSession)
 {
-    public static Option<SessionCredentials> FromNewSession(string sessionId, string token) =>
+    public static Option<SessionCredentials> FromExistingSession(string sessionId, string token) =>
         ParseCredentials(sessionId, token, true);
 
     private static Option<SessionCredentials> ParseCredentials(string sessionId, string token, bool isNewSession) =>
@@ -13,6 +13,6 @@ public record SessionCredentials(string SessionId, string Token, bool IsNewSessi
             ? Option<SessionCredentials>.None
             : new SessionCredentials(sessionId, token, isNewSession);
 
-    public static Option<SessionCredentials> FromExistingSession(Session session) =>
+    public static Option<SessionCredentials> FromCreatedSession(Session session) =>
         ParseCredentials(session.Id, session.GenerateToken(), false);
 }

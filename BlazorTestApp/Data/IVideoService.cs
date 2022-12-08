@@ -8,7 +8,7 @@ public interface IVideoService
 {
     void CreateSession();
 
-    void JoinSession(SessionCredentials sessionCredentials);
+    void AssignCredentials(SessionCredentials sessionCredentials);
 
     Task DeleteArchiveAsync(Guid archiveId);
 

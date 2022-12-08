@@ -59,8 +59,8 @@
     }
 
     private void JoinSession() => SessionCredentials
-        .FromNewSession(joinSessionId, joinToken)
-        .Do(VideoService.JoinSession)
+        .FromExistingSession(joinSessionId, joinToken)
+        .Do(VideoService.AssignCredentials)
         .Do(_ => AssignSessionId());
 
     private void AssignSessionId() => sessionId = VideoService
