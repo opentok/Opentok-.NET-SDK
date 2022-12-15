@@ -36,8 +36,8 @@
             <textarea type="text" @bind="@experienceComposerUrl" class="textarea-session"></textarea>
         </p>
         <p>
-            <button type="button" class="btn btn-success" onclick="@CaptureFeedAsync" disabled="@isCapturingFeed">Capture feed</button>
-            <button type="button" class="btn btn-danger" onclick="@DisposeFeedAsync" disabled="@(!isCapturingFeed)">Stop feed</button>
+            <button type="button" class="btn btn-success" onclick="@CaptureFeedAsync">Capture feed</button>
+            <button type="button" class="btn btn-danger" onclick="@DisposeFeedAsync">Stop feed</button>
         </p>
     </div>
     <hr hidden="@(!isStreamAdmin || !isStreaming)">
@@ -100,6 +100,7 @@
     private string experienceComposerUrl = "https://miro.com/app/board/uXjVOozTgCo=/?share_link_id=196081073888";
     private bool isStreaming;
     private Option<RenderItem> currentRendering = Option<RenderItem>.None;
+    private readonly List<RenderItem> renderingItems = new();
 
     protected override void OnInitialized()
     {
@@ -154,20 +155,16 @@
 
     private void NotifyStreamingStopped() => isStreaming = false;
 
-    private void NotifyCapturingFeedStarted() => isCapturingFeed = true;
-
-    private void NotifyCapturingFeedStopped() => isCapturingFeed = false;
-
     private async Task CaptureFeedAsync()
     {
-        currentRendering = await VideoService.StartExperienceComposerAsync(experienceComposerUrl, "Name");
-        NotifyCapturingFeedStarted();
+        var rendering = await VideoService.StartExperienceComposerAsync(experienceComposerUrl, "Name");
+        rendering.IfSome(value => renderingItems.Add(value));
     }
 
-    private async Task DisposeFeedAsync() => await currentRendering
-        .Do(_ => NotifyCapturingFeedStopped())
-        .IfSomeAsync(rendering => VideoService.StopExperienceComposerAsync(rendering));
-
-    private bool isCapturingFeed;
+    private async Task DisposeFeedAsync()
+    {
+        var tasks = renderingItems.Select(item => VideoService.StopExperienceComposerAsync(item));
+        await Task.WhenAll(tasks);
+    }
 
 }

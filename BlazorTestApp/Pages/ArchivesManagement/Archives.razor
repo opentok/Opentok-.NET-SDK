@@ -16,7 +16,7 @@
                 <h3 class="panel-title">Past Archives</h3>
             </div>
             <div class="panel-body">
-                @if (archiveCount > 0)
+                @if (archiveCount >= 0)
                 {
                     <table class="table">
                         <thead>
@@ -65,14 +65,15 @@
 @code {
 
     private IEnumerable<Archive> archives = new List<Archive>();
-    private int archiveCount;
+    private int archiveCount = -1;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         var openTokArchives = await Service.ListArchivesAsync();
-        archiveCount = openTokArchives.TotalCount;
-        archives = openTokArchives.ToList();
+        var filteredArchives = openTokArchives.Where(archive => archive.Status != ArchiveStatus.EXPIRED).ToList();
+        archiveCount = filteredArchives.Count;
+        archives = filteredArchives;
     }
 
     private async Task OpenArchiveAsync(Guid archiveId)
