@@ -7,7 +7,8 @@ using OpenTokSDK.Exception;
 namespace OpenTokSDK.Render
 {
     /// <summary>
-    /// Represents a request for starting a rendering.
+    /// Represents request options for
+    /// <see cref="OpenTok.StartRenderAsync"/>.
     /// </summary>
     public class StartRenderRequest
     {
@@ -106,8 +107,7 @@ namespace OpenTokSDK.Render
         }
 
         /// <summary>
-        ///     The ID of a session (generated with the same `APIKEY` as specified in the URL) which you wish to start rendering
-        ///     into
+        ///     The session ID.
         /// </summary>
         public string SessionId { get; }
 
@@ -125,12 +125,12 @@ namespace OpenTokSDK.Render
 
         /// <summary>
         ///     The maximum time allowed for the Render, in seconds. After this time, the Render will be stopped automatically, if
-        ///     it is still running. The minimum duration is 1s and the maximum one is 36000s (10 hours).
+        ///     it is still running. The minimum duration is 1 second, and the maximum is 36000 seconds (10 hours).
         /// </summary>
         public int MaxDuration { get; }
 
         /// <summary>
-        ///     Resolution of the display area for the composition. Allowed values are 480x640 (SD Portrait), 640x480 (SD
+        ///     The esolution of the display area for the composition. Allowed values are 480x640 (SD Portrait), 640x480 (SD
         ///     Landscape), 720x1280 (HD Portrait), 1280x720 (HD Landscape). The default value is 1280x720 (HD Landscape).
         /// </summary>
         public ScreenResolution Resolution { get; }
@@ -142,7 +142,7 @@ namespace OpenTokSDK.Render
         public Uri StatusCallbackUrl { get; }
 
         /// <summary>
-        ///     Initial configuration of Publisher properties for the composed output stream.
+        ///    The Publisher properties for the composed output stream.
         /// </summary>
         public PublisherProperty Properties { get; }
 
@@ -202,7 +202,7 @@ namespace OpenTokSDK.Render
             };
 
         /// <summary>
-        ///     Initial configuration of Publisher properties for the composed output stream.
+        ///     The Publisher properties for the composed output stream of a Render.
         /// </summary>
         public class PublisherProperty
         {
@@ -217,9 +217,10 @@ namespace OpenTokSDK.Render
             public const string OverflowStreamName = "StreamName cannot exceeds 200 characters.";
 
             /// <summary>
+            /// Constructor for a PublisherProperty.
             /// </summary>
             /// <param name="name">
-            ///     The name of the composed output stream which will be published to the session. The minimum length is
+            ///     The name for the composed output stream which will be published to the session. The minimum length is
             ///     1 and the maximum one is 200.
             /// </param>
             public PublisherProperty(string name)

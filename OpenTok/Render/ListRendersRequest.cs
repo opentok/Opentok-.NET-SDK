@@ -3,7 +3,8 @@
 namespace OpenTokSDK.Render
 {
     /// <summary>
-    ///     Represents a request for retrieving renders.
+    /// Represents a request for retrieving Experience Composer renderers.
+    /// (<see cref="OpenTok.ListRendersAsync"/>).
     /// </summary>
     public class ListRendersRequest
     {
@@ -28,7 +29,7 @@ namespace OpenTokSDK.Render
         public const string NegativeOffset = "Offset cannot be negative.";
 
         /// <summary>
-        ///     Initializes a ListRendersRequest with default values. Count will be 50.
+        ///     Initializes a ListRendersRequest with default values. The Count is set to 50.
         /// </summary>
         public ListRendersRequest()
         {
@@ -38,7 +39,9 @@ namespace OpenTokSDK.Render
         /// <summary>
         ///     Initializes a ListRendersRequest.
         /// </summary>
-        /// <param name="count">Number of Renders to retrieve starting at offset. Default is 50, maximum is 1000.</param>
+        /// <param name="count">
+        ///  The number of Renders to retrieve starting at the offset. The default is 50, and the maximum is 1000.
+        /// </param>
         public ListRendersRequest(int count)
             : this()
         {
@@ -49,8 +52,12 @@ namespace OpenTokSDK.Render
         /// <summary>
         ///     Initializes a ListRendersRequest.
         /// </summary>
-        /// <param name="offset">Start offset in the list of existing Renders.</param>
-        /// <param name="count">Number of Renders to retrieve starting at offset. Default is 50, maximum is 1000.</param>
+        /// <param name="offset">
+        /// The start offset in the list of existing Renders.
+        /// </param>
+        /// <param name="count">
+        /// The number of Renders to retrieve, starting at offset. The default is 50, and the maximum is 1000.
+        /// </param>
         public ListRendersRequest(int offset, int count)
             : this(count)
         {
@@ -60,12 +67,12 @@ namespace OpenTokSDK.Render
         }
 
         /// <summary>
-        ///     Start offset in the list of existing Renders.
+        ///     The start offset in the list of existing Renders.
         /// </summary>
         public int? Offset { get; }
 
         /// <summary>
-        ///     Number of Renders to retrieve starting at offset. Default is 50, maximum is 1000.
+        ///     The number of Renders to retrieve, starting at offset.
         /// </summary>
         public int Count { get; }
 
