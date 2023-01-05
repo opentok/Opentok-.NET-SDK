@@ -9,7 +9,6 @@ namespace OpenTokSDKTest.Render
         private int? maxDuration;
         private RenderResolution? resolution;
         private string sessionId;
-        private Uri statusCallbackUrl;
         private string streamName;
         private string token;
         private Uri url;
@@ -22,7 +21,6 @@ namespace OpenTokSDKTest.Render
             this.url = fixture.Create<Uri>();
             this.maxDuration = default;
             this.resolution = default;
-            this.statusCallbackUrl = fixture.Create<Uri>();
             this.streamName = fixture.Create<string>();
         }
 
@@ -46,12 +44,6 @@ namespace OpenTokSDKTest.Render
             return this;
         }
 
-        public StartRenderRequestDataBuilder WithStatusCallbackUrl(Uri value)
-        {
-            this.statusCallbackUrl = value;
-            return this;
-        }
-
         public StartRenderRequestDataBuilder WithResolution(RenderResolution? value)
         {
             this.resolution = value;
@@ -66,7 +58,6 @@ namespace OpenTokSDKTest.Render
                     this.sessionId,
                     this.token,
                     this.url,
-                    this.statusCallbackUrl,
                     this.streamName,
                     this.maxDuration.Value,
                     this.resolution.Value);
@@ -78,7 +69,6 @@ namespace OpenTokSDKTest.Render
                     this.sessionId,
                     this.token,
                     this.url,
-                    this.statusCallbackUrl,
                     this.streamName,
                     this.maxDuration.Value);
             }
@@ -89,7 +79,6 @@ namespace OpenTokSDKTest.Render
                     this.sessionId,
                     this.token,
                     this.url,
-                    this.statusCallbackUrl,
                     this.streamName,
                     resolution: this.resolution.Value);
             }
@@ -98,7 +87,6 @@ namespace OpenTokSDKTest.Render
                 this.sessionId,
                 this.token,
                 this.url,
-                this.statusCallbackUrl,
                 this.streamName);
         }
 

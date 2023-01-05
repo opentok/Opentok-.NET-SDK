@@ -98,36 +98,6 @@ namespace OpenTokSDKTest.Render
         }
 
         [Theory]
-        [InlineData("http://localh/")]
-        [InlineData("https://local/")]
-        public void StartRenderRequest_ShouldThrowOpenTokException_GivenStatusCallbackUrlLengthIsLowerThan15(string url)
-        {
-            void Act() => StartRenderRequestDataBuilder.Build().WithStatusCallbackUrl(new Uri(url)).Create();
-            var exception = Assert.Throws<OpenTokException>(Act);
-            Assert.Equal(StartRenderRequest.InvalidStatusCallbackUrl, exception.Message);
-        }
-
-        [Fact]
-        public void StartRenderRequest_ShouldThrowOpenTokException_GivenStatusCallbackUrlLengthIsHigherThan2048()
-        {
-            var filler = string.Join(string.Empty, Enumerable.Range(0, 2021).Select(_ => 'a').ToArray());
-            var uri = new Uri($"https://www.example.com?p={filler}/");
-            void Act() => StartRenderRequestDataBuilder.Build().WithStatusCallbackUrl(uri).Create();
-            var exception = Assert.Throws<OpenTokException>(Act);
-            Assert.Equal(2049, uri.AbsoluteUri.Length);
-            Assert.Equal(StartRenderRequest.InvalidStatusCallbackUrl, exception.Message);
-        }
-
-        [Fact]
-        public void StartRenderRequest_ShouldReturnInstance_GivenStatusCallbackUrlHasMaximumLength()
-        {
-            var filler = string.Join(string.Empty, Enumerable.Range(0, 2020).Select(_ => 'a').ToArray());
-            var uri = new Uri($"https://www.example.com?p={filler}/");
-            var request = StartRenderRequestDataBuilder.Build().WithStatusCallbackUrl(uri).Create();
-            Assert.Equal(uri, request.StatusCallbackUrl);
-        }
-
-        [Theory]
         [InlineData(RenderResolution.FullHighDefinitionLandscape)]
         [InlineData(RenderResolution.FullHighDefinitionPortrait)]
         public void StartRenderRequest_ShouldThrowOpenTokException_GivenResolutionIsNotAllowed(
@@ -163,26 +133,25 @@ namespace OpenTokSDKTest.Render
         }
 
         [Theory]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream",
             1200, RenderResolution.StandardDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 60,
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream", 60,
             RenderResolution.StandardDefinitionPortrait)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream",
             36000, RenderResolution.HighDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream",
             15647, RenderResolution.HighDefinitionPortrait)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://hel.fr/", "stream", null,
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream", null,
             RenderResolution.StandardDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://hel.fr/", "https://www.example.com/callback", "stream", 36000, null)]
+        [InlineData("sessionId", "token", "https://hel.fr/", "stream", 36000, null)]
         public void StartRenderRequest_ShouldReturnInstance(string sessionId, string token, string url,
-            string callbackUrl, string streamName, int? maxDuration, RenderResolution? resolution)
+            string streamName, int? maxDuration, RenderResolution? resolution)
         {
             var request = StartRenderRequestDataBuilder
                 .Build()
                 .WithSessionId(sessionId)
                 .WithToken(token)
                 .WithUrl(new Uri(url))
-                .WithStatusCallbackUrl(new Uri(callbackUrl))
                 .WithStreamName(streamName)
                 .WithMaxDuration(maxDuration)
                 .WithResolution(resolution)
@@ -190,30 +159,28 @@ namespace OpenTokSDKTest.Render
             Assert.Equal(sessionId, request.SessionId);
             Assert.Equal(token, request.Token);
             Assert.Equal(url, request.Url.AbsoluteUri);
-            Assert.Equal(callbackUrl, request.StatusCallbackUrl.AbsoluteUri);
             Assert.Equal(streamName, request.Properties.Name);
             Assert.Equal(maxDuration ?? 7200, request.MaxDuration);
             Assert.Equal(resolution ?? RenderResolution.HighDefinitionLandscape, request.Resolution);
         }
 
         [Theory]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream",
             1200, RenderResolution.StandardDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 60,
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream", 60,
             RenderResolution.StandardDefinitionPortrait)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream",
             36000, RenderResolution.HighDefinitionLandscape)]
-        [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
+        [InlineData("sessionId", "token", "https://www.example.com/", "stream",
             15647, RenderResolution.HighDefinitionPortrait)]
         public void ToDataDictionary_ShouldReturnValuesAsDictionary(string sessionId, string token, string url,
-            string callbackUrl, string streamName, int maxDuration, RenderResolution resolution)
+            string streamName, int maxDuration, RenderResolution resolution)
         {
             var expectedSerialized = JsonConvert.SerializeObject(new Dictionary<string, object>
             {
                 {"sessionId", sessionId},
                 {"token", token},
                 {"url", new Uri(url)},
-                {"statusCallbackUrl", new Uri(callbackUrl)},
                 {"maxDuration", maxDuration},
                 {"resolution", resolution.AsString(EnumFormat.Description)},
                 {"properties", new StartRenderRequest.PublisherProperty(streamName).ToDataDictionary()},
@@ -223,7 +190,6 @@ namespace OpenTokSDKTest.Render
                 .WithSessionId(sessionId)
                 .WithToken(token)
                 .WithUrl(new Uri(url))
-                .WithStatusCallbackUrl(new Uri(callbackUrl))
                 .WithStreamName(streamName)
                 .WithMaxDuration(maxDuration)
                 .WithResolution(resolution)

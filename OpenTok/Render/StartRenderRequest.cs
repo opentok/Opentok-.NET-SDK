@@ -34,11 +34,6 @@ namespace OpenTokSDK.Render
         public const string InvalidUrl = "Url length should be between 15 and 2048.";
 
         /// <summary>
-        ///     Indicates Url length should be between 15 and 2048.
-        /// </summary>
-        public const string InvalidStatusCallbackUrl = "Url length should be between 15 and 2048.";
-
-        /// <summary>
         ///     Indicates MaxDuration value should be between 60s and 36000s.
         /// </summary>
         public const string InvalidMaxDuration = "MaxDuration value should be between 60s and 36000s.";
@@ -75,10 +70,6 @@ namespace OpenTokSDK.Render
         ///     640x480 (SD Landscape), 720x1280 (HD Portrait), 1280x720 (HD Landscape). The default value is 1280x720 (HD
         ///     Landscape).
         /// </param>
-        /// <param name="statusCallbackUrl">
-        ///     URL of the customer service where the callbacks will be received. The absolute URI
-        ///     should have a minimum length of 15 and maximum length of 2048.
-        /// </param>
         /// <param name="streamName">
         ///     The name of the composed output stream which will be published to the session. The minimum
         ///     length is 1 and the maximum one is 200.
@@ -88,13 +79,12 @@ namespace OpenTokSDK.Render
         ///     stopped automatically, if it is still running. The minimum duration is 1s and the maximum one is 36000s (10 hours).
         /// </param>
         public StartRenderRequest(string sessionId, string token, Uri url,
-            Uri statusCallbackUrl, string streamName, int maxDuration = 7200,
+            string streamName, int maxDuration = 7200,
             RenderResolution resolution = RenderResolution.HighDefinitionLandscape)
         {
             ValidateSessionId(sessionId);
             ValidateToken(token);
             ValidateUrl(url, InvalidUrl);
-            ValidateUrl(statusCallbackUrl, InvalidStatusCallbackUrl);
             ValidateMaxDuration(maxDuration);
             this.ValidateResolution(resolution);
             this.SessionId = sessionId;
@@ -102,7 +92,6 @@ namespace OpenTokSDK.Render
             this.Url = url;
             this.MaxDuration = maxDuration;
             this.Resolution = resolution;
-            this.StatusCallbackUrl = statusCallbackUrl;
             this.Properties = new PublisherProperty(streamName);
         }
 
@@ -134,12 +123,6 @@ namespace OpenTokSDK.Render
         ///     Landscape), 720x1280 (HD Portrait), 1280x720 (HD Landscape). The default value is 1280x720 (HD Landscape).
         /// </summary>
         public RenderResolution Resolution { get; }
-
-        /// <summary>
-        ///     URL of the customer service where the callbacks will be received. The absolute URI should have a minimum length of
-        ///     15 and maximum length of 2048.
-        /// </summary>
-        public Uri StatusCallbackUrl { get; }
 
         /// <summary>
         ///    The Publisher properties for the composed output stream.
@@ -195,7 +178,6 @@ namespace OpenTokSDK.Render
                 {"sessionId", this.SessionId},
                 {"token", this.Token},
                 {"url", this.Url},
-                {"statusCallbackUrl", this.StatusCallbackUrl},
                 {"maxDuration", this.MaxDuration},
                 {"resolution", this.Resolution.AsString(EnumFormat.Description)},
                 {"properties", this.Properties.ToDataDictionary()},
