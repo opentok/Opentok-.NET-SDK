@@ -11,15 +11,15 @@ namespace OpenTokSDK.Render
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="id">The Id of the rendering.</param>
-        /// <param name="sessionId">The Id of the session.</param>
-        /// <param name="projectId">The Id of the project.</param>
+        /// <param name="id">The ID of the rendering.</param>
+        /// <param name="sessionId">The session ID.</param>
+        /// <param name="projectId">The project ID.</param>
         /// <param name="createdAt">The creation date.</param>
         /// <param name="updatedAt">The last update date.</param>
-        /// <param name="url">The Url.</param>
+        /// <param name="url">The URL.</param>
         /// <param name="resolution">The screen resolution.</param>
         /// <param name="status">The status.</param>
-        /// <param name="streamId">The Id of the stream.</param>
+        /// <param name="streamId">The stream ID.</param>
         /// <param name="reason">The reason.</param>
         public RenderItem(string id, string sessionId, string projectId, int createdAt, int updatedAt, Uri url,
             ScreenResolution resolution, string status, string streamId, string reason)
@@ -37,17 +37,17 @@ namespace OpenTokSDK.Render
         }
 
         /// <summary>
-        /// The Id of the rendering.
+        /// The ID of the rendering.
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// The Id of the session.
+        /// The session ID.
         /// </summary>
         public string SessionId { get; set; }
 
         /// <summary>
-        /// The Id of the project.
+        /// The project ID.
         /// </summary>
         public string ProjectId { get; set; }
 
@@ -62,12 +62,12 @@ namespace OpenTokSDK.Render
         public double UpdatedAt { get; set; }
 
         /// <summary>
-        /// The Url.
+        /// The URL.
         /// </summary>
         public Uri Url { get; set; }
 
         /// <summary>
-        /// The screen resolution.
+        /// The Experience Composer renderer resolution.
         /// </summary>
         [JsonConverter(typeof(ScreenResolutionConverter))]
         public ScreenResolution Resolution { get; set; }
@@ -78,12 +78,14 @@ namespace OpenTokSDK.Render
         public string Status { get; set; }
 
         /// <summary>
-        /// The Id of the stream.
+        /// The stream ID.
         /// </summary>
         public string StreamId { get; set; }
 
         /// <summary>
-        /// The reason.
+        /// The reason, when the status is either "stopped" or "failed". If the status is "stopped",
+        /// the reason field will contain either "Max Duration Exceeded" or "Stop Requested."
+        /// If the status is "failed", the reason will contain a more specific error message.
         /// </summary>
         public string Reason { get; set; }
     }

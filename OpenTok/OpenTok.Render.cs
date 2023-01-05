@@ -10,8 +10,12 @@ namespace OpenTokSDK
         private const string RenderEndpoint = "/render";
 
         /// <summary>
-        /// Starts a new rendering.
+        /// Starts a new Experience Composer renderer for an OpenTok session.
         /// </summary>
+        /// <para>
+        /// For more information, see the .
+        /// <a href="https://tokbox.com/developer/guides/experience-composer/">Experience Composer developer guide</a>.
+        /// </para>
         /// <param name="request">The rendering request.</param>
         /// <returns>The generated rendering.</returns>
         public async Task<RenderItem> StartRenderAsync(StartRenderRequest request)
@@ -24,7 +28,7 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Stops a rendering.
+        /// Stops an Experience Composer renderer.
         /// </summary>
         /// <param name="renderId">The Id of the rendering.</param>
         public async Task StopRenderAsync(string renderId) =>
@@ -33,7 +37,7 @@ namespace OpenTokSDK
                 new Dictionary<string, string>());
 
         /// <summary>
-        /// Retrieves all rendering matching the provided request.
+        /// Retrieves all Experience Composer renderers matching the provided request.
         /// </summary>
         /// <param name="request">The request containing filtering options.</param>
         /// <returns>The list of rendering.</returns>
@@ -45,7 +49,7 @@ namespace OpenTokSDK
         }
 
         /// <summary>
-        /// Retrieves a rendering.
+        /// Retrieves an Experience Composer renderer.
         /// </summary>
         /// <param name="renderId">The Id of the rendering.</param>
         public async Task<RenderItem> GetRenderAsync(string renderId)
