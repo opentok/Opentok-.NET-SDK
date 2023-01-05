@@ -7,7 +7,7 @@ namespace OpenTokSDK.Render
     /// <summary>
     ///     Custom converter for serializing ScreenResolution.
     /// </summary>
-    public class ScreenResolutionConverter : JsonConverter<ScreenResolution>
+    class ScreenResolutionConverter : JsonConverter<ScreenResolution>
     {
         /// <inheritdoc />
         public override void WriteJson(JsonWriter writer, ScreenResolution value, JsonSerializer serializer) =>
