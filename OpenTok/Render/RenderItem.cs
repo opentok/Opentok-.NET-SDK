@@ -22,7 +22,7 @@ namespace OpenTokSDK.Render
         /// <param name="streamId">The stream ID.</param>
         /// <param name="reason">The reason.</param>
         public RenderItem(string id, string sessionId, string projectId, int createdAt, int updatedAt, Uri url,
-            ScreenResolution resolution, string status, string streamId, string reason)
+            RenderResolution resolution, string status, string streamId, string reason)
         {
             this.Id = id;
             this.SessionId = sessionId;
@@ -69,8 +69,8 @@ namespace OpenTokSDK.Render
         /// <summary>
         /// The Experience Composer renderer resolution.
         /// </summary>
-        [JsonConverter(typeof(ScreenResolutionConverter))]
-        public ScreenResolution Resolution { get; set; }
+        [JsonConverter(typeof(RenderResolutionConverter))]
+        public RenderResolution Resolution { get; set; }
 
         /// <summary>
         /// The status.

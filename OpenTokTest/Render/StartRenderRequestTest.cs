@@ -128,10 +128,10 @@ namespace OpenTokSDKTest.Render
         }
 
         [Theory]
-        [InlineData(ScreenResolution.FullHighDefinitionLandscape)]
-        [InlineData(ScreenResolution.FullHighDefinitionPortrait)]
+        [InlineData(RenderResolution.FullHighDefinitionLandscape)]
+        [InlineData(RenderResolution.FullHighDefinitionPortrait)]
         public void StartRenderRequest_ShouldThrowOpenTokException_GivenResolutionIsNotAllowed(
-            ScreenResolution resolution)
+            RenderResolution resolution)
         {
             void Act() => StartRenderRequestDataBuilder.Build().WithResolution(resolution).Create();
             var exception = Assert.Throws<OpenTokException>(Act);
@@ -142,7 +142,7 @@ namespace OpenTokSDKTest.Render
         public void StartRenderRequest_ShouldHave1280x720AsDefaultResolution()
         {
             var request = StartRenderRequestDataBuilder.Build().Create();
-            Assert.Equal(ScreenResolution.HighDefinitionLandscape, request.Resolution);
+            Assert.Equal(RenderResolution.HighDefinitionLandscape, request.Resolution);
         }
 
         [Fact]
@@ -164,18 +164,18 @@ namespace OpenTokSDKTest.Render
 
         [Theory]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
-            1200, ScreenResolution.StandardDefinitionLandscape)]
+            1200, RenderResolution.StandardDefinitionLandscape)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 60,
-            ScreenResolution.StandardDefinitionPortrait)]
+            RenderResolution.StandardDefinitionPortrait)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
-            36000, ScreenResolution.HighDefinitionLandscape)]
+            36000, RenderResolution.HighDefinitionLandscape)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
-            15647, ScreenResolution.HighDefinitionPortrait)]
+            15647, RenderResolution.HighDefinitionPortrait)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://hel.fr/", "stream", null,
-            ScreenResolution.StandardDefinitionLandscape)]
+            RenderResolution.StandardDefinitionLandscape)]
         [InlineData("sessionId", "token", "https://hel.fr/", "https://www.example.com/callback", "stream", 36000, null)]
         public void StartRenderRequest_ShouldReturnInstance(string sessionId, string token, string url,
-            string callbackUrl, string streamName, int? maxDuration, ScreenResolution? resolution)
+            string callbackUrl, string streamName, int? maxDuration, RenderResolution? resolution)
         {
             var request = StartRenderRequestDataBuilder
                 .Build()
@@ -193,20 +193,20 @@ namespace OpenTokSDKTest.Render
             Assert.Equal(callbackUrl, request.StatusCallbackUrl.AbsoluteUri);
             Assert.Equal(streamName, request.Properties.Name);
             Assert.Equal(maxDuration ?? 7200, request.MaxDuration);
-            Assert.Equal(resolution ?? ScreenResolution.HighDefinitionLandscape, request.Resolution);
+            Assert.Equal(resolution ?? RenderResolution.HighDefinitionLandscape, request.Resolution);
         }
 
         [Theory]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
-            1200, ScreenResolution.StandardDefinitionLandscape)]
+            1200, RenderResolution.StandardDefinitionLandscape)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream", 60,
-            ScreenResolution.StandardDefinitionPortrait)]
+            RenderResolution.StandardDefinitionPortrait)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
-            36000, ScreenResolution.HighDefinitionLandscape)]
+            36000, RenderResolution.HighDefinitionLandscape)]
         [InlineData("sessionId", "token", "https://www.example.com/", "https://www.example.com/callback", "stream",
-            15647, ScreenResolution.HighDefinitionPortrait)]
+            15647, RenderResolution.HighDefinitionPortrait)]
         public void ToDataDictionary_ShouldReturnValuesAsDictionary(string sessionId, string token, string url,
-            string callbackUrl, string streamName, int maxDuration, ScreenResolution resolution)
+            string callbackUrl, string streamName, int maxDuration, RenderResolution resolution)
         {
             var expectedSerialized = JsonConvert.SerializeObject(new Dictionary<string, object>
             {

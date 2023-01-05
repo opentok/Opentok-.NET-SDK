@@ -7,7 +7,7 @@ namespace OpenTokSDKTest.Render
     public class StartRenderRequestDataBuilder
     {
         private int? maxDuration;
-        private ScreenResolution? resolution;
+        private RenderResolution? resolution;
         private string sessionId;
         private Uri statusCallbackUrl;
         private string streamName;
@@ -52,7 +52,7 @@ namespace OpenTokSDKTest.Render
             return this;
         }
 
-        public StartRenderRequestDataBuilder WithResolution(ScreenResolution? value)
+        public StartRenderRequestDataBuilder WithResolution(RenderResolution? value)
         {
             this.resolution = value;
             return this;

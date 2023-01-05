@@ -48,12 +48,12 @@ namespace OpenTokSDK.Render
         /// </summary>
         public const string InvalidResolution = "The provided resolution is not supported.";
 
-        private readonly ScreenResolution[] allowedResolutions =
+        private readonly RenderResolution[] allowedResolutions =
         {
-            ScreenResolution.HighDefinitionLandscape,
-            ScreenResolution.HighDefinitionPortrait,
-            ScreenResolution.StandardDefinitionLandscape,
-            ScreenResolution.StandardDefinitionPortrait,
+            RenderResolution.HighDefinitionLandscape,
+            RenderResolution.HighDefinitionPortrait,
+            RenderResolution.StandardDefinitionLandscape,
+            RenderResolution.StandardDefinitionPortrait,
         };
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace OpenTokSDK.Render
         /// </param>
         public StartRenderRequest(string sessionId, string token, Uri url,
             Uri statusCallbackUrl, string streamName, int maxDuration = 7200,
-            ScreenResolution resolution = ScreenResolution.HighDefinitionLandscape)
+            RenderResolution resolution = RenderResolution.HighDefinitionLandscape)
         {
             ValidateSessionId(sessionId);
             ValidateToken(token);
@@ -133,7 +133,7 @@ namespace OpenTokSDK.Render
         ///     The esolution of the display area for the composition. Allowed values are 480x640 (SD Portrait), 640x480 (SD
         ///     Landscape), 720x1280 (HD Portrait), 1280x720 (HD Landscape). The default value is 1280x720 (HD Landscape).
         /// </summary>
-        public ScreenResolution Resolution { get; }
+        public RenderResolution Resolution { get; }
 
         /// <summary>
         ///     URL of the customer service where the callbacks will be received. The absolute URI should have a minimum length of
@@ -178,7 +178,7 @@ namespace OpenTokSDK.Render
             }
         }
 
-        private void ValidateResolution(ScreenResolution resolution)
+        private void ValidateResolution(RenderResolution resolution)
         {
             if (!this.allowedResolutions.Contains(resolution))
             {

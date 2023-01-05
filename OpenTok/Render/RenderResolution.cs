@@ -5,7 +5,7 @@ namespace OpenTokSDK.Render
     /// <summary>
     ///     Enum for representing resolutions with orientation.
     /// </summary>
-    public enum ScreenResolution
+    public enum RenderResolution
     {
         /// <summary>
         ///     Standard definition (SD) resolution with landscape orientation (640x480)
