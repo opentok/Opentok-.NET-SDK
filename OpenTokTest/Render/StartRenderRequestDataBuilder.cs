@@ -12,6 +12,7 @@ namespace OpenTokSDKTest.Render
         private string streamName;
         private string token;
         private Uri url;
+        private StartRenderRequest.PublisherProperties properties;
 
         private StartRenderRequestDataBuilder()
         {
@@ -22,6 +23,7 @@ namespace OpenTokSDKTest.Render
             this.maxDuration = default;
             this.resolution = default;
             this.streamName = fixture.Create<string>();
+            this.properties = default;
         }
 
         public static StartRenderRequestDataBuilder Build() => new StartRenderRequestDataBuilder();
@@ -50,55 +52,24 @@ namespace OpenTokSDKTest.Render
             return this;
         }
 
-        public StartRenderRequest Create()
-        {
-            if (this.maxDuration.HasValue && this.resolution.HasValue)
-            {
-                return new StartRenderRequest(
-                    this.sessionId,
-                    this.token,
-                    this.url,
-                    this.streamName,
-                    this.maxDuration.Value,
-                    this.resolution.Value);
-            }
-
-            if (this.maxDuration.HasValue)
-            {
-                return new StartRenderRequest(
-                    this.sessionId,
-                    this.token,
-                    this.url,
-                    this.streamName,
-                    this.maxDuration.Value);
-            }
-
-            if (this.resolution.HasValue)
-            {
-                return new StartRenderRequest(
-                    this.sessionId,
-                    this.token,
-                    this.url,
-                    this.streamName,
-                    resolution: this.resolution.Value);
-            }
-
-            return new StartRenderRequest(
+        public StartRenderRequest Create() =>
+            new StartRenderRequest(
                 this.sessionId,
                 this.token,
                 this.url,
-                this.streamName);
-        }
+                this.maxDuration ?? default,
+                this.resolution ?? default,
+                this.properties);
 
         public StartRenderRequestDataBuilder WithMaxDuration(int? value)
         {
             this.maxDuration = value;
             return this;
         }
-
-        public StartRenderRequestDataBuilder WithStreamName(string value)
+        
+        public StartRenderRequestDataBuilder WithProperties(StartRenderRequest.PublisherProperties value)
         {
-            this.streamName = value;
+            this.properties = value;
             return this;
         }
     }

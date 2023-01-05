@@ -62,7 +62,7 @@ namespace OpenTokSDK.Render
         ///     the output stream.
         /// </param>
         /// <param name="url">
-        ///     A publically reachable URL controlled by the customer and capable of generating the content to be
+        ///     A publicly reachable URL controlled by the customer and capable of generating the content to be
         ///     rendered without user intervention. The absolute URI should have a minimum length of 15 and maximum length of 2048.
         /// </param>
         /// <param name="resolution">
@@ -70,17 +70,12 @@ namespace OpenTokSDK.Render
         ///     640x480 (SD Landscape), 720x1280 (HD Portrait), 1280x720 (HD Landscape). The default value is 1280x720 (HD
         ///     Landscape).
         /// </param>
-        /// <param name="streamName">
-        ///     The name of the composed output stream which will be published to the session. The minimum
-        ///     length is 1 and the maximum one is 200.
-        /// </param>
         /// <param name="maxDuration">
         ///     The maximum time allowed for the Render, in seconds. After this time, the Render will be
         ///     stopped automatically, if it is still running. The minimum duration is 1s and the maximum one is 36000s (10 hours).
         /// </param>
-        public StartRenderRequest(string sessionId, string token, Uri url,
-            string streamName, int maxDuration = 7200,
-            RenderResolution resolution = RenderResolution.HighDefinitionLandscape)
+        /// <param name="properties">The initial configuration of Publisher properties for the composed output stream. The properties object contains the key name (String) which serves as the name of the composed output stream which is published to the session. The name must have a minimum length of 1 and a maximum length of 200.</param>
+        public StartRenderRequest(string sessionId, string token, Uri url, int maxDuration = 7200, RenderResolution resolution = RenderResolution.HighDefinitionLandscape, PublisherProperties properties = null)
         {
             ValidateSessionId(sessionId);
             ValidateToken(token);
@@ -92,7 +87,7 @@ namespace OpenTokSDK.Render
             this.Url = url;
             this.MaxDuration = maxDuration;
             this.Resolution = resolution;
-            this.Properties = new PublisherProperty(streamName);
+            this.Properties = properties;
         }
 
         /// <summary>
@@ -127,7 +122,7 @@ namespace OpenTokSDK.Render
         /// <summary>
         ///    The Publisher properties for the composed output stream.
         /// </summary>
-        public PublisherProperty Properties { get; }
+        public PublisherProperties Properties { get; }
 
         private static void ValidateSessionId(string sessionId)
         {
@@ -186,29 +181,31 @@ namespace OpenTokSDK.Render
         /// <summary>
         ///     The Publisher properties for the composed output stream of a Render.
         /// </summary>
-        public class PublisherProperty
+        public class PublisherProperties
         {
-            /// <summary>
-            ///     Indicates StreamName needs to be provided.
-            /// </summary>
-            public const string MissingStreamName = "StreamName needs to be provided.";
-
             /// <summary>
             ///     Indicates StreamName cannot exceeds 200 characters.
             /// </summary>
             public const string OverflowStreamName = "StreamName cannot exceeds 200 characters.";
 
             /// <summary>
-            /// Constructor for a PublisherProperty.
+            /// Constructor for PublisherProperties.
             /// </summary>
             /// <param name="name">
             ///     The name for the composed output stream which will be published to the session. The minimum length is
             ///     1 and the maximum one is 200.
             /// </param>
-            public PublisherProperty(string name)
+            public PublisherProperties(string name)
             {
                 ValidateName(name);
                 this.Name = name;
+            }
+            
+            /// <summary>
+            /// Constructor for PublisherProperties.
+            /// </summary>
+            public PublisherProperties()
+            {
             }
 
             /// <summary>
@@ -219,22 +216,26 @@ namespace OpenTokSDK.Render
 
             private static void ValidateName(string name)
             {
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    throw new OpenTokException(MissingStreamName);
-                }
-
-                if (name.Length > MaximumPropertyNameLength)
+                if (name != null && name.Length > MaximumPropertyNameLength)
                 {
                     throw new OpenTokException(OverflowStreamName);
                 }
             }
 
-            public Dictionary<string, object> ToDataDictionary() =>
-                new Dictionary<string, object>
+            /// <summary>
+            /// Converts properties to a dictionary.
+            /// </summary>
+            /// <returns>A dictionary of key/value pair.</returns>
+            public Dictionary<string, object> ToDataDictionary()
+            {
+                var dictionary = new Dictionary<string, object>();
+                if (this.Name != null)
                 {
-                    {"name", this.Name},
-                };
+                    dictionary.Add("name", this.Name);
+                }
+                
+                return dictionary;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -38,7 +39,7 @@ namespace OpenTokSDKTest
             var expectedUrl = $"v2/project/{this.apiKey}/render";
             var expectedResponse = this.fixture.Create<RenderItem>();
             var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
-            var request = StartRenderRequestDataBuilder.Build().Create();
+            var request =  CreateRequest();
             this.mockClient.Setup(httpClient => httpClient.PostAsync(
                     expectedUrl,
                     MatchesContentTypeDictionary(contentTypeKey, contentType),
@@ -68,7 +69,7 @@ namespace OpenTokSDKTest
             var expectedUrl = $"v2/project/{this.apiKey}/render";
             var expectedResponse = this.fixture.Create<RenderItem>();
             var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
-            var request = StartRenderRequestDataBuilder.Build().Create();
+            var request = CreateRequest();
             this.mockClient.Setup(httpClient => httpClient.PostAsync(
                     expectedUrl,
                     MatchesContentTypeDictionary(contentTypeKey, contentType),
@@ -77,6 +78,17 @@ namespace OpenTokSDKTest
             var response = await this.sut.StartRenderAsync(request);
             Assert.Equal(expectedResponse, response);
         }
+
+        private static StartRenderRequest CreateRequest() => 
+            StartRenderRequestDataBuilder
+                .Build()
+                .WithSessionId("sessionId")
+                .WithToken("token")
+                .WithResolution(RenderResolution.HighDefinitionLandscape)
+                .WithMaxDuration(1200)
+                .WithUrl(new Uri("https://example.com"))
+                .WithProperties(new StartRenderRequest.PublisherProperties("stream"))
+                .Create();
 
         [Fact]
         public async Task StopRenderAsync_ShouldDeleteRendering()
