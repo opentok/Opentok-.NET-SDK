@@ -394,7 +394,14 @@ namespace OpenTokSDK
         /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
         /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
         /// </param>
-        /// <param name="multiArchiveTag">The tag of the archive, with which to start, this is unique for each archive within session</param>
+        /// <param name="multiArchiveTag">
+        /// Set this to support recording multiple archives for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous archive of an ongoing session.
+        /// You must also set this option when manually starting an archive in a session that
+        /// is automatically archived. If you do not specify a unique multiArchiveTag, you can
+        /// only record one archive at a time for a given session. See
+        /// <a href="https://tokbox.com/developer/guides/archiving/#simultaneous-archives">Simultaneous archives</a>.
+        /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
@@ -502,7 +509,14 @@ namespace OpenTokSDK
         /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
         /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
         /// </param>
-        /// <param name="multiArchiveTag">The tag of the archive, with which to start, this is unique for each archive within session</param>
+        /// <param name="multiArchiveTag">
+        /// Set this to support recording multiple archives for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous archive of an ongoing session.
+        /// You must also set this option when manually starting an archive in a session that
+        /// is automatically archived. If you do not specify a unique multiArchiveTag, you can
+        /// only record one archive at a time for a given session. See
+        /// <a href="https://tokbox.com/developer/guides/archiving/#simultaneous-archives">Simultaneous archives</a>.
+        /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
@@ -1025,7 +1039,11 @@ namespace OpenTokSDK
         /// the HLS URL will include a ?DVR query string appended to the end. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a></param>
         /// <param name="lowLatency">Whether to enable low-latency mode for the HLSstream. Some HLS players do not support low-latency mode. 
         /// This feature is incompatible with DVR mode HLS broadcasts. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency-hls-broadcasts">Low-latency HLS broadcasts</a></param>
-        /// <param name="multiBroadcastTag">The tag of the Broadcast, with which to start, this is unique for each Broadcast within session</param>
+        /// <param name="multiBroadcastTag">
+        /// Set this to support multiple broadcasts for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous broadcast of an ongoing session. See
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming#simultaneous-broadcasts">Simultaneous broadcasts</a>.
+        /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)

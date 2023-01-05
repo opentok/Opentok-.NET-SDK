@@ -203,7 +203,7 @@ namespace OpenTokSDK
         public StreamMode StreamMode { get; set; }
 
         /// <summary>
-        /// The tag of the archive.
+        /// The unique tag for simultaneous archives (if one was set).
         /// </summary>
         public string MultiArchiveTag { get; set; }
 

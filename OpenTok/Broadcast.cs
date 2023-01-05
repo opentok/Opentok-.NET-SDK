@@ -195,6 +195,9 @@ namespace OpenTokSDK
         [JsonProperty("settings")]
         public BroadcastSettings Settings { get; set; }
         
+        /// <summary>
+        /// The unique tag for simultaneous broadcasts (if one was set).
+        /// </summary>
         [JsonProperty("multiBroadcastTag")]
         public string MultiBroadcastTag { get; set; }
 
