@@ -17,6 +17,7 @@ The OpenTok .NET SDK provides methods for:
 * [Sending signals to clients connected to a session](https://www.tokbox.com/developer/guides/signaling/)
 * [Disconnecting clients from sessions](https://tokbox.com/developer/guides/moderation/rest/)
 * [Forcing clients in a session to disconnect or mute published audio](https://tokbox.com/developer/guides/moderation/)
+* Working with [Experience Composer](https://tokbox.com/developer/guides/experience-composer)
 
 ## Installation
 
@@ -301,6 +302,23 @@ or `Opentok.ForceMuteAllAsync(sessionId, excludedStreamIds)` method.
 You can then disable the mute state of the session by calling the
 `Opentok.DisableForceMute(sessionId)` or `Opentok.DisableForceMuteAsync(sessionId)`
 method.
+
+### Experience Composer
+
+You can start an [Experience Composer](https://tokbox.com/developer/guides/experience-composer)
+render using the `Opentok.StartRenderAsync()` method:
+
+```csharp
+string sessionId = "opentok-session-id";
+string token = "token-for-opentok-session";
+string url = "https://your-render-url/path/";
+StartRenderRequest request = new StartRenderRequest(sessionId, token, url);
+OpenTok.StartRenderAsync(request);
+```
+
+To stop a renderer, call the `Opentok.StopRenderAsync()` method.
+
+To list renderers, call the `Opentok.ListRendersAsync()` method.
 
 ### Changing the Timeout for Http Requests
 
