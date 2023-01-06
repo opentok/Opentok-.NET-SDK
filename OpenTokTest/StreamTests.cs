@@ -19,7 +19,7 @@ namespace OpenTokSDKTest
             string streamId = "be8f21f4-a133-43ae-a20a-bb29a1caaa46";
             string returnString = GetResponseJson(new Dictionary<string, string>
             {
-                {"streamId",streamId}
+                {"streamId", streamId}
             });
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
@@ -36,7 +36,9 @@ namespace OpenTokSDKTest
             Assert.NotEmpty(stream.LayoutClassList);
             Assert.Contains("asdf", stream.LayoutClassList);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}"))), Times.Once());
+            mockClient.Verify(
+                httpClient => httpClient.Get(It.Is<string>(url =>
+                    url.Equals($"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}"))), Times.Once());
         }
 
         [Fact]
@@ -46,7 +48,7 @@ namespace OpenTokSDKTest
             string streamId = "be8f21f4-a133-43ae-a20a-bb29a1caaa46";
             string returnString = GetResponseJson(new Dictionary<string, string>
             {
-                {"streamId",streamId}
+                {"streamId", streamId}
             });
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.Get(It.IsAny<string>())).Returns(returnString);
@@ -61,7 +63,9 @@ namespace OpenTokSDKTest
             Assert.Equal("screen", stream.VideoType);
             Assert.Empty(stream.LayoutClassList);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}"))), Times.Once());
+            mockClient.Verify(
+                httpClient => httpClient.Get(It.Is<string>(url =>
+                    url.Equals($"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}"))), Times.Once());
         }
 
         [Fact]
@@ -94,7 +98,7 @@ namespace OpenTokSDKTest
             string streamId = "be8f21f4-a133-43ae-a20a-bb29a1caaa46";
             string returnString = GetResponseJson(new Dictionary<string, string>
             {
-                {"streamId",streamId}
+                {"streamId", streamId}
             });
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
@@ -113,7 +117,9 @@ namespace OpenTokSDKTest
             Assert.Contains("asdf", stream.LayoutClassList);
 
             mockClient.Verify(httpClient => httpClient.GetAsync(
-                It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}")), null), Times.Once());
+                    It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}")),
+                    null),
+                Times.Once());
         }
 
         [Fact]
@@ -123,7 +129,7 @@ namespace OpenTokSDKTest
             string streamId = "be8f21f4-a133-43ae-a20a-bb29a1caaa46";
             string returnString = GetResponseJson(new Dictionary<string, string>
             {
-                {"streamId",streamId}
+                {"streamId", streamId}
             });
             var mockClient = new Mock<HttpClient>();
             mockClient.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>(), null))
@@ -141,7 +147,7 @@ namespace OpenTokSDKTest
 
             mockClient.Verify(httpClient => httpClient.GetAsync(
                     It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}")),
-                    null), 
+                    null),
                 Times.Once());
         }
 
@@ -152,7 +158,9 @@ namespace OpenTokSDKTest
 
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
-            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.GetStreamAsync(null, streamId));
+            var exception =
+                await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+                    await opentok.GetStreamAsync(null, streamId));
             Assert.Contains("The sessionId cannot be null or empty", exception.Message);
             Assert.Equal("sessionId", exception.ParamName);
         }
@@ -163,7 +171,9 @@ namespace OpenTokSDKTest
             string sessionId = "SESSIONID";
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
-            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.GetStreamAsync(sessionId, null));
+            var exception =
+                await Assert.ThrowsAsync<OpenTokArgumentException>(async () =>
+                    await opentok.GetStreamAsync(sessionId, null));
             Assert.Contains("The streamId cannot be null or empty", exception.Message);
             Assert.Equal("streamId", exception.ParamName);
         }
@@ -182,7 +192,7 @@ namespace OpenTokSDKTest
             opentok.Client = mockClient.Object;
 
             StreamList streamList = opentok.ListStreams(sessionId);
-            
+
             Stream streamOne = streamList[0];
             Stream streamTwo = streamList[1];
 
@@ -199,7 +209,10 @@ namespace OpenTokSDKTest
             Assert.Contains("layout2", streamTwo.LayoutClassList);
             Assert.Equal("camera", streamTwo.VideoType);
 
-            mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/" + sessionId + "/stream"))), Times.Once());
+            mockClient.Verify(
+                httpClient =>
+                    httpClient.Get(It.Is<string>(url =>
+                        url.Equals($"v2/project/{ApiKey}/session/" + sessionId + "/stream"))), Times.Once());
         }
 
         [Fact]
@@ -232,8 +245,10 @@ namespace OpenTokSDKTest
             Assert.Contains("layout2", streamTwo.LayoutClassList);
             Assert.Equal("camera", streamTwo.VideoType);
 
-            mockClient.Verify(httpClient => 
-                    httpClient.GetAsync(It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/" + sessionId + "/stream")), null), 
+            mockClient.Verify(httpClient =>
+                    httpClient.GetAsync(
+                        It.Is<string>(url => url.Equals($"v2/project/{ApiKey}/session/" + sessionId + "/stream")),
+                        null),
                 Times.Once());
         }
 
@@ -252,9 +267,78 @@ namespace OpenTokSDKTest
         {
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
-            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.ListStreamsAsync(null));
+            var exception =
+                await Assert.ThrowsAsync<OpenTokArgumentException>(async () => await opentok.ListStreamsAsync(null));
             Assert.Contains("The sessionId cannot be null or empty", exception.Message);
             Assert.Equal("sessionId", exception.ParamName);
+        }
+
+        // Stream Class Lists
+
+        [Fact]
+        public void SetStreamClassLists()
+        {
+            string sessionId = "SESSIONID";
+            string streamId = "STREAMID";
+
+            List<StreamProperties> streamPropertiesList = new List<StreamProperties>();
+            StreamProperties streamProperties = new StreamProperties(streamId);
+            streamProperties.addLayoutClass("focus");
+            streamPropertiesList.Add(streamProperties);
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Put(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>())).Returns("This function should not return anything");
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            opentok.SetStreamClassLists(sessionId, streamPropertiesList);
+
+            var expectedUrl = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            mockClient.Verify(
+                httpClient => httpClient.Put(It.Is<string>(url => url.Equals(expectedUrl)),
+                    It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task SetStreamClassListsAsync()
+        {
+            string sessionId = "SESSIONID";
+            string streamId = "STREAMID";
+
+            List<StreamProperties> streamPropertiesList = new List<StreamProperties>();
+            StreamProperties streamProperties = new StreamProperties(streamId);
+            streamProperties.addLayoutClass("focus");
+            streamPropertiesList.Add(streamProperties);
+
+            string actualUrl = null;
+            Dictionary<string, object> actualData = null;
+
+            var mockClient = new Mock<HttpClient>();
+            mockClient
+                .Setup(httpClient => httpClient.PutAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Callback<string, Dictionary<string, string>, Dictionary<string, object>>((sId, headers, data) =>
+                {
+                    actualUrl = sId;
+                    actualData = data;
+                })
+                .ReturnsAsync("This function should not return anything");
+
+            OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
+            opentok.Client = mockClient.Object;
+            await opentok.SetStreamClassListsAsync(sessionId, streamPropertiesList);
+
+            var expectedUrl = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            mockClient.Verify(
+                httpClient => httpClient.PutAsync(It.Is<string>(url => url.Equals(expectedUrl)),
+                    It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+            
+            Assert.NotNull(actualUrl);
+            Assert.Equal(expectedUrl, actualUrl);
+            Assert.NotNull(actualData);
+            Assert.NotEmpty(actualData);
+            Assert.True(actualData.ContainsKey("items"));
         }
     }
 }
