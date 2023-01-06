@@ -149,7 +149,7 @@ namespace OpenTokSDK
         public long UpdatedAt { get; set; }
 
         /// <summary>
-        /// The resolution of the broadcast: either "640x480" (SD, the default) or "1280x720" (HD).
+        /// The resolution of the broadcast: either "640x480" (SD landscape, the default), "1280x720" (HD landscape), "1920x1080" (FHD landscape), "480x640" (SD portrait), "720x1280" (HD portrait), or "1080x1920" (FHD portrait).
         /// </summary>
         [JsonProperty("resolution")]
         public string Resolution { get; set; }
