@@ -46,6 +46,7 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Enums.NET" Version="4.0.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>

@@ -286,6 +286,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="Enums.NET" Version="4.0.0" />
     <PackageReference Include="Moq" Version="4.14.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.4"/>
     <PackageReference Include="xunit" Version="2.4.1" />
