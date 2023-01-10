@@ -1079,13 +1079,13 @@ namespace OpenTokSDK
         public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
         {
-            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency);
+            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag);
             string url = $"v2/project/{ApiKey}/broadcast";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
-        
+
         /// <summary>
         /// Use this method to start a live streaming for an OpenTok session.
         /// This broadcasts the session to an HLS (HTTP live streaming) or to RTMP streams.
@@ -1137,11 +1137,16 @@ namespace OpenTokSDK
         /// the HLS URL will include a ?DVR query string appended to the end. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a></param>
         /// <param name="lowLatency">Whether to enable low-latency mode for the HLSstream. Some HLS players do not support low-latency mode. 
         /// This feature is incompatible with DVR mode HLS broadcasts. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency-hls-broadcasts">Low-latency HLS broadcasts</a></param>
+        /// <param name="multiBroadcastTag">
+        /// Set this to support multiple broadcasts for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous broadcast of an ongoing session. See
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming#simultaneous-broadcasts">Simultaneous broadcasts</a>.
+        /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public async Task<Broadcast> StartBroadcastAsync(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null)
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
         {
-            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency);
+            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag);
             string url = $"v2/project/{ApiKey}/broadcast"; 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = await Client.PostAsync(url, headers, data);
@@ -1149,7 +1154,7 @@ namespace OpenTokSDK
         }
 
          private Dictionary<string, object> PrepareStartBroadcastData(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null)
+             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
          {
             if (string.IsNullOrEmpty(sessionId))
             {
