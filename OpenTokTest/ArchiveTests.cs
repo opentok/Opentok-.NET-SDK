@@ -730,6 +730,53 @@ namespace OpenTokSDKTest
                     It.IsAny<Dictionary<string, object>>()), Times.Once());
         }
 
+        [Fact]
+        public void StartArchiveWithMultiArchiveTag()
+        {
+            string responseJson = GetResponseJson();
+            string multiArchiveTagName = "multiArchiveTag";
+            string multiArchiveTag = "TestArchiveTag";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(responseJson);
+            OpenTok opentok = this.BuildOpenTok(mockClient.Object);
+            Archive archive = opentok.StartArchive(SessionId, multiArchiveTag: multiArchiveTag);
+            Assert.NotNull(archive);
+            Assert.Equal(multiArchiveTag, archive.MultiArchiveTag);
+            Assert.NotEqual(Guid.Empty, archive.Id);
+            mockClient.Verify(
+                httpClient => httpClient.Post(
+                    It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.Is<Dictionary<string, object>>(dictionary => 
+                        dictionary.ContainsKey(multiArchiveTagName) && dictionary[multiArchiveTagName].ToString() == multiArchiveTag)), 
+                Times.Once());
+        }
+        
+        [Fact]
+        public async Task StartArchiveWithMultiArchiveTagAsync()
+        {
+            string responseJson = GetResponseJson();
+            string multiArchiveTagName = "multiArchiveTag";
+            string multiArchiveTag = "TestArchiveTag";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+                .ReturnsAsync(responseJson);
+            OpenTok opentok = this.BuildOpenTok(mockClient.Object);
+            Archive archive = await opentok.StartArchiveAsync(SessionId, multiArchiveTag: multiArchiveTag);
+            Assert.NotNull(archive);
+            Assert.Equal(multiArchiveTag, archive.MultiArchiveTag);
+            Assert.NotEqual(Guid.Empty, archive.Id);
+            mockClient.Verify(
+                httpClient => httpClient.PostAsync(
+                    It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.Is<Dictionary<string, object>>(dictionary => 
+                        dictionary.ContainsKey(multiArchiveTagName) && dictionary[multiArchiveTagName].ToString() == multiArchiveTag)), 
+                Times.Once());
+        }
 
         // AddStreamToArchive
 
@@ -1724,5 +1771,11 @@ namespace OpenTokSDKTest
 
             Assert.Equal("Session Id is not valid", exception.Message);
         }
+        
+        private OpenTok BuildOpenTok(HttpClient client) =>
+            new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = client,
+            };
     }
 }

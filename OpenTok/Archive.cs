@@ -109,6 +109,7 @@ namespace OpenTokSDK
             OutputMode = archive.OutputMode;
             Resolution = archive.Resolution;
             StreamMode = archive.StreamMode;
+            MultiArchiveTag = archive.MultiArchiveTag;
         }
 
         /// <summary>
@@ -200,6 +201,11 @@ namespace OpenTokSDK
         /// Whether streams included in the archive are selected automatically ("auto", the default) or manually.
         /// </summary>
         public StreamMode StreamMode { get; set; }
+
+        /// <summary>
+        /// The unique tag for simultaneous archives (if one was set).
+        /// </summary>
+        public string MultiArchiveTag { get; set; }
 
         /// <summary>
         /// Stops the OpenTok archive if it is being recorded.

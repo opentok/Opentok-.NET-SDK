@@ -91,6 +91,7 @@ namespace OpenTokSDK
             BroadcastUrls = broadcast.BroadcastUrls;
             StreamMode = broadcast.StreamMode;
             Settings = broadcast.Settings;
+            MultiBroadcastTag = broadcast.MultiBroadcastTag;
 
             if (BroadcastUrls == null)
                 return;
@@ -193,6 +194,12 @@ namespace OpenTokSDK
         /// </summary>
         [JsonProperty("settings")]
         public BroadcastSettings Settings { get; set; }
+        
+        /// <summary>
+        /// The unique tag for simultaneous broadcasts (if one was set).
+        /// </summary>
+        [JsonProperty("multiBroadcastTag")]
+        public string MultiBroadcastTag { get; set; }
 
         /// <summary>
         /// Stops the live broadcasting if it is started.
