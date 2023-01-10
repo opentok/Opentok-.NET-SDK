@@ -18,7 +18,7 @@ namespace OpenTokSDK
     /// (only on your web server) to create OpenTok sessions.
     /// </para>
     /// </summary>
-    public class OpenTok
+    public partial class OpenTok
     {
         /// <summary>
         /// The OpenTok API key passed into the OpenTok() constructor.
