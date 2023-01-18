@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>net452;net46;net461;netstandard2.0</TargetFrameworks>
     <Version>3.9.0-rc</Version>
-    <Version>3.8.1</Version>
     <Description>OpenTok is an API from TokBox that enables websites to weave live group video communication into their online experience.</Description>
     <PackageProjectUrl>https://github.com/opentok/Opentok-.NET-SDK</PackageProjectUrl>
     <RepositoryUrl>https://github.com/opentok/Opentok-.NET-SDK</RepositoryUrl>
