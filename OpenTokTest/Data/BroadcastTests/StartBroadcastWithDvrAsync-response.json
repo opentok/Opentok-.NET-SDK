@@ -1,0 +1,13 @@
+{
+  "id": "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9",
+  "sessionId": "SESSIONID",
+  "projectId": 123456,
+  "createdAt": 1395183243556,
+  "updatedAt": 1395183243556,
+  "resolution": "640x480",
+  "status": "started",
+  "broadcastUrls": {
+    "hls": "http://server/fakepath/playlist.m3u8"
+  },
+  "settings": { "hls": { "lowLatency": false } }
+}

@@ -2,7 +2,12 @@
 var session = OT.initSession(apiKey, sessionId);
 
 // Initialize a Publisher, and place it into the element with id="publisher"
-var publisher = OT.initPublisher('publisher', publisherOptions, _ => {
+var publisher = OT.initPublisher('publisher', {
+    insertMode: 'append',
+    width: '100%',
+    height: '100%',
+    resolution: '1280x720'
+}, _ => {
     loadDevices();
 });
 
