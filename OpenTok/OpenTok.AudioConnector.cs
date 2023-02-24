@@ -29,8 +29,5 @@ namespace OpenTokSDK
                 $"v2/project/{this.ApiKey}/connect/{connectionId}/stop",
                 new Dictionary<string, string>(),
                 new Dictionary<string, object>());
-
-        private static Dictionary<string, string> GetHeaderDictionary(string contentType) =>
-            new Dictionary<string, string> {{"Content-Type", contentType}};
     }
 }
