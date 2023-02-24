@@ -5,23 +5,22 @@ using AutoFixture;
 using Moq;
 using Newtonsoft.Json;
 using OpenTokSDK;
-using OpenTokSDK.AudioStreamer;
 using OpenTokSDK.Util;
-using OpenTokSDKTest.AudioStreamer;
 using Xunit;
 
 namespace OpenTokSDKTest
 {
-    public class OpenTokAudioStreamerTests
+    public class OpenTokAudioConnectorTests
     {
         private readonly int apiKey;
         private readonly Fixture fixture;
         private readonly Mock<HttpClient> mockClient;
         private readonly OpenTok sut;
 
-        public OpenTokAudioStreamerTests()
+        public OpenTokAudioConnectorTests()
         {
             this.fixture = new Fixture();
+            this.fixture.Customize(new SupportMutableValueTypesCustomization());
             this.apiKey = this.fixture.Create<int>();
             this.mockClient = new Mock<HttpClient>();
             this.sut = new OpenTok(this.apiKey, this.fixture.Create<string>())
@@ -35,11 +34,10 @@ namespace OpenTokSDKTest
         {
             const string contentTypeKey = "Content-Type";
             const string contentType = "application/json";
-            var apiVersion = this.fixture.Create<string>();
-            var expectedUrl = $"{apiVersion}/project/{this.apiKey}/connect";
-            var expectedResponse = this.fixture.Create<ConnectResponse>();
+            var expectedUrl = $"v2/project/{this.apiKey}/connect";
+            var expectedResponse = this.fixture.Create<AudioConnector>();
             var serializedResponse = JsonConvert.SerializeObject(expectedResponse);
-            var request = ConnectRequestDataBuilder.Build().Create();
+            var request = AudioConnectorStartRequestDataBuilder.Build().Create();
             this.mockClient.Setup(httpClient => httpClient.PostAsync(
                     expectedUrl,
                     It.Is<Dictionary<string, string>>(dictionary =>
@@ -47,17 +45,16 @@ namespace OpenTokSDKTest
                     It.Is<Dictionary<string, object>>(dictionary =>
                         dictionary.SequenceEqual(request.ToDataDictionary()))))
                 .ReturnsAsync(serializedResponse);
-            var response = await this.sut.ConnectAudioStreamerAsync(apiVersion, request);
+            var response = await this.sut.StartAudioConnectorAsync(request);
             Assert.Equal(expectedResponse, response);
         }
 
         [Fact]
         public async Task StopAsync_ShouldStopConnection()
         {
-            var apiVersion = this.fixture.Create<string>();
-            var callId = this.fixture.Create<string>();
-            var expectedUrl = $"{apiVersion}/project/{this.apiKey}/connect/{callId}/stop";
-            await this.sut.StopAudioStreamerAsync(apiVersion, callId);
+            var connectionId = this.fixture.Create<string>();
+            var expectedUrl = $"v2/project/{this.apiKey}/connect/{connectionId}/stop";
+            await this.sut.StopAudioConnectorAsync(connectionId);
             this.mockClient.Verify(httpClient => httpClient.PostAsync(
                     expectedUrl,
                     It.Is<Dictionary<string, string>>(dictionary => !dictionary.Any()),

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using OpenTokSDK.Exception;
 
-namespace OpenTokSDK.AudioStreamer
+namespace OpenTokSDK
 {
     /// <summary>
-    ///     POST WebSocket connect
+    ///     Represents a request to send audio from a Vonage Video API session to a WebSocket.
     /// </summary>
-    public class ConnectRequest
+    public class AudioConnectorStartRequest
     {
         private const int MinimumUrlLength = 15;
         private const int MaximumUrlLength = 2048;
@@ -30,13 +30,16 @@ namespace OpenTokSDK.AudioStreamer
         /// <summary>
         ///     Creates a new instance of ConnectRequest.
         /// </summary>
-        /// <param name="sessionId">
-        ///     The ID of a session (generated with the same `APIKEY` as specified in the URL) where the
-        ///     streams will be gathered from.
+        /// <param name="sessionId"> The OpenTok session ID that includes the OpenTok streams you want to include in the WebSocket stream.
         /// </param>
-        /// <param name="token">A valid OpenTok token with a Subscriber role.</param>
+        /// <param name="token">
+        /// The OpenTok token to be used for the Audio Connector connection to the OpenTok session.
+        /// You can add token data to identify that the connection is the Audio Connector endpoint or for other identifying data.
+        /// (The OpenTok client libraries include properties for inspecting the connection data for a client connected to a session.)
+        /// See the <a href="https://tokbox.com/developer/guides/create-token/">Token Creation developer guide</a>.
+        /// </param>
         /// <param name="socket">Options for configuring the connect call for WebSocket.</param>
-        public ConnectRequest(string sessionId, string token, WebSocket socket)
+        public AudioConnectorStartRequest(string sessionId, string token, WebSocket socket)
         {
             ValidateSessionId(sessionId);
             ValidateToken(token);
@@ -90,22 +93,17 @@ namespace OpenTokSDK.AudioStreamer
             ///     call. (f.e. wss://service.com/wsendpoint)".
             /// </param>
             /// <param name="streams">
-            ///     The stream IDs of the participants' whose audio is going to be connected. If not provided, all
-            ///     streams in session will be selected.
+            ///     An array of stream IDs for the OpenTok streams you want to include in the WebSocket stream. If you omit this property, all streams in the session will be included.
             /// </param>
             /// <param name="headers">
-            ///     An object of key/val pairs with additional properties to send to your Websocket server, with a
-            ///     maximum length of 512 bytes.
+            ///      An object of key-value pairs of headers to be sent to your WebSocket server with each message, with a maximum length of 512 bytes.
             /// </param>
-            /// <param name="audioRate">A number representing the audio sampling rate in Hz. If not provided 16000 will be used.</param>
-            public WebSocket(Uri uri, string[] streams = null,
-                Dictionary<string, string> headers = null, int audioRate = 16000)
+            public WebSocket(Uri uri, string[] streams = null, Dictionary<string, string> headers = null)
             {
                 ValidateUri(uri);
                 this.Uri = uri;
                 this.Streams = streams ?? new string[0];
                 this.Headers = headers ?? new Dictionary<string, string>();
-                this.AudioRate = audioRate;
             }
 
             /// <summary>
@@ -125,11 +123,6 @@ namespace OpenTokSDK.AudioStreamer
             ///     512 bytes.
             /// </summary>
             public Dictionary<string, string> Headers { get; }
-
-            /// <summary>
-            ///     A number representing the audio sampling rate in Hz. If not provided 16000 will be used.
-            /// </summary>
-            public int AudioRate { get; }
 
             private static void ValidateUri(Uri url)
             {

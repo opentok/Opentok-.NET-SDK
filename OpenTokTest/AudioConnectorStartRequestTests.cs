@@ -2,97 +2,92 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using OpenTokSDK.AudioStreamer;
+using OpenTokSDK;
 using OpenTokSDK.Exception;
 using Xunit;
 
-namespace OpenTokSDKTest.AudioStreamer
+namespace OpenTokSDKTest
 {
-    public class ConnectRequestTests
+    public class AudioConnectorStartRequestTests
     {
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void ConnectRequest_ShouldThrowOpenTokException_GivenSessionIdIsNotProvided(string sessionId)
+        public void AudioConnectorStartRequest_ShouldThrowOpenTokException_GivenSessionIdIsNotProvided(string sessionId)
         {
-            void Act() => ConnectRequestDataBuilder.Build().WithSessionId(sessionId).Create();
+            void Act() => AudioConnectorStartRequestDataBuilder.Build().WithSessionId(sessionId).Create();
             var exception = Assert.Throws<OpenTokException>(Act);
-            Assert.Equal(ConnectRequest.MissingSessionId, exception.Message);
+            Assert.Equal(AudioConnectorStartRequest.MissingSessionId, exception.Message);
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void ConnectRequest_ShouldThrowOpenTokException_GivenTokenIsNotProvided(string streamName)
+        public void AudioConnectorStartRequest_ShouldThrowOpenTokException_GivenTokenIsNotProvided(string streamName)
         {
-            void Act() => ConnectRequestDataBuilder.Build().WithToken(streamName).Create();
+            void Act() => AudioConnectorStartRequestDataBuilder.Build().WithToken(streamName).Create();
             var exception = Assert.Throws<OpenTokException>(Act);
-            Assert.Equal(ConnectRequest.MissingToken, exception.Message);
+            Assert.Equal(AudioConnectorStartRequest.MissingToken, exception.Message);
         }
 
         [Fact]
-        public void ConnectRequest_ShouldThrowOpenTokException_GivenUrlLengthIsHigherThan2048()
+        public void AudioConnectorStartRequest_ShouldThrowOpenTokException_GivenUrlLengthIsHigherThan2048()
         {
             var filler = string.Join(string.Empty, Enumerable.Range(0, 2021).Select(_ => 'a').ToArray());
             var uri = new Uri($"https://www.example.com?p={filler}/");
-            void Act() => ConnectRequestDataBuilder.Build().WithUri(uri).Create();
+            void Act() => AudioConnectorStartRequestDataBuilder.Build().WithUri(uri).Create();
             var exception = Assert.Throws<OpenTokException>(Act);
             Assert.Equal(2049, uri.AbsoluteUri.Length);
-            Assert.Equal(ConnectRequest.InvalidUrl, exception.Message);
+            Assert.Equal(AudioConnectorStartRequest.InvalidUrl, exception.Message);
         }
 
         [Fact]
-        public void ConnectRequest_ShouldReturnInstance_GivenUrlHasMaximumLength()
+        public void AudioConnectorStartRequest_ShouldReturnInstance_GivenUrlHasMaximumLength()
         {
             var filler = string.Join(string.Empty, Enumerable.Range(0, 2020).Select(_ => 'a').ToArray());
             var uri = new Uri($"https://www.example.com?p={filler}/");
-            var request = ConnectRequestDataBuilder.Build().WithUri(uri).Create();
+            var request = AudioConnectorStartRequestDataBuilder.Build().WithUri(uri).Create();
             Assert.Equal(uri, request.Socket.Uri);
         }
 
         [Fact]
-        public void ConnectRequest_ShouldReturnInstance_GivenUrlHasMinimumLength()
+        public void AudioConnectorStartRequest_ShouldReturnInstance_GivenUrlHasMinimumLength()
         {
             var uri = new Uri("https://localh/");
-            var request = ConnectRequestDataBuilder.Build().WithUri(uri).Create();
+            var request = AudioConnectorStartRequestDataBuilder.Build().WithUri(uri).Create();
             Assert.Equal(uri, request.Socket.Uri);
         }
 
         [Theory]
         [InlineData("http://localh/")]
         [InlineData("https://local/")]
-        public void ConnectRequest_ShouldThrowOpenTokException_GivenUrlLengthIsLowerThan15(string url)
+        public void AudioConnectorStartRequest_ShouldThrowOpenTokException_GivenUrlLengthIsLowerThan15(string url)
         {
-            void Act() => ConnectRequestDataBuilder.Build().WithUri(new Uri(url)).Create();
+            void Act() => AudioConnectorStartRequestDataBuilder.Build().WithUri(new Uri(url)).Create();
             var exception = Assert.Throws<OpenTokException>(Act);
-            Assert.Equal(ConnectRequest.InvalidUrl, exception.Message);
+            Assert.Equal(AudioConnectorStartRequest.InvalidUrl, exception.Message);
         }
 
         [Fact]
-        public void ConnectRequest_ShouldHaveEmptyStreams_GivenStreamsAreNotProvided() =>
-            Assert.Empty(ConnectRequestDataBuilder.Build().Create()
+        public void AudioConnectorStartRequest_ShouldHaveEmptyStreams_GivenStreamsAreNotProvided() =>
+            Assert.Empty(AudioConnectorStartRequestDataBuilder.Build().Create()
                 .Socket.Streams);
 
         [Fact]
-        public void ConnectRequest_ShouldHaveEmptyHeaders_GivenHeadersAreNotProvided() =>
-            Assert.Empty(ConnectRequestDataBuilder.Build().Create()
+        public void AudioConnectorStartRequest_ShouldHaveEmptyHeaders_GivenHeadersAreNotProvided() =>
+            Assert.Empty(AudioConnectorStartRequestDataBuilder.Build().Create()
                 .Socket.Headers);
-
-        [Fact]
-        public void ConnectRequest_ShouldHaveDefaultAudioRate_GivenAudioRateIsNotProvided() =>
-            Assert.Equal(16000, ConnectRequestDataBuilder.Build().Create()
-                .Socket.AudioRate);
 
         [Theory]
         [InlineData("sessionId", "token", "https://www.example.com/", new[] {"test"}, "key", "value")]
         [InlineData("sessionId", "token", "https://www.example.com/", new[] {"test1", "test2", "test3"}, "key",
             "value")]
-        public void ConnectRequest_ShouldReturnInstance(string sessionId, string token, string url, string[] streams,
+        public void AudioConnectorStartRequest_ShouldReturnInstance(string sessionId, string token, string url, string[] streams,
             string key, string value)
         {
-            var builder = ConnectRequestDataBuilder
+            var builder = AudioConnectorStartRequestDataBuilder
                 .Build()
                 .WithSessionId(sessionId)
                 .WithToken(token)
@@ -111,10 +106,10 @@ namespace OpenTokSDKTest.AudioStreamer
 
         [Theory]
         [InlineData("sessionId", "token", "https://www.example.com/", "key", "value")]
-        public void ConnectRequest_ShouldReturnInstance_WhenStreamAreNull(string sessionId, string token, string url,
+        public void AudioConnectorStartRequest_ShouldReturnInstance_WhenStreamAreNull(string sessionId, string token, string url,
             string key, string value)
         {
-            var builder = ConnectRequestDataBuilder
+            var builder = AudioConnectorStartRequestDataBuilder
                 .Build()
                 .WithSessionId(sessionId)
                 .WithToken(token)
@@ -132,10 +127,10 @@ namespace OpenTokSDKTest.AudioStreamer
 
         [Theory]
         [InlineData("sessionId", "token", "https://www.example.com/", new[] {"test1", "test2", "test3"})]
-        public void ConnectRequest_ShouldReturnInstance_WhenHeadersAreNull(string sessionId, string token, string url,
+        public void AudioConnectorStartRequest_ShouldReturnInstance_WhenHeadersAreNull(string sessionId, string token, string url,
             string[] streams)
         {
-            var builder = ConnectRequestDataBuilder
+            var builder = AudioConnectorStartRequestDataBuilder
                 .Build()
                 .WithSessionId(sessionId)
                 .WithToken(token)
@@ -150,25 +145,24 @@ namespace OpenTokSDKTest.AudioStreamer
         }
 
         [Theory]
-        [InlineData("sessionId", "token", "https://www.example.com/", new[] {"test"}, "key", "value", 1500)]
+        [InlineData("sessionId", "token", "https://www.example.com/", new[] {"test"}, "key", "value")]
         public void ToDataDictionary_ShouldReturnValuesAsDictionary(string sessionId, string token, string url,
             string[] streams,
-            string key, string value, int audioRate)
+            string key, string value)
         {
             var headers = new Dictionary<string, string> {{key, value}};
             var expectedSerialized = JsonConvert.SerializeObject(new Dictionary<string, object>
             {
                 {"sessionId", sessionId},
                 {"token", token},
-                {"webSocket", new ConnectRequest.WebSocket(new Uri(url), streams, headers, audioRate)},
+                {"webSocket", new AudioConnectorStartRequest.WebSocket(new Uri(url), streams, headers)},
             });
-            var builder = ConnectRequestDataBuilder
+            var builder = AudioConnectorStartRequestDataBuilder
                 .Build()
                 .WithSessionId(sessionId)
                 .WithToken(token)
                 .WithUri(new Uri(url))
-                .WithHeader(key, value)
-                .WithAudioRate(audioRate);
+                .WithHeader(key, value);
             streams.Aggregate(builder, (dataBuilder, stream) => dataBuilder.WithStream(stream));
             var result = builder.Create().ToDataDictionary();
             Assert.Equal(expectedSerialized, JsonConvert.SerializeObject(result));
