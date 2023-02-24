@@ -310,6 +310,23 @@ this.OpenTok = new OpenTok(apiKey, apiSecret);
 this.OpenTok.SetDefaultRequestTimeout(2000);
 ```
 
+### Working with Audio Connector
+
+You can start an [Audio Connector stream](https://tokbox.com/developer/guides/audio-connector) by calling the `OpenTok.StartAudioConnectorAsync(AudioConnectorStartRequest request)`method:
+
+```csharp
+var webSocket = new AudioConnectorStartRequest.WebSocket(
+    new Uri("wss://service.com/ws-endpoint"),
+    new []{"streamId-1", "streamId-2"},
+    new Dictionary<string, string>
+    {
+        {"X-CustomHeader-Key1", "headerValue1"},
+        {"X-CustomHeader-Key2", "headerValue2"},
+    });
+var startRequest = new AudioConnectorStartRequest(sessionId, token, webSocket);
+AudioConnector response = await this.OpenTok.StartAudioConnectorAsync(startRequest);
+```
+
 ## Samples
 
 There are two sample applications included with the SDK. To get going as fast as possible, clone the whole
