@@ -394,10 +394,18 @@ namespace OpenTokSDK
         /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
         /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
         /// </param>
+        /// <param name="multiArchiveTag">
+        /// Set this to support recording multiple archives for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous archive of an ongoing session.
+        /// You must also set this option when manually starting an archive in a session that
+        /// is automatically archived. If you do not specify a unique multiArchiveTag, you can
+        /// only record one archive at a time for a given session. See
+        /// <a href="https://tokbox.com/developer/guides/archiving/#simultaneous-archives">Simultaneous archives</a>.
+        /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -430,6 +438,11 @@ namespace OpenTokSDK
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
+            }
+
+            if (multiArchiveTag is object)
+            {
+                data.Add("multiArchiveTag", multiArchiveTag);
             }
 
             if (streamMode.HasValue)
@@ -496,10 +509,18 @@ namespace OpenTokSDK
         /// <see cref="OpenTok.AddStreamToArchiveAsync"/> and
         /// <see cref="OpenTok.RemoveStreamFromArchiveAsync"/> methods).
         /// </param>
+        /// <param name="multiArchiveTag">
+        /// Set this to support recording multiple archives for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous archive of an ongoing session.
+        /// You must also set this option when manually starting an archive in a session that
+        /// is automatically archived. If you do not specify a unique multiArchiveTag, you can
+        /// only record one archive at a time for a given session. See
+        /// <a href="https://tokbox.com/developer/guides/archiving/#simultaneous-archives">Simultaneous archives</a>.
+        /// </param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null)
+        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -539,6 +560,11 @@ namespace OpenTokSDK
                     throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
                 }
                 data.Add("layout", layout);
+            }
+            
+            if (multiArchiveTag is object)
+            {
+                data.Add("multiArchiveTag", multiArchiveTag);
             }
 
             if (streamMode.HasValue)
@@ -948,18 +974,49 @@ namespace OpenTokSDK
         /// <param name="connectionId">The connectionId of the connection in a session.</param>
         public void ForceDisconnect(string sessionId, string connectionId)
         {
-            if (String.IsNullOrEmpty(sessionId) || String.IsNullOrEmpty(connectionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                throw new OpenTokArgumentException("The sessionId or connectionId cannot be null or empty");
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
+            }
+            
+            if (string.IsNullOrEmpty(connectionId))
+            {
+                throw new OpenTokArgumentException("The connectionId cannot be null or empty", nameof(connectionId));
             }
 
             if (!OpenTokUtils.ValidateSession(sessionId))
             {
-                throw new OpenTokArgumentException("Invalid session Id");
+                throw new OpenTokArgumentException("Invalid session Id", nameof(sessionId));
             }
-            string url = string.Format("v2/project/{0}/session/{1}/connection/{2}", ApiKey, sessionId, connectionId);
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}";
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
+        }
+        
+        /// <summary>
+        /// Force a specific client to disconnect from an OpenTok session.
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session.</param>
+        /// <param name="connectionId">The connectionId of the connection in a session.</param>
+        public async Task ForceDisconnectAsync(string sessionId, string connectionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
+            }
+            
+            if (string.IsNullOrEmpty(connectionId))
+            {
+                throw new OpenTokArgumentException("The connectionId cannot be null or empty", nameof(connectionId));
+            }
+
+            if (!OpenTokUtils.ValidateSession(sessionId))
+            {
+                throw new OpenTokArgumentException("Invalid session Id", nameof(sessionId));
+            }
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}";
+            var headers = new Dictionary<string, string>();
+            await Client.DeleteAsync(url, headers);
         }
 
         /// <summary>
@@ -1013,10 +1070,92 @@ namespace OpenTokSDK
         /// the HLS URL will include a ?DVR query string appended to the end. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a></param>
         /// <param name="lowLatency">Whether to enable low-latency mode for the HLSstream. Some HLS players do not support low-latency mode. 
         /// This feature is incompatible with DVR mode HLS broadcasts. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency-hls-broadcasts">Low-latency HLS broadcasts</a></param>
+        /// <param name="multiBroadcastTag">
+        /// Set this to support multiple broadcasts for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous broadcast of an ongoing session. See
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming#simultaneous-broadcasts">Simultaneous broadcasts</a>.
+        /// </param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null)
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
         {
+            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag);
+            string url = $"v2/project/{ApiKey}/broadcast";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            string response = Client.Post(url, headers, data);
+            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+        /// <summary>
+        /// Use this method to start a live streaming for an OpenTok session.
+        /// This broadcasts the session to an HLS (HTTP live streaming) or to RTMP streams.
+        /// <para>
+        /// To successfully start broadcasting a session, at least one client must be connected to the session.
+        /// </para>
+        /// <para>
+        /// You can only have one active live streaming broadcast at a time for a session
+        /// (however, having more than one would not be useful).
+        /// The live streaming broadcast can target one HLS endpoint and up to five RTMP servers simultaneously for a session.
+        /// You can only start live streaming for sessions that use the OpenTok Media Router (with the media mode set to routed);
+        /// you cannot use live streaming with sessions that have the media mode set to relayed OpenTok Media Router. See
+        /// <a href="https://tokbox.com/developer/guides/create-session/#media-mode">The OpenTok Media Router and media modes.</a>
+        /// </para>
+        /// <para>
+        /// For more information on broadcasting, see the
+        /// <a href="https://tokbox.com/developer/guides/broadcast/">Broadcast developer guide.</a>
+        /// </para>
+        /// </summary>
+        /// <param name="sessionId">The session ID corresponding to the session.</param>
+        /// <param name="hls">Whether to include an HLS broadcast.</param>
+        /// <param name="rtmpList">
+        /// A list of <see cref="Rtmp"/> objects, defining RTMP streams to be broadcast (up to five).
+        /// </param>
+        /// <param name="resolution">
+        /// The resolution of the broadcast video. Valid resolutions are "640x480", "1280x720", "1920x1080", "480x640", "720x1280", "1080x1920".
+        /// </param>
+        /// <param name="maxDuration">
+        /// The maximum duration for the broadcast, in seconds. The broadcast will automatically
+        /// stop when the maximum duration is reached. You can set the maximum duration to a value
+        /// from 60 (60 seconds) to 36000 (10 hours). The default maximum duration is 2 hours
+        /// (7,200 seconds).
+        /// </param>
+        /// <param name="layout">
+        /// Specify this BroadcastLayout object to assign the initial layout type for
+        /// the broadcast.
+        /// </param>
+        /// <param name="streamMode">
+        /// Whether streams included in the broadcast are selected automatically (StreamMode.Auto,
+        /// the default) or manually (StreamMode.Manual). With StreamMode.Manual, you will
+        /// specify streams to be included in the broadcast using the
+        /// <see cref="OpenTok.AddStreamToBroadcast"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcast"/> methods (or the
+        /// <see cref="OpenTok.AddStreamToBroadcastAsync"/> and
+        /// <see cref="OpenTok.RemoveStreamFromBroadcastAsync"/> methods).
+        /// </param>
+        /// <param name="dvr">Whether to enable DVR functionality — rewinding, pausing, and resuming — in players that support it (true),
+        /// or not (false, the default). With DVR enabled,
+        /// the HLS URL will include a ?DVR query string appended to the end. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#dvr">DVR functionality</a></param>
+        /// <param name="lowLatency">Whether to enable low-latency mode for the HLSstream. Some HLS players do not support low-latency mode. 
+        /// This feature is incompatible with DVR mode HLS broadcasts. See <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#low-latency-hls-broadcasts">Low-latency HLS broadcasts</a></param>
+        /// <param name="multiBroadcastTag">
+        /// Set this to support multiple broadcasts for the same session simultaneously.
+        /// Set this to a unique string for each simultaneous broadcast of an ongoing session. See
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming#simultaneous-broadcasts">Simultaneous broadcasts</a>.
+        /// </param>
+        /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
+        public async Task<Broadcast> StartBroadcastAsync(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
+        {
+            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag);
+            string url = $"v2/project/{ApiKey}/broadcast"; 
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            string response = await Client.PostAsync(url, headers, data);
+            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
+        }
+
+         private Dictionary<string, object> PrepareStartBroadcastData(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
+             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
+         {
             if (string.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session not valid");
@@ -1038,8 +1177,6 @@ namespace OpenTokSDK
             if (dvr && lowLatency.HasValue && lowLatency.Value)
                 throw new OpenTokArgumentException("Cannot set both dvr and lowLatency on HLS.");
 
-            string url = $"v2/project/{ApiKey}/broadcast";
-            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var outputs = new Dictionary<string, object>();
 
             if (hls)
@@ -1076,7 +1213,7 @@ namespace OpenTokSDK
 
                 if (layout.ScreenShareType != null && layout.Type != BroadcastLayout.LayoutType.BestFit)
                 {
-                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}");
+                    throw new OpenTokArgumentException($"Could not set screenShareLayout. When screenShareType is set, layout.Type must be bestFit, was {layout.Type}", nameof(layout));
                 }
 
                 if (layout.Type.Equals(BroadcastLayout.LayoutType.Custom))
@@ -1088,15 +1225,19 @@ namespace OpenTokSDK
                     data.Add("layout", layout);
                 }
             }
+            
+            if (multiBroadcastTag is object)
+            {
+                data.Add("multiBroadcastTag", multiBroadcastTag);
+            }
 
             if (streamMode.HasValue)
             {
                 data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
 
-            string response = Client.Post(url, headers, data);
-            return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
-        }
+            return data;
+         }
 
         /// <summary>
         /// Use this method to stop a live broadcast of an OpenTok session.
@@ -1491,30 +1632,67 @@ namespace OpenTokSDK
         /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
-            string url = string.Format("v2/project/{0}/session/{1}/stream", ApiKey, sessionId);
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
-            if (streams == null || streams.Count() == 0)
+            if (streams == null || !streams.Any())
             {
                 throw new OpenTokArgumentException("The stream list must include at least one item.");
             }
-            else
+
+            foreach (StreamProperties stream in streams)
             {
-                foreach (StreamProperties stream in streams)
-                {
-                    items.Add(
-                        new
-                        {
-                            id = stream.Id,
-                            layoutClassList = stream.LayoutClassList
-                        }
-                    );
-                }
+                items.Add(
+                    new
+                    {
+                        id = stream.Id,
+                        layoutClassList = stream.LayoutClassList
+                    }
+                );
             }
             data.Add("items", items);
 
             Client.Put(url, headers, data);
+        }
+        
+        /// <summary>
+        /// Sets the layout class list for streams in a session. Layout classes are used in
+        /// the layout for composed archives and live streaming broadcasts. For more information, see
+        /// <a href="https://tokbox.com/developer/guides/archiving/layout-control.html">Customizing the video layout for composed archives</a> and
+        /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming/#configuring-video-layout-for-opentok-live-streaming-broadcasts" > Configuring video layout for OpenTok live streaming broadcasts</a>.
+        /// <para>
+        /// You can set the initial layout class list for streams published by a client when you generate
+        /// used by the client. See the <see cref="GenerateToken"/> method.
+        /// </para>
+        /// </summary>
+        /// <param name="sessionId">The sessionId</param>
+        /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
+        public async Task SetStreamClassListsAsync(string sessionId, List<StreamProperties> streams)
+        {
+            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var items = new List<object>();
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            
+            if (streams == null || !streams.Any())
+            {
+                throw new OpenTokArgumentException("The stream list must include at least one item.");
+            }
+
+            foreach (StreamProperties stream in streams)
+            {
+                items.Add(
+                    new
+                    {
+                        id = stream.Id,
+                        layoutClassList = stream.LayoutClassList
+                    }
+                );
+            }
+            data.Add("items", items);
+
+            await Client.PutAsync(url, headers, data);
         }
 
         /// <summary>
@@ -1525,13 +1703,15 @@ namespace OpenTokSDK
         /// <param name="connectionId">An optional parameter used to send the signal to a specific connection in a session.</param>
         public void Signal(string sessionId, SignalProperties signalProperties, string connectionId = null)
         {
-            if (String.IsNullOrEmpty(sessionId))
+            if (string.IsNullOrEmpty(sessionId))
             {
-                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
-            string url = String.IsNullOrEmpty(connectionId) ?
-                            string.Format("v2/project/{0}/session/{1}/signal", ApiKey, sessionId) :
-                            string.Format("v2/project/{0}/session/{1}/connection/{2}/signal", ApiKey, sessionId, connectionId);
+            
+            string url = String.IsNullOrEmpty(connectionId) 
+                ? $"v2/project/{ApiKey}/session/{sessionId}/signal"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/signal";
+            
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -1539,6 +1719,32 @@ namespace OpenTokSDK
                 { "type", signalProperties.type }
             };
             Client.Post(url, headers, data);
+        }
+        
+        /// <summary>
+        /// Sends a signal to clients (or a specific client) connected to an OpenTok session.
+        /// </summary>
+        /// <param name="sessionId">The OpenTok sessionId where the signal will be sent.</param>
+        /// <param name="signalProperties">This signalProperties defines the payload for the signal.</param>
+        /// <param name="connectionId">An optional parameter used to send the signal to a specific connection in a session.</param>
+        public async Task SignalAsync(string sessionId, SignalProperties signalProperties, string connectionId = null)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
+            }
+            
+            string url = String.IsNullOrEmpty(connectionId) 
+                ? $"v2/project/{ApiKey}/session/{sessionId}/signal"
+                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/signal";
+            
+            var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
+            var data = new Dictionary<string, object>
+            {
+                { "data", signalProperties.data },
+                { "type", signalProperties.type }
+            };
+            await Client.PostAsync(url, headers, data);
         }
 
         /// <summary>
