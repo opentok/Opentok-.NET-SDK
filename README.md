@@ -18,7 +18,6 @@ The OpenTok .NET SDK provides methods for:
 * [Disconnecting clients from sessions](https://tokbox.com/developer/guides/moderation/rest/)
 * [Forcing clients in a session to disconnect or mute published audio](https://tokbox.com/developer/guides/moderation/)
 * Working with [Experience Composer](https://tokbox.com/developer/guides/experience-composer)
-
 * Working with [Audio Connector](https://tokbox.com/developer/guides/audio-connector)
 
 ## Installation
