@@ -18,6 +18,7 @@ The OpenTok .NET SDK provides methods for:
 * [Disconnecting clients from sessions](https://tokbox.com/developer/guides/moderation/rest/)
 * [Forcing clients in a session to disconnect or mute published audio](https://tokbox.com/developer/guides/moderation/)
 * Working with [Experience Composer](https://tokbox.com/developer/guides/experience-composer)
+* Working with [Audio Connector](https://tokbox.com/developer/guides/audio-connector)
 
 ## Installation
 
@@ -320,7 +321,24 @@ To stop a renderer, call the `Opentok.StopRenderAsync()` method.
 
 To list renderers, call the `Opentok.ListRendersAsync()` method.
 
-### Changing the Timeout for Http Requests
+### Working with Audio Connector
+
+You can start an [Audio Connector stream](https://tokbox.com/developer/guides/audio-connector) by calling the `OpenTok.StartAudioConnectorAsync(AudioConnectorStartRequest request)`method:
+
+```csharp
+var webSocket = new AudioConnectorStartRequest.WebSocket(
+    new Uri("wss://service.com/ws-endpoint"),
+    new []{"streamId-1", "streamId-2"},
+    new Dictionary<string, string>
+    {
+        {"X-CustomHeader-Key1", "headerValue1"},
+        {"X-CustomHeader-Key2", "headerValue2"},
+    });
+var startRequest = new AudioConnectorStartRequest(sessionId, token, webSocket);
+AudioConnector response = await this.OpenTok.StartAudioConnectorAsync(startRequest);
+```
+
+### Changing the Timeout for HTTP Requests
 
 If you would like to adjust the timeouts for Http Requests sent by the client SDK you can by calling OpenTok.SetDefaultRequestTimeout(int timeout) - note timeout is in milliseconds
 
@@ -344,7 +362,7 @@ Reference documentation is available at <https://tokbox.com/developer/sdks/dot-n
 ## Requirements
 
 You need an OpenTok API key and API secret, which you can obtain by logging into your
-[TokBox account](https://tokbox.com/account).
+[Vonage Video API account](https://tokbox.com/account).
 
 The OpenTok .NET SDK requires .NET Framework 4.5.2 or greater.
 
@@ -354,7 +372,7 @@ The OpenTok .NET SDK requires .NET Framework 4.5.2 or greater.
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 ```
 
-Alternatively, if your application is dependant on a different version of TLS for other APIs, you can alternatively add TLS to the list of supported methods with a bitwise OR:
+Alternatively, if your application is dependent on a different version of TLS for other APIs, you can alternatively add TLS to the list of supported methods with a bitwise OR:
 
 ```
 ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
