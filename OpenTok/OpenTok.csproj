@@ -8,7 +8,7 @@
     <RepositoryUrl>https://github.com/opentok/Opentok-.NET-SDK</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <PackageReleaseNotes>https://github.com/opentok/Opentok-.NET-SDK/releases/tag/v3.8.0-rc</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/opentok/Opentok-.NET-SDK/releases/tag/v3.9.0-rc</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ProjectGuid>{C770C266-B8E6-413A-B5AB-68EB218DC76C}</ProjectGuid>
