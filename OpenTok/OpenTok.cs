@@ -1083,11 +1083,13 @@ namespace OpenTokSDK
         /// Set this to a unique string for each simultaneous broadcast of an ongoing session. See
         /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming#simultaneous-broadcasts">Simultaneous broadcasts</a>.
         /// </param>
+        /// <param name="hasAudio">Whether the broadcast has audio (default is true).</param>
+        /// <param name="hasVideo">Whether the broadcast has video (default is true).</param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public Broadcast StartBroadcast(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null, bool hasAudio = true, bool hasVideo = true)
         {
-            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag);
+            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag, hasAudio, hasVideo);
             string url = $"v2/project/{ApiKey}/broadcast";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Post(url, headers, data);
@@ -1150,19 +1152,21 @@ namespace OpenTokSDK
         /// Set this to a unique string for each simultaneous broadcast of an ongoing session. See
         /// <a href="https://tokbox.com/developer/guides/broadcast/live-streaming#simultaneous-broadcasts">Simultaneous broadcasts</a>.
         /// </param>
+        /// <param name="hasAudio">Whether the broadcast has audio (default is true).</param>
+        /// <param name="hasVideo">Whether the broadcast has video (default is true).</param>
         /// <returns>The Broadcast object. This object includes properties defining the archive, including the archive ID.</returns>
         public async Task<Broadcast> StartBroadcastAsync(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
+            int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null, bool hasAudio = true, bool hasVideo = true)
         {
-            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag);
+            var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag, hasAudio, hasVideo);
             string url = $"v2/project/{ApiKey}/broadcast"; 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = await Client.PostAsync(url, headers, data);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
-         private Dictionary<string, object> PrepareStartBroadcastData(string sessionId, bool hls = true, List<Rtmp> rtmpList = null, string resolution = null,
-             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null)
+         private Dictionary<string, object> PrepareStartBroadcastData(string sessionId, bool hls, List<Rtmp> rtmpList, string resolution,
+             int maxDuration, BroadcastLayout layout, StreamMode? streamMode, bool dvr, bool? lowLatency, string multiBroadcastTag, bool hasAudio, bool hasVideo)
          {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -1243,7 +1247,9 @@ namespace OpenTokSDK
             {
                 data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
-
+            
+            data.Add(nameof(hasAudio), hasAudio);
+            data.Add(nameof(hasVideo), hasVideo);
             return data;
          }
 
