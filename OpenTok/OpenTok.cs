@@ -147,7 +147,7 @@ namespace OpenTokSDK
         /// <see cref="MediaMode.ROUTED"/>
         /// </param>
         /// <param name="encryption">
-        /// Enables <a href="https://tokbox.com/developer/guides/end-to-end-encryption/">ent-to-end media encryption</a> in routed sessions. Media is already encrypted P2P, client to client, through WebRTC protocols when using a relayed session. This feature adds an encryption layer by encrypting the media payload at the client so that it will remain encrypted through the media server when routing media to other clients. You must enable end-to-end encryption when you create a session.
+        /// Enables <a href="https://tokbox.com/developer/guides/end-to-end-encryption/">end-to-end media encryption</a> in routed sessions.
         /// </param>
         /// <returns>
         /// A Session object representing the new session. The <see cref="Session.Id"/> property of the
@@ -249,7 +249,7 @@ namespace OpenTokSDK
         /// <see cref="MediaMode.ROUTED"/>
         /// </param>
         /// <param name="encryption">
-        /// Enables <a href="https://tokbox.com/developer/guides/end-to-end-encryption/">ent-to-end media encryption</a> in routed sessions. Media is already encrypted P2P, client to client, through WebRTC protocols when using a relayed session. This feature adds an encryption layer by encrypting the media payload at the client so that it will remain encrypted through the media server when routing media to other clients. You must enable end-to-end encryption when you create a session.
+        /// Enables <a href="https://tokbox.com/developer/guides/end-to-end-encryption/">end-to-end media encryption</a> in routed sessions.
         /// </param>
         /// <returns>
         /// A Session object representing the new session. The <see cref="Session.Id"/> property of the
