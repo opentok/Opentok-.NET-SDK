@@ -155,7 +155,7 @@ namespace OpenTokSDKTest
             {
                 {"sessionId", sessionId},
                 {"token", token},
-                {"webSocket", new AudioConnectorStartRequest.WebSocket(new Uri(url), streams, headers)},
+                {"websocket", new AudioConnectorStartRequest.WebSocket(new Uri(url), streams, headers)},
             });
             var builder = AudioConnectorStartRequestDataBuilder
                 .Build()
