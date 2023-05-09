@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using OpenTokSDK.Exception;
 
 namespace OpenTokSDK
@@ -110,18 +111,21 @@ namespace OpenTokSDK
             ///     A publicly reachable WebSocket URI controlled by the customer for the destination of the connect call. (f.e.
             ///     wss://service.com/wsendpoint)"
             /// </summary>
+            [JsonProperty(PropertyName = "uri")]
             public Uri Uri { get; }
 
             /// <summary>
             ///     The stream IDs of the participants' whose audio is going to be connected. If not provided, all streams in session
             ///     will be selected.
             /// </summary>
+            [JsonProperty(PropertyName = "streams")]
             public string[] Streams { get; }
 
             /// <summary>
             ///     An object of key/val pairs with additional properties to send to your Websocket server, with a maximum length of
             ///     512 bytes.
             /// </summary>
+            [JsonProperty(PropertyName = "headers")]
             public Dictionary<string, string> Headers { get; }
 
             private static void ValidateUri(Uri url)
@@ -142,7 +146,7 @@ namespace OpenTokSDK
             {
                 {"sessionId", this.SessionId},
                 {"token", this.Token},
-                {"webSocket", this.Socket},
+                {"websocket", this.Socket},
             };
     }
 }

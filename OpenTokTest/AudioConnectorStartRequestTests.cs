@@ -155,7 +155,7 @@ namespace OpenTokSDKTest
             {
                 {"sessionId", sessionId},
                 {"token", token},
-                {"webSocket", new AudioConnectorStartRequest.WebSocket(new Uri(url), streams, headers)},
+                {"websocket", new AudioConnectorStartRequest.WebSocket(new Uri(url), streams, headers)},
             });
             var builder = AudioConnectorStartRequestDataBuilder
                 .Build()
@@ -166,6 +166,23 @@ namespace OpenTokSDKTest
             streams.Aggregate(builder, (dataBuilder, stream) => dataBuilder.WithStream(stream));
             var result = builder.Create().ToDataDictionary();
             Assert.Equal(expectedSerialized, JsonConvert.SerializeObject(result));
+        }
+        
+        [Fact]
+        public void DataDictionarySerialization()
+        {
+            var expected = "{\"sessionId\":\"sessionId\",\"token\":\"token\",\"websocket\":{\"uri\":\"https://www.example.com/\",\"streams\":[\"stream1\",\"stream2\"],\"headers\":{\"key\":\"value\"}}}";
+            var dataDictionary = AudioConnectorStartRequestDataBuilder
+                .Build()
+                .WithSessionId("sessionId")
+                .WithToken("token")
+                .WithUri(new Uri("https://www.example.com/"))
+                .WithHeader("key", "value")
+                .WithStream("stream1")
+                .WithStream("stream2")
+                .Create()
+                .ToDataDictionary();
+            Assert.Equal(expected, JsonConvert.SerializeObject(dataDictionary));
         }
     }
 }
