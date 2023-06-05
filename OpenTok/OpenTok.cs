@@ -6,6 +6,8 @@ using OpenTokSDK.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using EnumsNET;
+using OpenTokSDK.Render;
 
 namespace OpenTokSDK
 {
@@ -149,6 +151,8 @@ namespace OpenTokSDK
         /// <param name="encryption">
         /// Enables <a href="https://tokbox.com/developer/guides/end-to-end-encryption/">end-to-end media encryption</a> in routed sessions.
         /// </param>
+        /// <param name="archiveName">Name of the archives in auto archived sessions. A session that begins with archive mode 'always' will be using this archive name for all archives of that session. Passing 'archiveName' with archive mode 'manual' will cause an error response.</param>
+        /// <param name="archiveResolution">Resolution of the archives in auto archived sessions. A session that begins with archive mode 'always' will be using this resolution for all archives of that session. Passing 'archiveResolution' with archive mode 'manual' will cause an error response.</param>
         /// <returns>
         /// A Session object representing the new session. The <see cref="Session.Id"/> property of the
         /// <see cref="Session"/> is the session ID, which uniquely identifies the session. You will use
@@ -157,7 +161,13 @@ namespace OpenTokSDK
         /// <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a>
         /// method (to initialize an OpenTok session).
         /// </returns>
-        public Session CreateSession(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL, bool encryption = false)
+        public Session CreateSession(
+            string location = "", 
+            MediaMode mediaMode = MediaMode.RELAYED, 
+            ArchiveMode archiveMode = ArchiveMode.MANUAL, 
+            bool encryption = false,
+            string archiveName = "",
+            RenderResolution archiveResolution = RenderResolution.StandardDefinitionLandscape)
         {
             if (!OpenTokUtils.TestIpAddress(location))
             {
@@ -169,15 +179,20 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("A session with always archive mode must also have the routed media mode.");
             }
 
-            string preference = (mediaMode == MediaMode.RELAYED) ? "enabled" : "disabled";
+            if (archiveName?.Length > 80)
+            {
+                throw new OpenTokArgumentException("ArchiveName length cannot exceed 80.");
+            }
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
             {
                 {"location", location},
-                {"p2p.preference", preference},
+                {"p2p.preference", mediaMode == MediaMode.RELAYED ? "enabled" : "disabled"},
                 {"archiveMode", archiveMode.ToString().ToLowerInvariant()},
                 {"e2ee", encryption},
+                {"archiveName", archiveName ?? string.Empty},
+                {"archiveResolution", archiveResolution.AsString(EnumFormat.Description)},
             };
 
             var response = Client.Post("session/create", headers, data);
@@ -251,6 +266,8 @@ namespace OpenTokSDK
         /// <param name="encryption">
         /// Enables <a href="https://tokbox.com/developer/guides/end-to-end-encryption/">end-to-end media encryption</a> in routed sessions.
         /// </param>
+        /// <param name="archiveName">Name of the archives in auto archived sessions. A session that begins with archive mode 'always' will be using this archive name for all archives of that session. Passing 'archiveName' with archive mode 'manual' will cause an error response.</param>
+        /// <param name="archiveResolution">Resolution of the archives in auto archived sessions. A session that begins with archive mode 'always' will be using this resolution for all archives of that session. Passing 'archiveResolution' with archive mode 'manual' will cause an error response.</param>
         /// <returns>
         /// A Session object representing the new session. The <see cref="Session.Id"/> property of the
         /// <see cref="Session"/> is the session ID, which uniquely identifies the session. You will use
@@ -259,7 +276,9 @@ namespace OpenTokSDK
         /// <a href="http://tokbox.com/opentok/libraries/client/js/reference/OT.html#initSession">OT.initSession()</a>
         /// method (to initialize an OpenTok session).
         /// </returns>
-        public async Task<Session> CreateSessionAsync(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL, bool encryption = false)
+        public async Task<Session> CreateSessionAsync(string location = "", MediaMode mediaMode = MediaMode.RELAYED, ArchiveMode archiveMode = ArchiveMode.MANUAL, bool encryption = false,
+            string archiveName = "",
+            RenderResolution archiveResolution = RenderResolution.StandardDefinitionLandscape)
         {
             if (!OpenTokUtils.TestIpAddress(location))
             {
@@ -270,18 +289,23 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("A session with always archive mode must also have the routed media mode.");
             }
-
-            string preference = mediaMode == MediaMode.RELAYED
-                ? "enabled"
-                : "disabled";
+            
+            if (archiveName?.Length > 80)
+            {
+                throw new OpenTokArgumentException("ArchiveName length cannot exceed 80.");
+            }
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
             {
                 {"location", location},
-                {"p2p.preference", preference},
+                {"p2p.preference", mediaMode == MediaMode.RELAYED
+                    ? "enabled"
+                    : "disabled"},
                 {"archiveMode", archiveMode.ToString().ToLowerInvariant()},
                 {"e2ee", encryption},
+                {"archiveName", archiveName ?? string.Empty},
+                {"archiveResolution", archiveResolution.AsString(EnumFormat.Description)},
             };
 
             var response = await Client.PostAsync("session/create", headers, data);
