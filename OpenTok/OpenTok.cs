@@ -34,6 +34,12 @@ namespace OpenTokSDK
         /// </summary>
         public HttpClient Client { internal get; set; }
 
+        /// <summary>
+        /// Sets a custom user-agent value. The HttpClient will append this value, if it exists, to the initial user-agent value.
+        /// </summary>
+        /// <param name="value">The custom user-agent value.</param>
+        public void SetCustomUserAgent(string value) => this.Client.CustomUserAgent = value;
+
         private bool _debug;
 
         private IEnumerable<string> _validResolutions = new[]
