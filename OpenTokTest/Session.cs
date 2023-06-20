@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using EnumsNET;
 using Moq;
 using OpenTokSDK;
 using OpenTokSDK.Exception;
+using OpenTokSDK.Render;
 using OpenTokSDK.Util;
 using Xunit;
 
@@ -57,6 +59,162 @@ namespace OpenTokSDKTest
             Assert.Equal("", session.Location);
 
             mockClient.Verify(httpClient => httpClient.Post(It.Is<string>(url => url.Equals(expectedUrl)), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()), Times.Once());
+        }
+        
+        [Fact]
+        public void CreateSession_ShouldSendArchiveName()
+        {
+            var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                               "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                               "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            const string expectedUrl = "session/create";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(
+                expectedUrl, 
+                It.IsAny<Dictionary<string, string>>(), 
+                It.Is<Dictionary<string, object>>(dictionary => 
+                   dictionary["archiveName"].ToString() == "TestArchiveName"
+                    && dictionary["archiveResolution"].ToString() == "640x480")))
+                .Returns(returnString);
+            var session = new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = mockClient.Object,
+            }.CreateSession(archiveName: "TestArchiveName");
+            Assert.NotNull(session);
+        }
+        
+        [Fact]
+        public void CreateSession_ShouldThrowException_GivenArchiveExceeds80Characters()
+        {
+            var session = new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = new Mock<HttpClient>().Object,
+            };
+            
+            var exception = Assert.Throws<OpenTokArgumentException>(() => session.CreateSession(archiveName: new string('*', 81)));
+            Assert.Equal("ArchiveName length cannot exceed 80.", exception.Message);
+        }
+        
+        [Fact]
+        public void CreateSession_ShouldSendArchiveResolution()
+        {
+            var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                               "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                               "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            const string expectedUrl = "session/create";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(
+                    expectedUrl, 
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.Is<Dictionary<string, object>>(dictionary => 
+                        dictionary["archiveName"].ToString() == string.Empty
+                        && dictionary["archiveResolution"].ToString() == "1920x1080")))
+                .Returns(returnString);
+            var session = new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = mockClient.Object,
+            }.CreateSession(archiveResolution: RenderResolution.FullHighDefinitionLandscape);
+            Assert.NotNull(session);
+        }
+        
+        [Fact]
+        public void CreateSession_ShouldSendDefaultArchivingValues()
+        {
+            var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                               "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                               "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            const string expectedUrl = "session/create";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.Post(
+                    expectedUrl, 
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.Is<Dictionary<string, object>>(dictionary => 
+                        dictionary["archiveName"].ToString() == string.Empty
+                        && dictionary["archiveResolution"].ToString() == "640x480")))
+                .Returns(returnString);
+            var session = new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = mockClient.Object,
+            }.CreateSession();
+            Assert.NotNull(session);
+        }
+        
+        [Fact]
+        public async Task CreateSessionAsync_ShouldSendArchiveName()
+        {
+            var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                               "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                               "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            const string expectedUrl = "session/create";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(
+                expectedUrl, 
+                It.IsAny<Dictionary<string, string>>(), 
+                It.Is<Dictionary<string, object>>(dictionary => 
+                   dictionary["archiveName"].ToString() == "TestArchiveName"
+                    && dictionary["archiveResolution"].ToString() == "640x480")))
+                .Returns(Task.FromResult(returnString));
+            var session = await new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = mockClient.Object,
+            }.CreateSessionAsync(archiveName: "TestArchiveName");
+            Assert.NotNull(session);
+        }
+        
+        [Fact]
+        public async Task CreateSessionAsync_ShouldThrowException_GivenArchiveExceeds80Characters()
+        {
+            var session = new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = new Mock<HttpClient>().Object,
+            };
+            
+            var exception = await Assert.ThrowsAsync<OpenTokArgumentException>(() => session.CreateSessionAsync(archiveName: new string('*', 81)));
+            Assert.Equal("ArchiveName length cannot exceed 80.", exception.Message);
+        }
+        
+        [Fact]
+        public async Task CreateSessionAsync_ShouldSendArchiveResolution()
+        {
+            var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                               "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                               "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            const string expectedUrl = "session/create";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(
+                    expectedUrl, 
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.Is<Dictionary<string, object>>(dictionary => 
+                        dictionary["archiveName"].ToString() == string.Empty
+                        && dictionary["archiveResolution"].ToString() == "1920x1080")))
+                .Returns(Task.FromResult(returnString));
+            var session = await new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = mockClient.Object,
+            }.CreateSessionAsync(archiveResolution: RenderResolution.FullHighDefinitionLandscape);
+            Assert.NotNull(session);
+        }
+        
+        [Fact]
+        public async Task CreateSessionAsync_ShouldSendDefaultArchivingValues()
+        {
+            var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
+                               "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
+                               "Mon Mar 17 00:41:31 PDT 2014</create_dt></Session></sessions>";
+            const string expectedUrl = "session/create";
+            var mockClient = new Mock<HttpClient>();
+            mockClient.Setup(httpClient => httpClient.PostAsync(
+                    expectedUrl, 
+                    It.IsAny<Dictionary<string, string>>(), 
+                    It.Is<Dictionary<string, object>>(dictionary => 
+                        dictionary["archiveName"].ToString() == string.Empty
+                        && dictionary["archiveResolution"].ToString() == "640x480")))
+                .Returns(Task.FromResult(returnString));
+            var session = await new OpenTok(this.ApiKey, this.ApiSecret)
+            {
+                Client = mockClient.Object,
+            }.CreateSessionAsync();
+            Assert.NotNull(session);
         }
 
         [Fact]
