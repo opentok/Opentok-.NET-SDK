@@ -30,6 +30,11 @@ namespace OpenTokSDK.Util
             1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
         );
 
+        /// <summary>
+        /// The custom user-agent value. The HttpClient will append this value, if it exists, to the initial user-agent value.
+        /// </summary>
+        public string CustomUserAgent { get; internal set; }
+
         internal HttpClient()
         {
         }
@@ -300,7 +305,9 @@ namespace OpenTokSDK.Util
             }
 
             request.ContentLength = data.Length;
-            request.UserAgent = OpenTokVersion.GetVersion();
+            request.UserAgent = this.CustomUserAgent != null 
+                ? $"{OpenTokVersion.GetVersion()}/{this.CustomUserAgent}"
+                : OpenTokVersion.GetVersion();
             if (headers.ContainsKey("Content-Type"))
             {
                 request.ContentType = headers["Content-Type"];

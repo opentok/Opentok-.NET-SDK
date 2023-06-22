@@ -53,6 +53,17 @@ string ApiSecret = "YOUR API SECRET";
 var OpenTok = new OpenTok(ApiKey, ApiSecret);
 ```
 
+#### Overriding the request's user-agent value
+
+You can decide to add a custom value to the user-agent value passed with every request.
+
+```csharp
+var OpenTok = new OpenTok(ApiKey, ApiSecret);
+OpenTok.SetCustomUserAgent(customUserAgent);
+```
+
+If the custom value has been set, the user-agent will comply to the following format: `Opentok-DotNet-SDK/{version}/{customValue}`.
+
 ### Creating Sessions
 
 To create an OpenTok Session, call the `OpenTok` instance's
