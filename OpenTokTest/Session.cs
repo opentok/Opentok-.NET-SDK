@@ -62,7 +62,7 @@ namespace OpenTokSDKTest
         }
         
         [Fact]
-        public void CreateSession_ShouldSendArchiveName()
+        public void CreateSession_ShouldSendArchiveName_GivenArchiveModeIsAlways()
         {
             var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
                                "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
@@ -79,10 +79,19 @@ namespace OpenTokSDKTest
             var session = new OpenTok(this.ApiKey, this.ApiSecret)
             {
                 Client = mockClient.Object,
-            }.CreateSession(archiveName: "TestArchiveName");
+            }.CreateSession(archiveMode: ArchiveMode.ALWAYS, mediaMode: MediaMode.ROUTED, archiveName: "TestArchiveName");
             Assert.NotNull(session);
         }
         
+        [Fact]
+        public void CreateSession_ShouldThrowException_GivenArchiveNameIsSetInManualArchiveMode() => 
+            Assert.Throws<OpenTokArgumentException>(() => new OpenTok(this.ApiKey, this.ApiSecret).CreateSession(archiveName: "TestArchiveName"));
+        
+        [Fact]
+        public void CreateSessionAsync_ShouldThrowException_GivenArchiveNameIsSetInManualArchiveMode() => 
+            Assert.ThrowsAsync<OpenTokArgumentException>(() => new OpenTok(this.ApiKey, this.ApiSecret).CreateSessionAsync(archiveName: "TestArchiveName"));
+
+
         [Fact]
         public void CreateSession_ShouldThrowException_GivenArchiveExceeds80Characters()
         {
@@ -96,7 +105,7 @@ namespace OpenTokSDKTest
         }
         
         [Fact]
-        public void CreateSession_ShouldSendArchiveResolution()
+        public void CreateSession_ShouldSendArchiveResolution_GivenArchiveModeIsAlways()
         {
             var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
                                "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
@@ -113,12 +122,12 @@ namespace OpenTokSDKTest
             var session = new OpenTok(this.ApiKey, this.ApiSecret)
             {
                 Client = mockClient.Object,
-            }.CreateSession(archiveResolution: RenderResolution.FullHighDefinitionLandscape);
+            }.CreateSession(archiveMode: ArchiveMode.ALWAYS, mediaMode: MediaMode.ROUTED, archiveResolution: RenderResolution.FullHighDefinitionLandscape);
             Assert.NotNull(session);
         }
         
         [Fact]
-        public void CreateSession_ShouldSendDefaultArchivingValues()
+        public void CreateSession_ShouldSendDefaultArchivingValues_GivenArchiveModeIsAlways()
         {
             var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
                                "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
@@ -135,12 +144,12 @@ namespace OpenTokSDKTest
             var session = new OpenTok(this.ApiKey, this.ApiSecret)
             {
                 Client = mockClient.Object,
-            }.CreateSession();
+            }.CreateSession(archiveMode: ArchiveMode.ALWAYS, mediaMode: MediaMode.ROUTED);
             Assert.NotNull(session);
         }
         
         [Fact]
-        public async Task CreateSessionAsync_ShouldSendArchiveName()
+        public async Task CreateSessionAsync_ShouldSendArchiveName_GivenArchiveModeIsAlways()
         {
             var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
                                "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
@@ -157,7 +166,7 @@ namespace OpenTokSDKTest
             var session = await new OpenTok(this.ApiKey, this.ApiSecret)
             {
                 Client = mockClient.Object,
-            }.CreateSessionAsync(archiveName: "TestArchiveName");
+            }.CreateSessionAsync(archiveMode: ArchiveMode.ALWAYS, mediaMode: MediaMode.ROUTED, archiveName: "TestArchiveName");
             Assert.NotNull(session);
         }
         
@@ -174,7 +183,7 @@ namespace OpenTokSDKTest
         }
         
         [Fact]
-        public async Task CreateSessionAsync_ShouldSendArchiveResolution()
+        public async Task CreateSessionAsync_ShouldSendArchiveResolution_GivenArchiveModeIsAlways()
         {
             var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
                                "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
@@ -191,12 +200,12 @@ namespace OpenTokSDKTest
             var session = await new OpenTok(this.ApiKey, this.ApiSecret)
             {
                 Client = mockClient.Object,
-            }.CreateSessionAsync(archiveResolution: RenderResolution.FullHighDefinitionLandscape);
+            }.CreateSessionAsync(archiveMode: ArchiveMode.ALWAYS, mediaMode: MediaMode.ROUTED, archiveResolution: RenderResolution.FullHighDefinitionLandscape);
             Assert.NotNull(session);
         }
         
         [Fact]
-        public async Task CreateSessionAsync_ShouldSendDefaultArchivingValues()
+        public async Task CreateSessionAsync_ShouldSendDefaultArchivingValues_GivenArchiveModeIsAlways()
         {
             var returnString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sessions><Session><" +
                                "session_id>" + this.SessionId + "</session_id><partner_id>123456</partner_id><create_dt>" +
@@ -213,7 +222,7 @@ namespace OpenTokSDKTest
             var session = await new OpenTok(this.ApiKey, this.ApiSecret)
             {
                 Client = mockClient.Object,
-            }.CreateSessionAsync();
+            }.CreateSessionAsync(archiveMode: ArchiveMode.ALWAYS, mediaMode: MediaMode.ROUTED);
             Assert.NotNull(session);
         }
 
