@@ -189,6 +189,11 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("ArchiveName length cannot exceed 80.");
             }
+            
+            if (archiveMode == ArchiveMode.MANUAL && !string.IsNullOrWhiteSpace(archiveName))
+            {
+                throw new OpenTokArgumentException("Archive name can't be specified with manual archive mode.");
+            }
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
@@ -197,9 +202,13 @@ namespace OpenTokSDK
                 {"p2p.preference", mediaMode == MediaMode.RELAYED ? "enabled" : "disabled"},
                 {"archiveMode", archiveMode.ToString().ToLowerInvariant()},
                 {"e2ee", encryption},
-                {"archiveName", archiveName ?? string.Empty},
-                {"archiveResolution", archiveResolution.AsString(EnumFormat.Description)},
             };
+
+            if (archiveMode == ArchiveMode.ALWAYS)
+            {
+                data.Add("archiveName", archiveName ?? string.Empty);
+                data.Add("archiveResolution", archiveResolution.AsString(EnumFormat.Description));
+            }
 
             var response = Client.Post("session/create", headers, data);
             var xmlDoc = Client.ReadXmlResponse(response);
@@ -301,18 +310,25 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("ArchiveName length cannot exceed 80.");
             }
 
+            if (archiveMode == ArchiveMode.MANUAL && !string.IsNullOrWhiteSpace(archiveName))
+            {
+                throw new OpenTokArgumentException("Archive name can't be specified with manual archive mode.");
+            }
+
             var headers = new Dictionary<string, string> { { "Content-Type", "application/x-www-form-urlencoded" } };
             var data = new Dictionary<string, object>
             {
                 {"location", location},
-                {"p2p.preference", mediaMode == MediaMode.RELAYED
-                    ? "enabled"
-                    : "disabled"},
+                {"p2p.preference", mediaMode == MediaMode.RELAYED ? "enabled" : "disabled"},
                 {"archiveMode", archiveMode.ToString().ToLowerInvariant()},
                 {"e2ee", encryption},
-                {"archiveName", archiveName ?? string.Empty},
-                {"archiveResolution", archiveResolution.AsString(EnumFormat.Description)},
             };
+
+            if (archiveMode == ArchiveMode.ALWAYS)
+            {
+                data.Add("archiveName", archiveName ?? string.Empty);
+                data.Add("archiveResolution", archiveResolution.AsString(EnumFormat.Description));
+            }
 
             var response = await Client.PostAsync("session/create", headers, data);
             var xmlDoc = Client.ReadXmlResponse(response);
