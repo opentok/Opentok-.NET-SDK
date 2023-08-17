@@ -30,6 +30,7 @@ namespace OpenTokSDKTest
             Assert.Equal(sessionId, broadcast.SessionId);
             Assert.NotNull(broadcast.Id);
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+            Assert.Equal(2000000, broadcast.MaxBitRate);
 
             mockClient.Verify(
                 httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/broadcast")),
@@ -57,6 +58,7 @@ namespace OpenTokSDKTest
             Assert.Equal(sessionId, broadcast.SessionId);
             Assert.NotNull(broadcast.Id);
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+             Assert.Equal(2000000, broadcast.MaxBitRate);
 
             mockClient.Verify(
                 httpClient => httpClient.PostAsync(expectedUrl, It.IsAny<Dictionary<string, string>>(),

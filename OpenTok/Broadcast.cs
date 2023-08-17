@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -92,6 +91,7 @@ namespace OpenTokSDK
             StreamMode = broadcast.StreamMode;
             Settings = broadcast.Settings;
             MultiBroadcastTag = broadcast.MultiBroadcastTag;
+            MaxBitRate = broadcast.MaxBitRate;
 
             if (BroadcastUrls == null)
                 return;
@@ -210,6 +210,11 @@ namespace OpenTokSDK
         /// HLS status. Can be one of the following: 'connecting', 'ready', 'live', 'ended' or 'error'.
         /// </summary>
         public string HlsStatus { get; set; }
+        
+        /// <summary>
+        /// Maximum BitRate allowed for the broadcast composing. The default value is 2000000, which is also the maximum value. The minimum value is 400000.
+        /// </summary>
+        public int MaxBitRate { get; set; } = 2000000;
 
         /// <summary>
         /// Stops the live broadcasting if it is started.
