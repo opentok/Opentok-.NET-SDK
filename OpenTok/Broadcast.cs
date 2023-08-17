@@ -100,6 +100,11 @@ namespace OpenTokSDK
             {
                 Hls = BroadcastUrls["hls"].ToString();
             }
+            
+            if (BroadcastUrls.ContainsKey("hlsStatus"))
+            {
+                HlsStatus = BroadcastUrls["hlsStatus"].ToString();
+            }
 
             if (BroadcastUrls.ContainsKey("rtmp"))
             {
@@ -200,6 +205,11 @@ namespace OpenTokSDK
         /// </summary>
         [JsonProperty("multiBroadcastTag")]
         public string MultiBroadcastTag { get; set; }
+
+        /// <summary>
+        /// HLS status. Can be one of the following: 'connecting', 'ready', 'live', 'ended' or 'error'.
+        /// </summary>
+        public string HlsStatus { get; set; }
 
         /// <summary>
         /// Stops the live broadcasting if it is started.
