@@ -47,7 +47,7 @@ namespace OpenTokSDK
             JsonSerializer serializer)
         {
             var value = (long?)reader.Value;
-            return value.HasValue ? new BroadcastBitrate(value.Value) : new BroadcastBitrate();
+            return value.HasValue ? new BroadcastBitrate(value.Value) : null;
         }
     }
 }
