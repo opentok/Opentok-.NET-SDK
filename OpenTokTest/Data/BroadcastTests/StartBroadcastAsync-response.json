@@ -10,5 +10,5 @@
     "hls": "http://server/fakepath/playlist.m3u8"
   },
   "settings": { "hls": { "lowLatency": false } },
-  "maxBitRate": 2000000
+  "maxBitRate": 1000000
 }

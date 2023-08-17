@@ -214,7 +214,8 @@ namespace OpenTokSDK
         /// <summary>
         /// Maximum BitRate allowed for the broadcast composing. The default value is 2000000, which is also the maximum value. The minimum value is 400000.
         /// </summary>
-        public int MaxBitRate { get; set; } = 2000000;
+        [JsonConverter(typeof(BroadcastBitrateConverter))]
+        public BroadcastBitrate MaxBitRate { get; set; } = new BroadcastBitrate();
 
         /// <summary>
         /// Stops the live broadcasting if it is started.

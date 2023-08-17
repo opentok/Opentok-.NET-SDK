@@ -219,3 +219,6 @@ pip-log.txt
 ## Samples
 #Samples/HelloWorld/App.config
 #Samples/Archiving/App.config
+
+## Jetbrains Rider files
+.idea/
