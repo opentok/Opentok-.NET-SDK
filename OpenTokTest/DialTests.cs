@@ -164,7 +164,8 @@ namespace OpenTokSDKTest
                 Auth = new DialAuth { Username = "Tim", Password = "Bob" },
                 Secure = true,
                 Video = true,
-                ObserveForceMute = true
+                ObserveForceMute = true,
+                Streams = new []{"stream1", "stream2"},
             };
 
             Dictionary<string, string> headersSent = null;
@@ -199,6 +200,7 @@ namespace OpenTokSDKTest
             Assert.Equal(dialOptions.Secure, sip.secure);
             Assert.Equal(dialOptions.Video, sip.video);
             Assert.Equal(dialOptions.ObserveForceMute, sip.observeForceMute);
+            Assert.Equal(dialOptions.Streams, sip.streams);
         }
 
         [Fact]
@@ -215,7 +217,8 @@ namespace OpenTokSDKTest
                 Auth = new DialAuth { Username = "Tim", Password = "Bob" },
                 Secure = true,
                 Video = true,
-                ObserveForceMute = true
+                ObserveForceMute = true,
+                Streams = new []{"stream1", "stream2"},
             };
 
             Dictionary<string, string> headersSent = null;
@@ -250,6 +253,7 @@ namespace OpenTokSDKTest
             Assert.Equal(dialOptions.Secure, sip.secure);
             Assert.Equal(dialOptions.Video, sip.video);
             Assert.Equal(dialOptions.ObserveForceMute, sip.observeForceMute);
+            Assert.Equal(dialOptions.Streams, sip.streams);
         }
 
         [Fact]
