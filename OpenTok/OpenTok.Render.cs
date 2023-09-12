@@ -8,6 +8,7 @@ namespace OpenTokSDK
     public partial class OpenTok
     {
         private const string RenderEndpoint = "/render";
+        private const string CaptionsEndpoint = "/captions";
 
         /// <summary>
         /// Starts a new Experience Composer renderer for an OpenTok session.
