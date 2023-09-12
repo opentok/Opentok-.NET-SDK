@@ -7,6 +7,8 @@ namespace OpenTokSDK
 {
 	public partial class OpenTok
 	{
+		private const string CaptionsEndpoint = "/captions";
+		
 		/// <summary>
 		/// </summary>
 		/// <param name="options"></param>
