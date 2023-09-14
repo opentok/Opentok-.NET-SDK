@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>HelloWorld</AssemblyName>
     <Version>1.0.0</Version>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <Authors>Vonage</Authors>
     <Company>Vonage</Company>
     <Copyright>Copyright ©  2020</Copyright>

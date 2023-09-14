@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net452;net46;net461;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Version>3.11.2</Version>
     <Description>OpenTok is an API from TokBox that enables websites to weave live group video communication into their online experience.</Description>
     <PackageProjectUrl>https://github.com/opentok/Opentok-.NET-SDK</PackageProjectUrl>
