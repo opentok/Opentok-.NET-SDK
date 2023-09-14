@@ -77,5 +77,8 @@
     <Content Include="views\_ViewStart.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Nancy" Version="2.0.0" />
   </ItemGroup>  
 </Project>
