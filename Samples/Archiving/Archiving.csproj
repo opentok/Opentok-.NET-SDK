@@ -3,17 +3,17 @@
   <PropertyGroup>
     <AssemblyName>Archiving</AssemblyName>
     <Version>1.0.0</Version>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <Authors>Vonage</Authors>
     <Company>Vonage</Company>
     <Copyright>Copyright ©  2020</Copyright>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
-    <PackageReference Include="Nancy.Owin" Version="1.1.0" />
-    <PackageReference Include="Nancy.Viewengines.Razor" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.1" />
+    <PackageReference Include="Nancy.Owin" Version="2.0.0" />
+    <PackageReference Include="Nancy.Viewengines.Razor" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="4.2.2" />
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="4.2.2" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Content\css\sample.css" />
@@ -77,5 +77,8 @@
     <Content Include="views\_ViewStart.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Nancy" Version="2.0.0" />
   </ItemGroup>  
 </Project>
