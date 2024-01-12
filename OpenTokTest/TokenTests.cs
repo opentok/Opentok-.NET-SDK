@@ -24,7 +24,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(data["sig"]);
             Assert.NotNull(data["create_time"]);
             Assert.NotNull(data["nonce"]);
-            Assert.Equal(data["role"], Role.PUBLISHER.ToString());
+            Assert.Equal(data["role"], "publisher");
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(data["sig"]);
             Assert.NotNull(data["create_time"]);
             Assert.NotNull(data["nonce"]);
-            Assert.Equal(data["role"], Role.SUBSCRIBER.ToString());
+            Assert.Equal(data["role"], "subscriber");
         }
         
         [Fact]
@@ -61,7 +61,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(data["sig"]);
             Assert.NotNull(data["create_time"]);
             Assert.NotNull(data["nonce"]);
-            Assert.Equal(data["role"], Role.PUBLISHER.ToString());
+            Assert.Equal(data["role"], "publisher");
             Assert.Equal(data["expire_time"], ((long) expireTime).ToString());
         }
 
@@ -80,7 +80,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(data["sig"]);
             Assert.NotNull(data["create_time"]);
             Assert.NotNull(data["nonce"]);
-            Assert.Equal(data["role"], Role.PUBLISHER.ToString());
+            Assert.Equal(data["role"], "publisher");
             Assert.Equal(data["connection_data"], connectionData);
         }
 
@@ -101,7 +101,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(data["sig"]);
             Assert.NotNull(data["create_time"]);
             Assert.NotNull(data["nonce"]);
-            Assert.Equal(data["role"], Role.PUBLISHER.ToString());
+            Assert.Equal(data["role"],"publisher");
             Assert.Equal("focus", data["initial_layout_class_list"]);
         }
 
