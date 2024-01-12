@@ -1909,7 +1909,8 @@ namespace OpenTokSDK
                         auth = options?.Auth,
                         secure = options?.Secure,
                         video = options?.Video,
-                        observeForceMute = options?.ObserveForceMute
+                        observeForceMute = options?.ObserveForceMute,
+                        streams = options?.Streams,
                     }
                 }
             };
@@ -1968,7 +1969,8 @@ namespace OpenTokSDK
                         auth = options?.Auth,
                         secure = options?.Secure,
                         video = options?.Video,
-                        observeForceMute = options?.ObserveForceMute
+                        observeForceMute = options?.ObserveForceMute,
+                        streams = options?.Streams,
                     }
                 }
             };

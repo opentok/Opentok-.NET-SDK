@@ -30,6 +30,7 @@ namespace OpenTokSDKTest
             Assert.Equal(sessionId, broadcast.SessionId);
             Assert.NotNull(broadcast.Id);
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+            Assert.Equal(2000000, broadcast.MaxBitRate.Bitrate);
 
             mockClient.Verify(
                 httpClient => httpClient.Post(It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/broadcast")),
@@ -57,6 +58,7 @@ namespace OpenTokSDKTest
             Assert.Equal(sessionId, broadcast.SessionId);
             Assert.NotNull(broadcast.Id);
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
+             Assert.Equal(1000000, broadcast.MaxBitRate.Bitrate);
 
             mockClient.Verify(
                 httpClient => httpClient.PostAsync(expectedUrl, It.IsAny<Dictionary<string, string>>(),
@@ -481,6 +483,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(broadcast.RtmpList);
             Assert.Equal(2, broadcast.RtmpList.Count);
             Assert.NotNull(broadcast.Hls);
+            Assert.Equal("ready", broadcast.HlsStatus);
             Assert.NotNull(broadcast.Id);
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
 
@@ -530,6 +533,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(broadcast.RtmpList);
             Assert.Equal(2, broadcast.RtmpList.Count);
             Assert.NotNull(broadcast.Hls);
+            Assert.Equal("ready", broadcast.HlsStatus);
             Assert.NotNull(broadcast.Id);
             Assert.Equal(Broadcast.BroadcastStatus.STARTED, broadcast.Status);
 
@@ -1405,6 +1409,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(broadcast);
             Assert.Equal(broadcastId, broadcast.Id);
             Assert.NotNull(broadcast.Id);
+            Assert.Equal("ready", broadcast.HlsStatus);
 
             var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
             mockClient.Verify(httpClient => httpClient.Get(It.Is<string>(url => url.Equals(expectedUrl))),
@@ -1427,6 +1432,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(broadcast);
             Assert.Equal(broadcastId, broadcast.Id);
             Assert.NotNull(broadcast.Id);
+            Assert.Equal("ready", broadcast.HlsStatus);
 
             var expectedUrl = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
             mockClient.Verify(httpClient => httpClient.GetAsync(It.Is<string>(url => url.Equals(expectedUrl)), null),
