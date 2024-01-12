@@ -123,9 +123,11 @@ namespace OpenTokSDK
         /// based on the first client connecting to the session.
         /// </param>
         /// <param name="mediaMode">
+        /// <para>
         /// Whether the session will transmit streams using the OpenTok Media Router
         /// (<see cref="MediaMode.ROUTED"/>) or not (<see cref="MediaMode.RELAYED"/>).
         /// By default, the setting is <see cref="MediaMode.RELAYED"/>.
+        /// </para>
         /// <para>
         /// With the parameter set to <see cref="MediaMode.RELAYED"/>, the session will
         /// attempt to transmit streams directly between clients. If clients cannot connect
@@ -247,9 +249,11 @@ namespace OpenTokSDK
         /// based on the first client connecting to the session.
         /// </param>
         /// <param name="mediaMode">
+        /// <para>
         /// Whether the session will transmit streams using the OpenTok Media Router
         /// (<see cref="MediaMode.ROUTED"/>) or not (<see cref="MediaMode.RELAYED"/>).
         /// By default, the setting is <see cref="MediaMode.RELAYED"/>.
+        /// </para>
         /// <para>
         /// With the parameter set to <see cref="MediaMode.RELAYED"/>, the session will
         /// attempt to transmit streams directly between clients. If clients cannot connect
