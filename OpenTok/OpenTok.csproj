@@ -2,13 +2,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>3.11.2</Version>
+    <Version>3.11.3</Version>
     <Description>OpenTok is an API from TokBox that enables websites to weave live group video communication into their online experience.</Description>
     <PackageProjectUrl>https://github.com/opentok/Opentok-.NET-SDK</PackageProjectUrl>
     <RepositoryUrl>https://github.com/opentok/Opentok-.NET-SDK</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <PackageReleaseNotes>https://github.com/opentok/Opentok-.NET-SDK/releases/tag/v3.11.2</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/opentok/Opentok-.NET-SDK/releases/tag/v3.11.3</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ProjectGuid>{C770C266-B8E6-413A-B5AB-68EB218DC76C}</ProjectGuid>
@@ -25,10 +25,10 @@
     <DocumentationFile/>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JWT" Version="10.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="JWT" Version="10.1.0"/>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     <PackageReference Include="Enums.NET" Version="4.0.0"/>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
