@@ -50,5 +50,10 @@ namespace OpenTokSDK
         /// (true) or not (false, the default).
         /// </summary>
         public bool? ObserveForceMute { get; set; }
+
+        /// <summary>
+        /// The stream IDs of the participants' which will be subscribed by the SIP participant. If not provided, all streams in session will be selected.
+        /// </summary>
+        public string[] Streams { get; set; }
     }
 }

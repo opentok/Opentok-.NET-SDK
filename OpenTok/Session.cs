@@ -159,7 +159,7 @@ namespace OpenTokSDK
             dataStringBuilder.Append(string.Format("session_id={0}", this.Id));
             dataStringBuilder.Append(string.Format("&create_time={0}", (long)createTime));
             dataStringBuilder.Append(string.Format("&nonce={0}", nonce));
-            dataStringBuilder.Append(string.Format("&role={0}", role.ToString()));
+            dataStringBuilder.Append(string.Format("&role={0}", role.ToString().ToLowerInvariant()));
 
             if (initialLayoutClassList != null)
             {

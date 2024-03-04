@@ -8,6 +8,7 @@
   "status": "started",
   "broadcastUrls": {
     "hls": "http://server/fakepath/playlist.m3u8",
+    "hlsStatus" : "ready",
     "rtmp": [
       {
         "status": "connecting",
