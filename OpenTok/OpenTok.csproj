@@ -25,10 +25,10 @@
     <DocumentationFile/>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JWT" Version="10.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="JWT" Version="10.1.0"/>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     <PackageReference Include="Enums.NET" Version="4.0.0"/>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
