@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Company>Vonage</Company>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Authors>Vonage</Authors>
     <Copyright>Vonage 2020</Copyright>
     <RootNamespace>OpenTokSDKTest</RootNamespace>        
@@ -290,6 +290,7 @@
     <Reference Include="Microsoft.CSharp" />
     <PackageReference Include="AutoFixture" Version="4.18.0" />
     <PackageReference Include="Enums.NET" Version="4.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="xunit" Version="2.5.0" />
