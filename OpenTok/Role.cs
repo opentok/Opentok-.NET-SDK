@@ -25,7 +25,11 @@ namespace OpenTokSDK
         /// mute audio in published streams. See the
         ///   <a href="https://tokbox.com/developer/guides/moderation/">Moderation developer guide</a>.
         /// </summary>
-        MODERATOR
+        MODERATOR,
+        /// <summary>
+        /// A publisher-only role can publish streams, but not signal.
+        /// </summary>
+        PUBLISHERONLY,
     }
 
     /// <summary>

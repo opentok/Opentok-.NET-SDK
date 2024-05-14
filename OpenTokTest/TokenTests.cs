@@ -27,13 +27,17 @@ namespace OpenTokSDKTest
             Assert.Equal(data["role"], "publisher");
         }
 
-        [Fact]
-        public void GenerateTokenWithRoleTest()
+        [Theory]
+        [InlineData(Role.SUBSCRIBER, "subscriber")]
+        [InlineData(Role.PUBLISHER, "publisher")]
+        [InlineData(Role.MODERATOR, "moderator")]
+        [InlineData(Role.PUBLISHERONLY, "publisheronly")]
+        public void GenerateTokenWithRoleTest(Role role, string expectedRole)
         {
             OpenTok opentok = new OpenTok(ApiKey, ApiSecret);
 
             String sessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4";
-            string token = opentok.GenerateToken(sessionId, role:Role.SUBSCRIBER);
+            string token = opentok.GenerateToken(sessionId, role: role);
 
             Assert.NotNull(token);
             var data = CheckToken(token);
@@ -42,7 +46,7 @@ namespace OpenTokSDKTest
             Assert.NotNull(data["sig"]);
             Assert.NotNull(data["create_time"]);
             Assert.NotNull(data["nonce"]);
-            Assert.Equal(data["role"], "subscriber");
+            Assert.Equal(data["role"], expectedRole);
         }
         
         [Fact]
