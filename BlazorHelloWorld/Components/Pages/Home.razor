@@ -1,0 +1,39 @@
+﻿@page "/"
+@using BlazorHelloWorld.Infrastructure
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject IJSRuntime JavascriptRuntime
+@inject VideoService Service
+
+<PageTitle>Weather</PageTitle>
+
+<div class="container">
+    <div class="panel-body">
+        <h3 class="panel-title">Your stream</h3>
+        <div id="publisher"></div>
+        <div>
+            <select id="cameras"></select>
+            <br />
+            <select id="mics"></select>
+        </div>
+    </div>
+    <div class="panel-body">
+        <h3 class="panel-title">Other streams</h3>
+        <p>This part contains all other streams from your session.</p>
+        <div id="subscribers">
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            var session = Service.CreateSession();
+            await JavascriptRuntime.InvokeVoidAsync("initializeStream", Service.GetApiKey(), session.SessionId, session.Token);    
+        }
+    }
+
+}
