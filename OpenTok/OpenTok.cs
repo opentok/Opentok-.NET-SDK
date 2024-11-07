@@ -396,6 +396,57 @@ namespace OpenTokSDK
             Session session = new Session(sessionId, ApiKey, ApiSecret);
             return session.GenerateToken(role, expireTime, data, initialLayoutClassList);
         }
+        
+         /// <summary>
+        /// Creates a token for connecting to an OpenTok session. In order to authenticate a user
+        /// connecting to an OpenTok session, the client passes a token when connecting to the session.
+        /// <para>
+        /// For testing, you can also generate test tokens by logging in to your
+        /// <a href="https://tokbox.com/account">TokBox account</a>.
+        /// </para>
+        /// </summary>
+        /// <param name="sessionId">
+        /// The session ID corresponding to the session to which the user will connect.
+        /// </param>
+        /// <param name="role">
+        /// The role for the token. Valid values are defined in the Role enum:
+        /// - <see cref="Role.SUBSCRIBER"/> (A subscriber can only subscribe to streams)
+        /// - <see cref="Role.PUBLISHER"/> (A publisher can publish streams, subscribe to streams, and signal.
+        ///   (This is the default value if you do not specify a role.))
+        /// - <see cref="Role.MODERATOR"/> (In addition to the privileges granted to a publisher, 
+        ///   a moderator can perform moderation functions, such as forcing clients
+        ///   to disconnect, to stop publishing streams, or to mute audio in published streams. See the
+        ///   <a href="https://tokbox.com/developer/guides/moderation/">Moderation developer guide</a>.
+        /// </param>
+        /// <param name="expireTime">
+        /// The expiration time of the token, in seconds since the UNIX epoch. Pass in 0 to use the default
+        /// expiration time of 24 hours after the token creation time. The maximum expiration time is 30 days
+        /// after the creation time.
+        /// </param>
+        /// <param name="data">
+        /// A string containing connection metadata describing the end-user. For example, you can pass the
+        /// user ID, name, or other data describing the end-user. The length of the string is limited to 1000
+        /// characters. This data cannot be updated once it is set.
+        /// </param>
+        /// <param name="initialLayoutClassList">
+        /// A list of strings values containing the initial layout for the stream.
+        /// </param>
+        /// <returns></returns>
+        public string GenerateT1Token(string sessionId, Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null)
+        {
+            if (String.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("Session id cannot be empty or null");
+            }
+
+            if (!OpenTokUtils.ValidateSession(sessionId))
+            {
+                throw new OpenTokArgumentException("Invalid Session id " + sessionId);
+            }
+
+            Session session = new Session(sessionId, ApiKey, ApiSecret);
+            return session.GenerateT1Token(role, expireTime, data, initialLayoutClassList);
+        }
 
         /// <summary>
         /// Starts archiving an OpenTok session.

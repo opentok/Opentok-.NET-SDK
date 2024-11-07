@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using JWT;
 using JWT.Algorithms;
 using JWT.Serializers;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OpenTokSDK.Constants;
 using OpenTokSDK.Exception;
@@ -396,6 +400,39 @@ namespace OpenTokSDK.Util
             IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
             var token = encoder.Encode(payload, secret);
             return token;
+        }
+        
+        private string GenerateJwt2(int apiKey, string apiSecret, int expiryPeriod = 300)
+        {
+            var tokenData = new byte[64];
+            var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(tokenData);
+            var jwtTokenId = Convert.ToBase64String(tokenData);
+            var payload = new Dictionary<string, object>
+            {
+                {"iss", apiKey},
+                {"ist", "project"},
+                {"role", "publisher"},
+                {"session_id", "sessionid"},
+                {"scope", "session.connect"},
+                {"iat", (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds},
+                {"exp", (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds + 300},
+                {"jti", jwtTokenId},
+                {"initial_layout_list", ""},
+                {"nonce", OpenTokUtils.GetRandomNumber()},
+            };
+            // generate token that is valid for 7 days
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(apiSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                //Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
+                Claims = payload,
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var a = tokenHandler.WriteToken(token);
+            return a;
         }
 
         private Dictionary<string, string> GetCommonHeaders()

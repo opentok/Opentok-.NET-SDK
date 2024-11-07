@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 using System.Web;
-
+using Microsoft.IdentityModel.Tokens;
 using OpenTokSDK.Util;
 using OpenTokSDK.Exception;
 
@@ -131,7 +133,7 @@ namespace OpenTokSDK
         /// </param>
         /// <param name="initialLayoutClassList"></param>
         /// <returns>The token string.</returns>
-        public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null)
+        public string GenerateT1Token(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null)
         {
             double createTime = OpenTokUtils.GetCurrentUnixTimeStamp();
             int nonce = OpenTokUtils.GetRandomNumber();
@@ -139,6 +141,44 @@ namespace OpenTokSDK
             string dataString = BuildDataString(role, expireTime, data, createTime, nonce, initialLayoutClassList);
             return BuildTokenString(dataString);
         }
+        
+        /// <summary>
+        /// Creates a token for connecting to an OpenTok session. In order to authenticate a user
+        /// connecting to an OpenTok session that user must pass an authentication token along with
+        /// the API key.
+        /// </summary>
+        /// <param name="role">
+        /// The role for the token. Valid values are defined in the Role enum:
+        /// - <see cref="Role.SUBSCRIBER"/> A subscriber can only subscribe to streams.
+        /// - <see cref="Role.PUBLISHER"/> A publisher can publish streams, subscribe to
+        ///   streams, and signal. (This is the default value if you do not specify a role.)
+        /// - <see cref="Role.MODERATOR"/> In addition to the privileges granted to a
+        ///   publisher, in clients using the OpenTok.js library, a moderator can call the
+        ///   forceUnpublish() and forceDisconnect() method of the Session object.
+        /// </param>
+        /// <param name="expireTime">
+        /// The expiration time of the token, in seconds since the UNIX epoch.
+        /// Pass in 0 to use the default expiration time of 24 hours after the token creation time.
+        /// The maximum expiration time is 30 days after the creation time.
+        /// </param>
+        /// <param name="data">
+        /// A string containing connection metadata describing the end-user. For example,
+        /// you can pass the user ID, name, or other data describing the end-user. The length of the
+        /// string is limited to 1000 characters. This data cannot be updated once it is set.
+        /// </param>
+        /// <param name="initialLayoutClassList"></param>
+        /// <returns>The token string.</returns>
+        public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null) =>
+            new TokenGenerator().GenerateToken(new TokenData()
+            {
+                ApiSecret = this.ApiSecret,
+                Role = role,
+                ApiKey = this.ApiKey.ToString(),
+                Data = data,
+                SessionId = this.Id,
+                ExpireTime = expireTime,
+                InitialLayoutClasses = initialLayoutClassList ?? Enumerable.Empty<string>(),
+            });
 
         private string BuildTokenString(string dataString)
         {

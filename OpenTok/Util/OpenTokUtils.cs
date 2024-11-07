@@ -65,7 +65,7 @@ namespace OpenTokSDK.Util
         }
         public static double GetUnixTimeStampForDate(DateTime date)
         {
-            return (date - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            return (date.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
         }
 
         public static double GetCurrentUnixTimeStamp()
