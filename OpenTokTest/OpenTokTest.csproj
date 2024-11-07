@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Company>Vonage</Company>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Authors>Vonage</Authors>
     <Copyright>Vonage 2020</Copyright>
     <RootNamespace>OpenTokSDKTest</RootNamespace>        
