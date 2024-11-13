@@ -5,8 +5,14 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
+using JWT;
+using JWT.Algorithms;
+using JWT.Serializers;
 using Microsoft.IdentityModel.Tokens;
 using OpenTokSDK.Exception;
+using Vonage;
+using Vonage.Request;
+using Vonage.Video.Authentication;
 
 #endregion
 
@@ -14,7 +20,7 @@ namespace OpenTokSDK.Util
 {
     internal class TokenGenerator
     {
-        public string GenerateToken(TokenData data)
+        public string GenerateSessionToken(TokenData data)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -25,6 +31,43 @@ namespace OpenTokSDK.Util
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateSessionToken(string applicationId, string privateKey, string sessionId)
+        {
+            return new VideoTokenGenerator().GenerateToken(
+                Credentials.FromAppIdAndPrivateKey(applicationId, privateKey),
+                TokenAdditionalClaims.Parse(sessionId)).GetSuccessUnsafe().Token;
+        }
+
+        public string GenerateLegacyToken(int key, string secret, int expiryPeriod = 300)
+        {
+            var now = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+            var expiry = now + expiryPeriod;
+            var payload = new Dictionary<string, object>
+            {
+                { "iss", Convert.ToString(key) },
+                { "ist", "project" },
+                { "iat", now },
+                { "exp", expiry }
+            };
+            IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+            IJsonSerializer serializer = new JsonNetSerializer();
+            IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+            IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+            var token = encoder.Encode(payload, secret);
+            return token;
+        }
+
+        public string GenerateToken(string applicationId, string privateKey)
+        {
+            return new Jwt().GenerateToken(Credentials.FromAppIdAndPrivateKey(applicationId, privateKey))
+                .GetSuccessUnsafe();
+        }
+
+        public string GenerateT1Token()
+        {
+            return null;
         }
     }
 

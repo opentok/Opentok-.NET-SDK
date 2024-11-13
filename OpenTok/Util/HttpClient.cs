@@ -1,28 +1,28 @@
+#region
+
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using JWT;
-using JWT.Algorithms;
-using JWT.Serializers;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OpenTokSDK.Constants;
 using OpenTokSDK.Exception;
+using Vonage;
+using Vonage.Request;
+
+#endregion
 
 #pragma warning disable CS1591
 
 namespace OpenTokSDK.Util
 {
     /// <summary>
-    /// For internal use.
+    ///     For internal use.
     /// </summary>
     public class HttpClient
     {
@@ -34,10 +34,8 @@ namespace OpenTokSDK.Util
             1970, 1, 1, 0, 0, 0, DateTimeKind.Utc
         );
 
-        /// <summary>
-        /// The custom user-agent value. The HttpClient will append this value, if it exists, to the initial user-agent value.
-        /// </summary>
-        public string CustomUserAgent { get; internal set; }
+        private readonly string appId;
+        private readonly string privateKey;
 
         internal HttpClient()
         {
@@ -56,13 +54,27 @@ namespace OpenTokSDK.Util
             _apiUrl = apiUrl;
         }
 
+        public HttpClient(string appId, string privateKey)
+        {
+            this.appId = appId;
+            this.privateKey = privateKey;
+            _apiUrl = "https://video.api.vonage.com";
+        }
+
+        private bool IsShim => !string.IsNullOrEmpty(appId);
+
         /// <summary>
-        /// Turns on and off debug logging
+        ///     The custom user-agent value. The HttpClient will append this value, if it exists, to the initial user-agent value.
+        /// </summary>
+        public string CustomUserAgent { get; internal set; }
+
+        /// <summary>
+        ///     Turns on and off debug logging
         /// </summary>
         public bool Debug { get; set; } = false;
 
         /// <summary>
-        /// Timeout in milliseconds for the HttpWebRequests sent by the client.
+        ///     Timeout in milliseconds for the HttpWebRequests sent by the client.
         /// </summary>
         public int? RequestTimeout { get; set; }
 
@@ -140,9 +152,9 @@ namespace OpenTokSDK.Util
         public string DoRequest(string url, Dictionary<string, string> specificHeaders,
             Dictionary<string, object> bodyData)
         {
-            string data = GetRequestPostData(bodyData, specificHeaders);
+            var data = GetRequestPostData(bodyData, specificHeaders);
             var headers = GetRequestHeaders(specificHeaders);
-            HttpWebRequest request = CreateRequest(url, headers, data);
+            var request = CreateRequest(url, headers, data);
             DebugLog("Request Method: " + request.Method);
             DebugLog("Request URI: " + request.RequestUri);
             DebugLogHeaders(request.Headers, "Request");
@@ -155,7 +167,7 @@ namespace OpenTokSDK.Util
                     SendData(request, data);
                 }
 
-                using (response = (HttpWebResponse) request.GetResponse())
+                using (response = (HttpWebResponse)request.GetResponse())
                 {
                     DebugLog("Response Status Code: " + response.StatusCode);
                     DebugLog("Response Status Description: " + response.StatusDescription);
@@ -181,21 +193,19 @@ namespace OpenTokSDK.Util
             catch (WebException e)
             {
                 DebugLog("WebException Status: " + e.Status + ", Message: " + e.Message);
-                response = (HttpWebResponse) e.Response;
+                response = (HttpWebResponse)e.Response;
                 if (response != null)
                 {
                     DebugLog("Response Status Code: " + response.StatusCode);
                     DebugLog("Response Status Description: " + response.StatusDescription);
                     DebugLogHeaders(response.Headers, "Response");
                     if (Debug)
-                    {
                         using (var stream = new StreamReader(response.GetResponseStream() ??
                                                              throw new InvalidOperationException(
                                                                  "Response stream null")))
                         {
                             DebugLog("Response Body: " + stream.ReadToEnd());
                         }
-                    }
                 }
                 else if (e.Status == WebExceptionStatus.SendFailure)
                 {
@@ -211,9 +221,9 @@ namespace OpenTokSDK.Util
         public async Task<string> DoRequestAsync(string url, Dictionary<string, string> specificHeaders,
             Dictionary<string, object> bodyData)
         {
-            string data = GetRequestPostData(bodyData, specificHeaders);
+            var data = GetRequestPostData(bodyData, specificHeaders);
             var headers = GetRequestHeaders(specificHeaders);
-            HttpWebRequest request = CreateRequest(url, headers, data);
+            var request = CreateRequest(url, headers, data);
             DebugLog("Request Method: " + request.Method);
             DebugLog("Request URI: " + request.RequestUri);
             DebugLogHeaders(request.Headers, "Request");
@@ -252,14 +262,13 @@ namespace OpenTokSDK.Util
             catch (WebException e)
             {
                 DebugLog("WebException Status: " + e.Status + ", Message: " + e.Message);
-                response = (HttpWebResponse) e.Response;
+                response = (HttpWebResponse)e.Response;
                 if (response != null)
                 {
                     DebugLog("Response Status Code: " + response.StatusCode);
                     DebugLog("Response Status Description: " + response.StatusDescription);
                     DebugLogHeaders(response.Headers, "Response");
                     if (Debug)
-                    {
                         using (var stream = new StreamReader(response.GetResponseStream() ??
                                                              throw new InvalidOperationException(
                                                                  "Response stream null")))
@@ -267,7 +276,6 @@ namespace OpenTokSDK.Util
                             var body = await stream.ReadToEndAsync();
                             DebugLog($"Response Body: {body}");
                         }
-                    }
                 }
 
                 OpenTokUtils.ValidateTlsVersion(e);
@@ -277,7 +285,7 @@ namespace OpenTokSDK.Util
 
         public XmlDocument ReadXmlResponse(string xml)
         {
-            XmlDocument xmlDoc = new XmlDocument();
+            var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xml);
             return xmlDoc;
         }
@@ -285,7 +293,7 @@ namespace OpenTokSDK.Util
         private void SendData(HttpWebRequest request, string data)
         {
             LastRequest = data;
-            using (StreamWriter stream = new StreamWriter(request.GetRequestStream()))
+            using (var stream = new StreamWriter(request.GetRequestStream()))
             {
                 stream.Write(data);
             }
@@ -293,7 +301,7 @@ namespace OpenTokSDK.Util
 
         private async Task SendDataAsync(HttpWebRequest request, string data)
         {
-            using (StreamWriter stream = new StreamWriter(await request.GetRequestStreamAsync().ConfigureAwait(false)))
+            using (var stream = new StreamWriter(await request.GetRequestStreamAsync().ConfigureAwait(false)))
             {
                 await stream.WriteAsync(data).ConfigureAwait(false);
             }
@@ -301,16 +309,13 @@ namespace OpenTokSDK.Util
 
         private HttpWebRequest CreateRequest(string url, Dictionary<string, string> headers, string data)
         {
-            Uri uri = new Uri($"{_apiUrl}/{url}");
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(uri);
-            if (RequestTimeout != null)
-            {
-                request.Timeout = (int) RequestTimeout;
-            }
+            var uri = new Uri($"{_apiUrl}/{url}");
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            if (RequestTimeout != null) request.Timeout = (int)RequestTimeout;
 
             request.ContentLength = data.Length;
-            request.UserAgent = this.CustomUserAgent != null 
-                ? $"{OpenTokVersion.GetVersion()}/{this.CustomUserAgent}"
+            request.UserAgent = CustomUserAgent != null
+                ? $"{OpenTokVersion.GetVersion()}/{CustomUserAgent}"
                 : OpenTokVersion.GetVersion();
             if (headers.ContainsKey("Content-Type"))
             {
@@ -325,10 +330,7 @@ namespace OpenTokSDK.Util
                 headers.Remove("Method");
             }
 
-            foreach (KeyValuePair<string, string> entry in headers)
-            {
-                request.Headers.Add(entry.Key, entry.Value);
-            }
+            foreach (var entry in headers) request.Headers.Add(entry.Key, entry.Value);
 
             return request;
         }
@@ -346,14 +348,9 @@ namespace OpenTokSDK.Util
             if (data != null && headers.ContainsKey("Content-Type"))
             {
                 if (headers["Content-Type"] == "application/json")
-                {
                     return JsonConvert.SerializeObject(data,
-                        new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
-                }
-                else if (headers["Content-Type"] == "application/x-www-form-urlencoded")
-                {
-                    return ProcessParameters(data);
-                }
+                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                if (headers["Content-Type"] == "application/x-www-form-urlencoded") return ProcessParameters(data);
             }
             else if (data != null || headers.ContainsKey("Content-Type"))
             {
@@ -366,11 +363,9 @@ namespace OpenTokSDK.Util
 
         private string ProcessParameters(Dictionary<string, object> parameters)
         {
-            string data = string.Empty;
-            foreach (KeyValuePair<string, object> pair in parameters)
-            {
+            var data = string.Empty;
+            foreach (var pair in parameters)
                 data += pair.Key + "=" + HttpUtility.UrlEncode(pair.Value.ToString()) + "&";
-            }
 
             return data.Substring(0, data.Length - 1);
         }
@@ -379,68 +374,26 @@ namespace OpenTokSDK.Util
         {
             IDateTimeProvider provider = new UtcDateTimeProvider();
             var now = provider.GetNow();
-            int secondsSinceEpoch = (int) Math.Round((now - _unixEpoch).TotalSeconds);
+            var secondsSinceEpoch = (int)Math.Round((now - _unixEpoch).TotalSeconds);
             return secondsSinceEpoch;
         }
 
-        private string GenerateJwt(int key, string secret, int expiryPeriod = 300)
+        private string GenerateJwt()
         {
-            int now = CurrentTime();
-            int expiry = now + expiryPeriod;
-            var payload = new Dictionary<string, object>
-            {
-                {"iss", Convert.ToString(key)},
-                {"ist", "project"},
-                {"iat", now},
-                {"exp", expiry}
-            };
-            IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
-            IJsonSerializer serializer = new JsonNetSerializer();
-            IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-            IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
-            var token = encoder.Encode(payload, secret);
-            return token;
-        }
-        
-        private string GenerateJwt2(int apiKey, string apiSecret, int expiryPeriod = 300)
-        {
-            var tokenData = new byte[64];
-            var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(tokenData);
-            var jwtTokenId = Convert.ToBase64String(tokenData);
-            var payload = new Dictionary<string, object>
-            {
-                {"iss", apiKey},
-                {"ist", "project"},
-                {"role", "publisher"},
-                {"session_id", "sessionid"},
-                {"scope", "session.connect"},
-                {"iat", (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds},
-                {"exp", (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds + 300},
-                {"jti", jwtTokenId},
-                {"initial_layout_list", ""},
-                {"nonce", OpenTokUtils.GetRandomNumber()},
-            };
-            // generate token that is valid for 7 days
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(apiSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                //Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256),
-                Claims = payload,
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var a = tokenHandler.WriteToken(token);
-            return a;
+            return IsShim
+                ? new TokenGenerator().GenerateToken(appId, privateKey)
+                : new TokenGenerator().GenerateLegacyToken(_apiKey, _apiSecret);
         }
 
         private Dictionary<string, string> GetCommonHeaders()
         {
             return new Dictionary<string, string>
             {
-                {"X-OPENTOK-AUTH", GenerateJwt(_apiKey, _apiSecret)},
-                {"X-TB-VERSION", "1"},
+                {
+                    IsShim ? "Authorization" : "X-OPENTOK-AUTH",
+                    IsShim ? "Bearer " + GenerateJwt() : GenerateJwt()
+                },
+                { "X-TB-VERSION", "1" }
             };
         }
 
@@ -456,16 +409,11 @@ namespace OpenTokSDK.Util
         private void DebugLogHeaders(WebHeaderCollection headers, string label)
         {
             if (Debug)
-            {
-                for (int i = 0; i < headers.Count; ++i)
+                for (var i = 0; i < headers.Count; ++i)
                 {
-                    string header = headers.GetKey(i);
-                    foreach (string value in headers.GetValues(i))
-                    {
-                        DebugLog(label + " Header: " + header + " = " + value);
-                    }
+                    var header = headers.GetKey(i);
+                    foreach (var value in headers.GetValues(i)) DebugLog(label + " Header: " + header + " = " + value);
                 }
-            }
         }
     }
 }

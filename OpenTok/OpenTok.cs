@@ -54,6 +54,10 @@ namespace OpenTokSDK
             "1080x1920"
         };
 
+        private readonly string applicationId;
+        private readonly string privateKey;
+        private bool IsShim => !string.IsNullOrEmpty(applicationId);
+
 
         /// <summary>
         /// Enables writing request/response details to console.
@@ -95,6 +99,20 @@ namespace OpenTokSDK
             ApiSecret = apiSecret;
             OpenTokServer = apiUrl;
             Client = new HttpClient(apiKey, apiSecret, OpenTokServer);
+            Debug = false;
+        }
+        
+        /// <summary>
+        /// Use for OpenTok to target Vonage Video API
+        /// </summary>
+        /// <param name="applicationId">The application Id.</param>
+        /// <param name="privateKey">The private key.</param>
+        public OpenTok(string applicationId, string privateKey)
+        {
+            this.applicationId = applicationId;
+            this.privateKey = privateKey;
+            OpenTokServer = "https://api.opentok.com";
+            Client = new HttpClient(applicationId, privateKey);
             Debug = false;
         }
 
@@ -220,8 +238,10 @@ namespace OpenTokSDK
                 throw new OpenTokWebException("Session could not be provided. Are ApiKey and ApiSecret correctly set?");
             }
             var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
-            var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
-            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+
+            return this.IsShim
+                ? Session.FromShim(sessionId, this.applicationId, this.privateKey, location, mediaMode, archiveMode)
+                : Session.FromLegacy(sessionId, Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value), ApiSecret, location, mediaMode, archiveMode);
         }
 
         /// <summary>
@@ -342,8 +362,9 @@ namespace OpenTokSDK
                 throw new OpenTokWebException("Session could not be provided. Are ApiKey and ApiSecret correctly set?");
             }
             var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
-            var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
-            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+            return this.IsShim
+                ? Session.FromShim(sessionId, this.applicationId, this.privateKey, location, mediaMode, archiveMode)
+                : Session.FromLegacy(sessionId, Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value), ApiSecret, location, mediaMode, archiveMode);
         }
 
         /// <summary>
@@ -393,8 +414,16 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
-            Session session = new Session(sessionId, ApiKey, ApiSecret);
-            return session.GenerateToken(role, expireTime, data, initialLayoutClassList);
+            return new TokenGenerator().GenerateSessionToken(new TokenData()
+            {
+                ApiSecret = this.ApiSecret,
+                Role = role,
+                ApiKey = this.ApiKey.ToString(),
+                Data = data,
+                SessionId = sessionId,
+                ExpireTime = expireTime,
+                InitialLayoutClasses = initialLayoutClassList ?? Enumerable.Empty<string>(),
+            });
         }
         
          /// <summary>
@@ -444,6 +473,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
+            
             Session session = new Session(sessionId, ApiKey, ApiSecret);
             return session.GenerateT1Token(role, expireTime, data, initialLayoutClassList);
         }
