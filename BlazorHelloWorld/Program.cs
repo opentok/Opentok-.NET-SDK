@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 var options = builder.Configuration.GetSection(nameof(OpenTokOptions)).Get<OpenTokOptions>();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<OpenTokOptions>(options);
+builder.Services.AddSingleton(options);
 builder.Services.AddScoped<VideoService>();
 var app = builder.Build();
 app.UseHttpsRedirection();
