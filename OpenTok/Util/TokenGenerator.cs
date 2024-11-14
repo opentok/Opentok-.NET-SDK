@@ -64,11 +64,6 @@ namespace OpenTokSDK.Util
             return new Jwt().GenerateToken(Credentials.FromAppIdAndPrivateKey(applicationId, privateKey))
                 .GetSuccessUnsafe();
         }
-
-        public string GenerateT1Token()
-        {
-            return null;
-        }
     }
 
     internal struct TokenData
