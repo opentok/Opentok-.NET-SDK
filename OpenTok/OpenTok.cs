@@ -593,7 +593,11 @@ namespace OpenTokSDK
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
-        private string GetOpenTokId() => this.IsShim ? this.applicationId : this.ApiKey.ToString();
+        /// <summary>
+        /// Retrieves either the Api Key or Application Id associated with the OpenTok object.
+        /// </summary>
+        /// <returns>The identifier.</returns>
+        public string GetOpenTokId() => this.IsShim ? this.applicationId : this.ApiKey.ToString();
         
         /// <summary>
         /// Starts archiving an OpenTok session.
