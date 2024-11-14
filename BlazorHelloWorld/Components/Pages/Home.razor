@@ -23,17 +23,32 @@
         <div id="subscribers">
         </div>
     </div>
+    <div>
+        <button class="btn btn-success" onclick="@StartArchiving" disabled="@isArchiving">Start archiving</button>
+        <button class="btn btn-danger" onclick="@StopArchiving" disabled="@(!isArchiving)">Stop archiving</button>
+    </div>
 </div>
 
 @code {
+    private bool isArchiving => this.archiveId != Guid.Empty;
+    private SessionCredentials session;
+    private Guid archiveId;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-            var session = Service.CreateSession();
-            await JavascriptRuntime.InvokeVoidAsync("initializeStream", Service.GetApiKey(), session.SessionId, session.Token);    
+            this.session = Service.CreateSession();
+            await JavascriptRuntime.InvokeVoidAsync("initializeStream", Service.GetOpenTokId(), session.SessionId, session.Token);    
         }
     }
 
+    private async Task StartArchiving()
+    {
+        var archive = await Service.StartArchiving(this.session.SessionId);
+        this.archiveId = archive.Id;
+    }
+
+    private Task StopArchiving() => Service.StopArchiving(this.archiveId.ToString());
 }

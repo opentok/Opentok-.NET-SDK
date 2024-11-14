@@ -9,6 +9,8 @@ using System.Web;
 using Microsoft.IdentityModel.Tokens;
 using OpenTokSDK.Util;
 using OpenTokSDK.Exception;
+using Vonage.Request;
+using Vonage.Video.Authentication;
 
 namespace OpenTokSDK
 {
@@ -97,14 +99,37 @@ namespace OpenTokSDK
             this.ApiSecret = apiSecret;
         }
 
-        internal Session(string sessionId, int apiKey, string apiSecret, string location, MediaMode mediaMode, ArchiveMode archiveMode)
+        internal static Session FromShim(string sessionId, string applicationId, string privateKey, string location, MediaMode mediaMode, ArchiveMode archiveMode)
         {
-            this.Id = sessionId;
-            this.ApiKey = apiKey;
-            this.ApiSecret = apiSecret;
-            this.Location = location;
-            this.MediaMode = mediaMode;
-            this.ArchiveMode = archiveMode;
+            return new Session()
+            {
+                Id = sessionId,
+                ArchiveMode = archiveMode,
+                MediaMode = mediaMode,
+                Location = location,
+                ApplicationId = applicationId,
+                PrivateKey = privateKey,
+            };
+        }
+        
+        internal static Session FromLegacy(string sessionId,  int apiKey, string apiSecret, string location, MediaMode mediaMode, ArchiveMode archiveMode)
+        {
+            return new Session()
+            {
+                Id = sessionId,
+                ArchiveMode = archiveMode,
+                MediaMode = mediaMode,
+                Location = location,
+                ApiKey = apiKey,
+                ApiSecret = apiSecret,
+            };
+        }
+
+        private string ApplicationId { get; set; }
+        private string PrivateKey { get; set; }
+
+        private Session()
+        {
         }
 
         /// <summary>
@@ -169,7 +194,9 @@ namespace OpenTokSDK
         /// <param name="initialLayoutClassList"></param>
         /// <returns>The token string.</returns>
         public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null) =>
-            new TokenGenerator().GenerateToken(new TokenData()
+            !string.IsNullOrEmpty(this.ApplicationId)
+        ? new TokenGenerator().GenerateSessionToken(this.ApplicationId, this.PrivateKey, this.Id)
+        : new TokenGenerator().GenerateSessionToken(new TokenData()
             {
                 ApiSecret = this.ApiSecret,
                 Role = role,

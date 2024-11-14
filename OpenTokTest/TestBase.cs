@@ -12,6 +12,8 @@ namespace OpenTokSDKTest
         protected string ApiSecret = "1234567890abcdef1234567890abcdef1234567890";
         protected int ApiKey = 123456;
         protected string SessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4";
+        protected string ApplicationId = "123";
+        protected string PrivateKey = "456";
 
 #if NETCOREAPP2_0_OR_GREATER
         private static readonly Assembly ThisAssembly = typeof(TestBase).GetTypeInfo().Assembly;

@@ -54,6 +54,10 @@ namespace OpenTokSDK
             "1080x1920"
         };
 
+        private readonly string applicationId;
+        private readonly string privateKey;
+        private bool IsShim => !string.IsNullOrEmpty(applicationId);
+
 
         /// <summary>
         /// Enables writing request/response details to console.
@@ -95,6 +99,20 @@ namespace OpenTokSDK
             ApiSecret = apiSecret;
             OpenTokServer = apiUrl;
             Client = new HttpClient(apiKey, apiSecret, OpenTokServer);
+            Debug = false;
+        }
+        
+        /// <summary>
+        /// Use for OpenTok to target Vonage Video API
+        /// </summary>
+        /// <param name="applicationId">The application Id.</param>
+        /// <param name="privateKey">The private key.</param>
+        public OpenTok(string applicationId, string privateKey)
+        {
+            this.applicationId = applicationId;
+            this.privateKey = privateKey;
+            OpenTokServer = "https://api.opentok.com";
+            Client = new HttpClient(applicationId, privateKey);
             Debug = false;
         }
 
@@ -220,8 +238,10 @@ namespace OpenTokSDK
                 throw new OpenTokWebException("Session could not be provided. Are ApiKey and ApiSecret correctly set?");
             }
             var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
-            var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
-            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+
+            return this.IsShim
+                ? Session.FromShim(sessionId, this.applicationId, this.privateKey, location, mediaMode, archiveMode)
+                : Session.FromLegacy(sessionId, Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value), ApiSecret, location, mediaMode, archiveMode);
         }
 
         /// <summary>
@@ -342,8 +362,9 @@ namespace OpenTokSDK
                 throw new OpenTokWebException("Session could not be provided. Are ApiKey and ApiSecret correctly set?");
             }
             var sessionId = xmlDoc.GetElementsByTagName("session_id")[0].ChildNodes[0].Value;
-            var apiKey = Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value);
-            return new Session(sessionId, apiKey, ApiSecret, location, mediaMode, archiveMode);
+            return this.IsShim
+                ? Session.FromShim(sessionId, this.applicationId, this.privateKey, location, mediaMode, archiveMode)
+                : Session.FromLegacy(sessionId, Convert.ToInt32(xmlDoc.GetElementsByTagName("partner_id")[0].ChildNodes[0].Value), ApiSecret, location, mediaMode, archiveMode);
         }
 
         /// <summary>
@@ -393,8 +414,16 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
-            Session session = new Session(sessionId, ApiKey, ApiSecret);
-            return session.GenerateToken(role, expireTime, data, initialLayoutClassList);
+            return new TokenGenerator().GenerateSessionToken(new TokenData()
+            {
+                ApiSecret = this.ApiSecret,
+                Role = role,
+                ApiKey = this.ApiKey.ToString(),
+                Data = data,
+                SessionId = sessionId,
+                ExpireTime = expireTime,
+                InitialLayoutClasses = initialLayoutClassList ?? Enumerable.Empty<string>(),
+            });
         }
         
          /// <summary>
@@ -444,6 +473,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Invalid Session id " + sessionId);
             }
 
+            
             Session session = new Session(sessionId, ApiKey, ApiSecret);
             return session.GenerateT1Token(role, expireTime, data, initialLayoutClassList);
         }
@@ -520,7 +550,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
-            string url = $"v2/project/{ApiKey}/archive";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "sessionId", sessionId }, { "name", name }, { "hasVideo", hasVideo }, { "hasAudio", hasAudio }, { "outputMode", outputMode.ToString().ToLowerInvariant() } };
 
@@ -563,6 +593,12 @@ namespace OpenTokSDK
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
         }
 
+        /// <summary>
+        /// Retrieves either the Api Key or Application Id associated with the OpenTok object.
+        /// </summary>
+        /// <returns>The identifier.</returns>
+        public string GetOpenTokId() => this.IsShim ? this.applicationId : this.ApiKey.ToString();
+        
         /// <summary>
         /// Starts archiving an OpenTok session.
         /// <para>
@@ -635,7 +671,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Session not valid");
             }
-            string url = $"v2/project/{ApiKey}/archive";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -696,7 +732,7 @@ namespace OpenTokSDK
         /// <returns>The Archive object corresponding to the archive being stopped.</returns>
         public Archive StopArchive(string archiveId)
         {
-            string url = string.Format("v2/project/{0}/archive/{1}/stop", ApiKey, archiveId);
+            string url = string.Format("v2/project/{0}/archive/{1}/stop", this.GetOpenTokId(), archiveId);
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = Client.Post(url, headers, new Dictionary<string, object>());
@@ -714,7 +750,7 @@ namespace OpenTokSDK
         /// <returns>The Archive object corresponding to the archive being stopped.</returns>
         public async Task<Archive> StopArchiveAsync(string archiveId)
         {
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}/stop";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}/stop";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
@@ -742,7 +778,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
-            string url = $"v2/project/{ApiKey}/archive?offset={offset}";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive?offset={offset}";
             
             if (count > 0)
             {
@@ -785,7 +821,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("count cannot be smaller than 0");
             }
 
-            string url = $"v2/project/{this.ApiKey}/archive?offset={offset}";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive?offset={offset}";
             if (count > 0)
             {
                 url = $"{url}&count={count}";
@@ -813,7 +849,7 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Archive"/> object.</returns>
         public Archive GetArchive(string archiveId)
         {
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}";
             string response = Client.Get(url);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
@@ -825,7 +861,7 @@ namespace OpenTokSDK
         /// <returns>The <see cref="Archive"/> object.</returns>
         public async Task<Archive> GetArchiveAsync(string archiveId)
         { 
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}";
             string response = await Client.GetAsync(url, null);
             return JsonConvert.DeserializeObject<Archive>(response);
         }
@@ -841,7 +877,7 @@ namespace OpenTokSDK
         /// <param name="archiveId">The archive ID of the archive you want to delete.</param>
         public void DeleteArchive(string archiveId)
         {
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}";
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
         }
@@ -857,7 +893,7 @@ namespace OpenTokSDK
         /// <param name="archiveId">The archive ID of the archive you want to delete.</param>
         public Task DeleteArchiveAsync(string archiveId)
         {
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}";
             var headers = new Dictionary<string, string>();
             return Client.DeleteAsync(url, headers);
         }
@@ -885,7 +921,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -920,7 +956,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -950,7 +986,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "removeStream", streamId } };
 
@@ -975,7 +1011,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "removeStream", streamId } };
 
@@ -1000,7 +1036,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty", nameof(streamId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream/{streamId}";
             string response = Client.Get(url);
             Stream stream = JsonConvert.DeserializeObject<Stream>(response);
             Stream streamCopy = new Stream();
@@ -1026,7 +1062,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty", nameof(streamId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream/{streamId}";
             string response = await Client.GetAsync(url);
             Stream stream = JsonConvert.DeserializeObject<Stream>(response);
             Stream streamCopy = new Stream();
@@ -1047,7 +1083,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
             }
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream";
             string response = Client.Get(url);
             JObject streams = JObject.Parse(response);
             JArray streamsArray = (JArray)streams["items"];
@@ -1068,7 +1104,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("The sessionId cannot be null or empty", nameof(sessionId));
             }
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream";
             string response = await Client.GetAsync(url);
             JObject streams = JObject.Parse(response);
             JArray streamsArray = (JArray)streams["items"];
@@ -1097,7 +1133,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Invalid session Id", nameof(sessionId));
             }
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/connection/{connectionId}";
             var headers = new Dictionary<string, string>();
             Client.Delete(url, headers);
         }
@@ -1123,7 +1159,7 @@ namespace OpenTokSDK
             {
                 throw new OpenTokArgumentException("Invalid session Id", nameof(sessionId));
             }
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/connection/{connectionId}";
             var headers = new Dictionary<string, string>();
             await Client.DeleteAsync(url, headers);
         }
@@ -1191,7 +1227,7 @@ namespace OpenTokSDK
             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null, bool hasAudio = true, bool hasVideo = true)
         {
             var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag, hasAudio, hasVideo);
-            string url = $"v2/project/{ApiKey}/broadcast";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
@@ -1260,7 +1296,7 @@ namespace OpenTokSDK
             int maxDuration = 7200, BroadcastLayout layout = null, StreamMode? streamMode = null, bool dvr = false, bool? lowLatency = null, string multiBroadcastTag = null, bool hasAudio = true, bool hasVideo = true)
         {
             var data = PrepareStartBroadcastData(sessionId, hls, rtmpList, resolution, maxDuration, layout, streamMode, dvr, lowLatency, multiBroadcastTag, hasAudio, hasVideo);
-            string url = $"v2/project/{ApiKey}/broadcast"; 
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast"; 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = await Client.PostAsync(url, headers, data);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
@@ -1368,7 +1404,7 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast StopBroadcast(string broadcastId)
         {
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/stop";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             string response = Client.Post(url, headers, new Dictionary<string, object>());
             return JsonConvert.DeserializeObject<Broadcast>(response);
@@ -1388,7 +1424,7 @@ namespace OpenTokSDK
         /// </returns>
         public async Task<Broadcast> StopBroadcastAsync(string broadcastId)
         {
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/stop";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/stop";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
 
             string response = await Client.PostAsync(url, headers, new Dictionary<string, object>());
@@ -1408,7 +1444,7 @@ namespace OpenTokSDK
         /// </returns>
         public Broadcast GetBroadcast(string broadcastId)
         {
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}";
             string response = Client.Get(url);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
@@ -1426,7 +1462,7 @@ namespace OpenTokSDK
         /// </returns>
         public async Task<Broadcast> GetBroadcastAsync(string broadcastId)
         {
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}";
             string response = await Client.GetAsync(url);
             return OpenTokUtils.GenerateBroadcast(response, ApiKey, ApiSecret, OpenTokServer);
         }
@@ -1439,7 +1475,7 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public void SetBroadcastLayout(string broadcastId, BroadcastLayout layout)
         {
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
@@ -1479,7 +1515,7 @@ namespace OpenTokSDK
         /// <param name="layout">The BroadcastLayout that defines layout options for the broadcast.</param>
         public async Task SetBroadcastLayoutAsync(string broadcastId, BroadcastLayout layout)
         {
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/layout";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             if (layout != null)
@@ -1520,7 +1556,7 @@ namespace OpenTokSDK
         /// <returns></returns>
         public bool SetArchiveLayout(string archiveId, ArchiveLayout layout)
         {
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
             
@@ -1581,7 +1617,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -1617,7 +1653,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -1648,7 +1684,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -1677,7 +1713,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be null or empty");
             }
 
-            string url = $"v2/project/{ApiKey}/broadcast/{broadcastId}/streams";
+            string url = $"v2/project/{this.GetOpenTokId()}/broadcast/{broadcastId}/streams";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
             {
@@ -1697,7 +1733,7 @@ namespace OpenTokSDK
         /// <returns></returns>
         public async Task<bool> SetArchiveLayoutAsync(string archiveId, ArchiveLayout layout)
         {
-            string url = $"v2/project/{ApiKey}/archive/{archiveId}/layout";
+            string url = $"v2/project/{this.GetOpenTokId()}/archive/{archiveId}/layout";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>();
 
@@ -1747,7 +1783,7 @@ namespace OpenTokSDK
         /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
         public void SetStreamClassLists(string sessionId, List<StreamProperties> streams)
         {
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
@@ -1785,7 +1821,7 @@ namespace OpenTokSDK
         /// <param name="streams">A list of StreamsProperties that defines class lists for one or more streams in the session.</param>
         public async Task SetStreamClassListsAsync(string sessionId, List<StreamProperties> streams)
         {
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream";
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var items = new List<object>();
             Dictionary<string, object> data = new Dictionary<string, object>();
@@ -1824,8 +1860,8 @@ namespace OpenTokSDK
             }
             
             string url = String.IsNullOrEmpty(connectionId) 
-                ? $"v2/project/{ApiKey}/session/{sessionId}/signal"
-                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/signal";
+                ? $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/signal"
+                : $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/connection/{connectionId}/signal";
             
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
@@ -1850,8 +1886,8 @@ namespace OpenTokSDK
             }
             
             string url = String.IsNullOrEmpty(connectionId) 
-                ? $"v2/project/{ApiKey}/session/{sessionId}/signal"
-                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/signal";
+                ? $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/signal"
+                : $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/connection/{connectionId}/signal";
             
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
@@ -1885,8 +1921,8 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf"
-                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
@@ -1907,8 +1943,8 @@ namespace OpenTokSDK
             }
 
             string url = string.IsNullOrEmpty(connectionId)
-                ? $"v2/project/{ApiKey}/session/{sessionId}/play-dtmf"
-                : $"v2/project/{ApiKey}/session/{sessionId}/connection/{connectionId}/play-dtmf";
+                ? $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/play-dtmf"
+                : $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/connection/{connectionId}/play-dtmf";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "digits", digits } };
@@ -1946,7 +1982,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session Id is not valid");
             }
 
-            string url = $"v2/project/{ApiKey}/dial";
+            string url = $"v2/project/{this.GetOpenTokId()}/dial";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
@@ -2006,7 +2042,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("Session Id is not valid");
             }
 
-            string url = $"v2/project/{ApiKey}/dial";
+            string url = $"v2/project/{this.GetOpenTokId()}/dial";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object>
@@ -2051,7 +2087,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream/{streamId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             Client.Post(url, headers, null);
@@ -2079,7 +2115,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The streamId cannot be empty.", nameof(streamId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/stream/{streamId}/mute";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/stream/{streamId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             await Client.PostAsync(url, headers, null);
@@ -2108,7 +2144,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };
@@ -2138,7 +2174,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "active", true }, { "excludedStreamIds", excludedStreamIds } };
@@ -2168,7 +2204,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "active", false } };
@@ -2198,7 +2234,7 @@ namespace OpenTokSDK
                 throw new OpenTokArgumentException("The sessionId cannot be empty.", nameof(sessionId));
             }
 
-            string url = $"v2/project/{ApiKey}/session/{sessionId}/mute";
+            string url = $"v2/project/{this.GetOpenTokId()}/session/{sessionId}/mute";
 
             var headers = new Dictionary<string, string> { { "Content-Type", "application/json" } };
             var data = new Dictionary<string, object> { { "active", false } };
