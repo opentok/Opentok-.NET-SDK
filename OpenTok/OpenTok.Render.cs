@@ -59,7 +59,7 @@ namespace OpenTokSDK
 				this.BuildUrlWithRouteParameter(RenderEndpoint, renderId),
 				new Dictionary<string, string>());
 
-		private string BuildUrl(string endpoint) => $"v2/project/{this.ApiKey}{endpoint}";
+		private string BuildUrl(string endpoint) => $"v2/project/{this.GetOpenTokId()}{endpoint}";
 
 		private string BuildUrlWithQueryParameter(string endpoint, string queryParameter) =>
 			$"{this.BuildUrl(endpoint)}?{queryParameter}";

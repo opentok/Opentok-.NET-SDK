@@ -14,7 +14,7 @@ namespace OpenTokSDK
         public async Task<AudioConnector> StartAudioConnectorAsync(AudioConnectorStartRequest request)
         {
             var response = await this.Client.PostAsync(
-                $"v2/project/{this.ApiKey}/connect",
+                $"v2/project/{this.GetOpenTokId()}/connect",
                 GetHeaderDictionary("application/json"),
                 request.ToDataDictionary());
             return JsonConvert.DeserializeObject<AudioConnector>(response);
@@ -26,7 +26,7 @@ namespace OpenTokSDK
         /// <param name="connectionId">The OpenTok connection ID for the Audio Connector WebSocket connection in the OpenTok session. See <see cref="AudioConnector.ConnectionId"/>.</param>
         public async Task StopAudioConnectorAsync(string connectionId) =>
             _ = await this.Client.PostAsync(
-                $"v2/project/{this.ApiKey}/connect/{connectionId}/stop",
+                $"v2/project/{this.GetOpenTokId()}/connect/{connectionId}/stop",
                 new Dictionary<string, string>(),
                 new Dictionary<string, object>());
     }
