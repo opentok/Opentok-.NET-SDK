@@ -155,7 +155,7 @@ namespace OpenTokSDKTest
         public void GenerateToken_ShouldSetData()
         {
             var token = sut.GenerateToken(SessionId, data: "Some data.");
-            ExtractClaims(token)["data"].Should().Be("Some data.");
+            ExtractClaims(token)["connection_data"].Should().Be("Some data.");
         }
 
         [Fact]
