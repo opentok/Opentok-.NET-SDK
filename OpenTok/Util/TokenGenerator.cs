@@ -97,7 +97,7 @@ namespace OpenTokSDK.Util
                 { "jti", GenerateTokenId() },
                 { "initial_layout_list", string.Join(" ", InitialLayoutClasses) },
                 { "nonce", OpenTokUtils.GetRandomNumber() },
-                { "data", this.Data },
+                { "connection_data", this.Data },
             };
 
             return payload;
