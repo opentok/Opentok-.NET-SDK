@@ -813,6 +813,46 @@ public class ArchiveTests : TestBase
                     dictionary[multiArchiveTagName].ToString() == multiArchiveTag)),
             Times.Once());
     }
+    
+     [Fact]
+    public void StartArchiveWithMaxBitrate()
+    {
+        var responseJson = GetResponseJson("StartArchive");
+        var mockClient = new Mock<HttpClient>();
+        mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>()))
+            .Returns(responseJson);
+        var opentok = BuildOpenTok(mockClient.Object);
+        opentok.StartArchive(SessionId, maxBitrate: 300000);
+        mockClient.Verify(
+            httpClient => httpClient.Post(
+                It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is<Dictionary<string, object>>(dictionary =>
+                    dictionary.ContainsKey("maxBitrate") &&
+                    dictionary["maxBitrate"].ToString() == 300000.ToString())),
+            Times.Once());
+    }
+
+    [Fact]
+    public async Task StartArchiveWithMaxBitrateAsync()
+    {
+        var responseJson = GetResponseJson("StartArchive");
+        var mockClient = new Mock<HttpClient>();
+        mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+            .ReturnsAsync(responseJson);
+        var opentok = BuildOpenTok(mockClient.Object);
+        await opentok.StartArchiveAsync(SessionId, maxBitrate: 300000);
+        mockClient.Verify(
+            httpClient => httpClient.PostAsync(
+                It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is<Dictionary<string, object>>(dictionary =>
+                    dictionary.ContainsKey("maxBitrate") &&
+                    dictionary["maxBitrate"].ToString() == 300000.ToString())),
+            Times.Once());
+    }
 
     // AddStreamToArchive
 

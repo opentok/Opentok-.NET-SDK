@@ -541,10 +541,11 @@ namespace OpenTokSDK
         /// only record one archive at a time for a given session. See
         /// <a href="https://tokbox.com/developer/guides/archiving/#simultaneous-archives">Simultaneous archives</a>.
         /// </param>
+        /// <param name="maxBitrate">The maximum video bitrate for the archive, in bits per second. This option is only valid for composed archives. Set the maximum video bitrate to control the size of the composed archive. This maximum bitrate applies to the video bitrate only. If the output archive has audio, those bits will be excluded from the limit.</param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null, int? maxBitrate = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -588,6 +589,11 @@ namespace OpenTokSDK
             {
                 data.Add("streamMode", streamMode.Value.ToString().ToLower());
             }
+            
+            if (maxBitrate.HasValue)
+            {
+                data.Add("maxBitrate", maxBitrate.Value);
+            }
 
             string response = Client.Post(url, headers, data);
             return OpenTokUtils.GenerateArchive(response, ApiKey, ApiSecret, OpenTokServer);
@@ -598,7 +604,7 @@ namespace OpenTokSDK
         /// </summary>
         /// <returns>The identifier.</returns>
         public string GetOpenTokId() => this.IsShim ? this.applicationId : this.ApiKey.ToString();
-        
+
         /// <summary>
         /// Starts archiving an OpenTok session.
         /// <para>
@@ -662,10 +668,11 @@ namespace OpenTokSDK
         /// only record one archive at a time for a given session. See
         /// <a href="https://tokbox.com/developer/guides/archiving/#simultaneous-archives">Simultaneous archives</a>.
         /// </param>
+        /// <param name="maxBitrate">The maximum video bitrate for the archive, in bits per second. This option is only valid for composed archives. Set the maximum video bitrate to control the size of the composed archive. This maximum bitrate applies to the video bitrate only. If the output archive has audio, those bits will be excluded from the limit.</param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null)
+        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null, int? maxBitrate = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -715,6 +722,11 @@ namespace OpenTokSDK
             if (streamMode.HasValue)
             {
                 data.Add("streamMode", streamMode.Value.ToString().ToLower());
+            }
+
+            if (maxBitrate.HasValue)
+            {
+                data.Add("maxBitrate", maxBitrate.Value);
             }
 
             string response = await Client.PostAsync(url, headers, data);
