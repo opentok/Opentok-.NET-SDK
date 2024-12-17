@@ -133,7 +133,7 @@ namespace OpenTokSDKTest
         private const string SessionId = "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4";
         private readonly OpenTok sut = new(ApiKey, ApiSecret);
 
-        [Fact]
+        [Fact(Skip = "Until GA.")]
         public void GenerateToken_ShouldReturnTokenWithDefaultValues()
         {
             var token = sut.GenerateToken(SessionId);
@@ -151,14 +151,14 @@ namespace OpenTokSDKTest
             claims.ContainsKey("initial_layout_class_list").Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "Until GA.")]
         public void GenerateToken_ShouldSetData()
         {
             var token = sut.GenerateToken(SessionId, data: "Some data.");
             ExtractClaims(token)["connection_data"].Should().Be("Some data.");
         }
 
-        [Fact]
+        [Fact(Skip = "Until GA.")]
         public void GenerateToken_ShouldSetExpireTime()
         {
             var expireTime = new DateTimeOffset(DateTime.UtcNow.AddSeconds(30)).ToUnixTimeSeconds();
@@ -167,7 +167,7 @@ namespace OpenTokSDKTest
             claims["exp"].Should().Be(expireTime.ToString(CultureInfo.InvariantCulture));
         }
 
-        [Fact]
+        [Fact(Skip = "Until GA.")]
         public void GenerateToken_ShouldSetInitialLayoutClass()
         {
             var list = new List<string> {"focus", "hello"};
@@ -176,7 +176,7 @@ namespace OpenTokSDKTest
             claims["initial_layout_list"].Should().Be("focus hello");
         }
 
-        [Theory]
+        [Theory(Skip = "Until GA.")]
         [InlineData(Role.SUBSCRIBER, "subscriber")]
         [InlineData(Role.PUBLISHER, "publisher")]
         [InlineData(Role.MODERATOR, "moderator")]

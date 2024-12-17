@@ -196,16 +196,17 @@ namespace OpenTokSDK
         public string GenerateToken(Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null) =>
             !string.IsNullOrEmpty(this.ApplicationId)
         ? new TokenGenerator().GenerateSessionToken(this.ApplicationId, this.PrivateKey, this.Id)
-        : new TokenGenerator().GenerateSessionToken(new TokenData()
-            {
-                ApiSecret = this.ApiSecret,
-                Role = role,
-                ApiKey = this.ApiKey.ToString(),
-                Data = data,
-                SessionId = this.Id,
-                ExpireTime = expireTime,
-                InitialLayoutClasses = initialLayoutClassList ?? Enumerable.Empty<string>(),
-            });
+        : this.GenerateT1Token(role, expireTime, data, initialLayoutClassList);
+        // : new TokenGenerator().GenerateSessionToken(new TokenData()
+        //     {
+        //         ApiSecret = this.ApiSecret,
+        //         Role = role,
+        //         ApiKey = this.ApiKey.ToString(),
+        //         Data = data,
+        //         SessionId = this.Id,
+        //         ExpireTime = expireTime,
+        //         InitialLayoutClasses = initialLayoutClassList ?? Enumerable.Empty<string>(),
+        //     });
 
         private string BuildTokenString(string dataString)
         {

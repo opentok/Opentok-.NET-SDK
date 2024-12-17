@@ -404,6 +404,7 @@ namespace OpenTokSDK
         /// <returns></returns>
         public string GenerateToken(string sessionId, Role role = Role.PUBLISHER, double expireTime = 0, string data = null, List<string> initialLayoutClassList = null)
         {
+            return this.GenerateT1Token(sessionId, role, expireTime, data, initialLayoutClassList);
             if (String.IsNullOrEmpty(sessionId))
             {
                 throw new OpenTokArgumentException("Session id cannot be empty or null");
