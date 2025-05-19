@@ -208,6 +208,16 @@ namespace OpenTokSDK
         public string MultiArchiveTag { get; set; }
 
         /// <summary>
+        /// Quantization parameter (QP) is an optional video encoding value allowed for composed archiving, smaller values generate higher quality and larger archives, larger values generate lower quality and smaller archives, QP uses variable bitrate (VBR)
+        /// </summary>
+        public int QuantizationParameter { get; set; }
+
+        /// <summary>
+        /// Maximum bitrate (bits per second) is an optional value allowed for the composing, maxBitrate uses constant bitrate (CBR)
+        /// </summary>
+        public int MaxBitrate { get; set; }
+        
+        /// <summary>
         /// Stops the OpenTok archive if it is being recorded.
         /// <para>
         /// Archives automatically stop recording after 120 minutes or when all clients have

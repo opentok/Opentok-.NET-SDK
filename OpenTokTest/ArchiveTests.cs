@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAssertions;
+using FluentAssertions.Equivalency.Steps;
 using Moq;
 using OpenTokSDK;
 using OpenTokSDK.Exception;
@@ -853,6 +855,66 @@ public class ArchiveTests : TestBase
                     dictionary["maxBitrate"].ToString() == 300000.ToString())),
             Times.Once());
     }
+    
+    [Fact]
+    public void StartArchiveWithQuantizationParameter()
+    {
+        var responseJson = GetResponseJson("StartArchive");
+        var mockClient = new Mock<HttpClient>();
+        mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(),
+                It.IsAny<Dictionary<string, object>>()))
+            .Returns(responseJson);
+        var opentok = BuildOpenTok(mockClient.Object);
+        opentok.StartArchive(SessionId, quantizationParameter: 15);
+        mockClient.Verify(
+            httpClient => httpClient.Post(
+                It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is<Dictionary<string, object>>(dictionary =>
+                    dictionary.ContainsKey("quantizationParameter") &&
+                    dictionary["quantizationParameter"].ToString() == 15.ToString())),
+            Times.Once());
+    }
+    
+    [Theory]
+    [InlineData(14)]
+    [InlineData(41)]
+    public void StartArchiveWithQuantizationParameter_ShouldThrowException_GivenParameterOutOfRange(int invalidParameter)
+    {
+        var opentok = BuildOpenTok(new Mock<HttpClient>().Object);
+        var action = () => opentok.StartArchive(SessionId, quantizationParameter: invalidParameter);
+        action.Should().Throw<OpenTokArgumentException>().WithMessage("QuantizationParameter must be between 15 and 40");
+    }
+
+    [Fact]
+    public async Task StartArchiveWithQuantizationParameterAsync()
+    {
+        var responseJson = GetResponseJson("StartArchive");
+        var mockClient = new Mock<HttpClient>();
+        mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+            .ReturnsAsync(responseJson);
+        var opentok = BuildOpenTok(mockClient.Object);
+        await opentok.StartArchiveAsync(SessionId,quantizationParameter: 15);
+        mockClient.Verify(
+            httpClient => httpClient.PostAsync(
+                It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is<Dictionary<string, object>>(dictionary =>
+                    dictionary.ContainsKey("quantizationParameter") &&
+                    dictionary["quantizationParameter"].ToString() == 15.ToString())),
+            Times.Once());
+    }
+    
+    [Theory]
+    [InlineData(14)]
+    [InlineData(41)]
+    public async Task StartArchiveWithQuantizationParameterAsync_ShouldThrowException_GivenParameterOutOfRange(int invalidParameter)
+    {
+        var opentok = BuildOpenTok(new Mock<HttpClient>().Object);
+        var action = () => opentok.StartArchiveAsync(SessionId, quantizationParameter: invalidParameter);
+        await action.Should().ThrowAsync<OpenTokArgumentException>().WithMessage("QuantizationParameter must be between 15 and 40");
+    }
 
     // AddStreamToArchive
 
@@ -1159,6 +1221,8 @@ public class ArchiveTests : TestBase
                      "%2Farchive.mp4?Expires=13951" +
                      "94362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
             archive.Url);
+        Assert.Equal(1000, archive.MaxBitrate);
+        Assert.Equal(40, archive.QuantizationParameter);
 
         mockClient.Verify(
             httpClient =>

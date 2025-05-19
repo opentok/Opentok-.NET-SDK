@@ -9,5 +9,7 @@
   "size": 8347554,
   "status": "available",
   "url":
-    "http://tokbox.com.archive2.s3.amazonaws.com/123456%2F$archiveId$%2Farchive.mp4?Expires=1395194362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    "http://tokbox.com.archive2.s3.amazonaws.com/123456%2F$archiveId$%2Farchive.mp4?Expires=1395194362&AWSAccessKeyId=AKIAI6LQCPIXYVWCQV6Q&Signature=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "maxBitrate": 1000,
+  "quantizationParameter": 40
 }
