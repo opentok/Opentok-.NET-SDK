@@ -12,58 +12,72 @@ namespace OpenTokSDKTest
         private List<string> streams;
         private string token;
         private Uri uri;
+        private AudioConnectorStartRequest.WebSocket.SupportedAudioRates rate;
+        private bool bidirectionalAudio;
 
         private AudioConnectorStartRequestDataBuilder()
         {
             var fixture = new Fixture();
-            this.sessionId = fixture.Create<string>();
-            this.token = fixture.Create<string>();
-            this.uri = fixture.Create<Uri>();
+            sessionId = fixture.Create<string>();
+            token = fixture.Create<string>();
+            uri = fixture.Create<Uri>();
         }
 
-        public static AudioConnectorStartRequestDataBuilder Build() => new AudioConnectorStartRequestDataBuilder();
+        public static AudioConnectorStartRequestDataBuilder Build() => new();
 
         public AudioConnectorStartRequestDataBuilder WithSessionId(string value)
         {
-            this.sessionId = value;
+            sessionId = value;
             return this;
         }
 
         public AudioConnectorStartRequestDataBuilder WithToken(string value)
         {
-            this.token = value;
+            token = value;
             return this;
         }
 
         public AudioConnectorStartRequestDataBuilder WithUri(Uri value)
         {
-            this.uri = value;
+            uri = value;
             return this;
         }
 
         public AudioConnectorStartRequestDataBuilder WithStream(string value)
         {
-            if (this.streams is null)
+            if (streams is null)
             {
-                this.streams = new List<string>();
+                streams = new List<string>();
             }
 
-            this.streams.Add(value);
+            streams.Add(value);
             return this;
         }
 
         public AudioConnectorStartRequestDataBuilder WithHeader(string key, string value)
         {
-            if (this.headers is null)
+            if (headers is null)
             {
-                this.headers = new Dictionary<string, string>();
+                headers = new Dictionary<string, string>();
             }
 
-            this.headers.Add(key, value);
+            headers.Add(key, value);
+            return this;
+        }
+        
+        public AudioConnectorStartRequestDataBuilder WithAudioRate(AudioConnectorStartRequest.WebSocket.SupportedAudioRates rate)
+        {
+            this.rate = rate;
+            return this;
+        }
+        
+        public AudioConnectorStartRequestDataBuilder WithBidirectionalAudio()
+        {
+            bidirectionalAudio = true;
             return this;
         }
 
         public AudioConnectorStartRequest Create() => 
-            new AudioConnectorStartRequest(this.sessionId, this.token, new AudioConnectorStartRequest.WebSocket(this.uri, this.streams?.ToArray(), this.headers));
+            new(sessionId, token, new AudioConnectorStartRequest.WebSocket(uri, streams?.ToArray(), headers, rate, bidirectionalAudio));
     }
 }

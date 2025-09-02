@@ -99,12 +99,16 @@ namespace OpenTokSDK
             /// <param name="headers">
             ///      An object of key-value pairs of headers to be sent to your WebSocket server with each message, with a maximum length of 512 bytes.
             /// </param>
-            public WebSocket(Uri uri, string[] streams = null, Dictionary<string, string> headers = null)
+            /// <param name="audioRate">The audio sampling rate in Hz.</param>
+            /// <param name="bidirectionalAudio">Indicates whether bidirectional audio is enabled or not.</param>
+            public WebSocket(Uri uri, string[] streams = null, Dictionary<string, string> headers = null, SupportedAudioRates audioRate = SupportedAudioRates.AUDIO_RATE_8000Hz, bool bidirectionalAudio = false)
             {
                 ValidateUri(uri);
                 this.Uri = uri;
-                this.Streams = streams ?? new string[0];
+                this.Streams = streams ?? Array.Empty<string>();
                 this.Headers = headers ?? new Dictionary<string, string>();
+                this.AudioRate = audioRate;
+                this.HasBidirectionalAudio = bidirectionalAudio;
             }
 
             /// <summary>
@@ -128,6 +132,18 @@ namespace OpenTokSDK
             [JsonProperty(PropertyName = "headers")]
             public Dictionary<string, string> Headers { get; }
 
+            /// <summary>
+            /// The audio sampling rate in Hz.
+            /// </summary>
+            [JsonProperty(PropertyName = "audioRate")]
+            public SupportedAudioRates AudioRate { get; set; }
+            
+            /// <summary>
+            /// Indicates whether bidirectional audio is enabled or not.
+            /// </summary>
+            [JsonProperty(PropertyName = "bidirectional")]
+            public bool HasBidirectionalAudio { get; set; }
+
             private static void ValidateUri(Uri url)
             {
                 if (url.AbsoluteUri.Length < MinimumUrlLength || url.AbsoluteUri.Length > MaximumUrlLength)
@@ -135,7 +151,25 @@ namespace OpenTokSDK
                     throw new OpenTokException(InvalidUrl);
                 }
             }
+            
+            /// <summary>
+            ///     A number representing the audio sampling rate in Hz.
+            /// </summary>
+            public enum SupportedAudioRates
+            {
+                /// <summary>
+                ///     8000Hz
+                /// </summary>
+                AUDIO_RATE_8000Hz = 8000,
+
+                /// <summary>
+                ///     16000Hz
+                /// </summary>
+                AUDIO_RATE_16000Hz = 16000,
+            }
         }
+        
+        
         
         /// <summary>
         /// Converts request to dictionary.
