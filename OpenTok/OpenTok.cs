@@ -544,10 +544,12 @@ namespace OpenTokSDK
         /// </param>
         /// <param name="maxBitrate">The maximum video bitrate for the archive, in bits per second. This option is only valid for composed archives. Set the maximum video bitrate to control the size of the composed archive. This maximum bitrate applies to the video bitrate only. If the output archive has audio, those bits will be excluded from the limit.</param>
         /// <param name="quantizationParameter">Quantization parameter (QP) is an optional video encoding value allowed for composed archiving, smaller values generate higher quality and larger archives, larger values generate lower quality and smaller archives, QP uses variable bitrate (VBR)</param>
+        /// <param name="hasTranscription"></param>
+        /// <param name="transcriptionProperties"></param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null, int? maxBitrate = null, int? quantizationParameter = null)
+        public Archive StartArchive(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null, int? maxBitrate = null, int? quantizationParameter = null, bool hasTranscription = false, TranscriptionProperties? transcriptionProperties = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -605,6 +607,16 @@ namespace OpenTokSDK
                 }
                 
                 data.Add("quantizationParameter", quantizationParameter.Value);
+            }
+
+            if (hasTranscription)
+            {
+                data.Add("hasTranscription", true);
+            }
+
+            if (transcriptionProperties.HasValue)
+            {
+                data.Add("transcriptionProperties", transcriptionProperties.Value);
             }
 
             string response = Client.Post(url, headers, data);
@@ -682,10 +694,12 @@ namespace OpenTokSDK
         /// </param>
         /// <param name="maxBitrate">The maximum video bitrate for the archive, in bits per second. This option is only valid for composed archives. Set the maximum video bitrate to control the size of the composed archive. This maximum bitrate applies to the video bitrate only. If the output archive has audio, those bits will be excluded from the limit.</param>
         /// <param name="quantizationParameter">Quantization parameter (QP) is an optional video encoding value allowed for composed archiving, smaller values generate higher quality and larger archives, larger values generate lower quality and smaller archives, QP uses variable bitrate (VBR)</param>
+        /// <param name="hasTranscription"></param>
+        /// <param name="transcriptionProperties"></param>
         /// <returns>
         /// The Archive object. This object includes properties defining the archive, including the archive ID.
         /// </returns>
-        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null, int? maxBitrate = null, int? quantizationParameter = null)
+        public async Task<Archive> StartArchiveAsync(string sessionId, string name = "", bool hasVideo = true, bool hasAudio = true, OutputMode outputMode = OutputMode.COMPOSED, string resolution = null, ArchiveLayout layout = null, StreamMode? streamMode = null, string multiArchiveTag = null, int? maxBitrate = null, int? quantizationParameter = null , bool hasTranscription = false, TranscriptionProperties? transcriptionProperties = null)
         {
             if (string.IsNullOrEmpty(sessionId))
             {
@@ -750,6 +764,17 @@ namespace OpenTokSDK
                 }
                 
                 data.Add("quantizationParameter", quantizationParameter.Value);
+            }
+            
+            
+            if (hasTranscription)
+            {
+                data.Add("hasTranscription", true);
+            }
+
+            if (transcriptionProperties.HasValue)
+            {
+                data.Add("transcriptionProperties", transcriptionProperties.Value);
             }
 
             string response = await Client.PostAsync(url, headers, data);

@@ -110,6 +110,8 @@ namespace OpenTokSDK
             Resolution = archive.Resolution;
             StreamMode = archive.StreamMode;
             MultiArchiveTag = archive.MultiArchiveTag;
+            HasTranscription = archive.HasTranscription;
+            Transcription = archive.Transcription;
         }
 
         /// <summary>
@@ -216,6 +218,16 @@ namespace OpenTokSDK
         /// Maximum bitrate (bits per second) is an optional value allowed for the composing, maxBitrate uses constant bitrate (CBR)
         /// </summary>
         public int MaxBitrate { get; set; }
+       
+        /// <summary>
+        /// Whether the archive will have a transcription of the audio of the session (true) or not (false, the default).
+        /// </summary>
+        public bool HasTranscription { get; set; }
+
+        /// <summary>
+        /// Properties of the transcription attached to this archive
+        /// </summary>
+        public Transcription Transcription { get; set; }
         
         /// <summary>
         /// Stops the OpenTok archive if it is being recorded.
@@ -275,4 +287,53 @@ namespace OpenTokSDK
             return _opentok?.DeleteArchiveAsync(Id.ToString());
         }
     }
+}
+
+/// <summary>
+/// Properties of the transcription attached to this archive
+/// </summary>
+public struct TranscriptionProperties
+{
+    /// <summary>
+    /// The primary language spoken in the archive to be transcribed, in BCP-47 format, e.g. en-US, es-ES or pt-BR.
+    /// </summary>
+    public string PrimaryLanguageCode { get; set; }
+
+    /// <summary>
+    /// Whether the transcription should include a summary of the session (true) or not (false, the default).
+    /// </summary>
+    public bool HasSummary { get; set; }
+}
+
+/// <summary>
+///  Properties of the transcription attached to this archive
+/// </summary>
+public struct Transcription
+{
+    /// <summary>
+    /// Status of the transcription
+
+
+    /// </summary>
+    public string Status { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string Url { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string Reason { get; set; }
+    
+    /// <summary>
+    /// The primary language spoken in the archive to be transcribed, in BCP-47 format, e.g. en-US, es-ES or pt-BR.
+    /// </summary>
+    public string PrimaryLanguageCode { get; set; }
+
+    /// <summary>
+    /// Whether the transcription should include a summary of the session (true) or not (false, the default).
+    /// </summary>
+    public bool HasSummary { get; set; }
 }

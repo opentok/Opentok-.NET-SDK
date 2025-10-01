@@ -1,0 +1,20 @@
+{
+  "createdAt": 1395183243556,
+  "duration": 0,
+  "id": "30b3ebf1-ba36-4f5b-8def-6f70d9986fe9",
+  "name": "",
+  "partnerId": 123456,
+  "reason": "",
+  "sessionId": "1_MX4xMjM0NTZ-flNhdCBNYXIgMTUgMTQ6NDI6MjMgUERUIDIwMTR-MC40OTAxMzAyNX4",
+  "size": 0,
+  "status": "started",
+  "url": null,
+  "hasTranscription": true,
+  "transcription": {
+    "status": "requested",
+    "url": "string",
+    "reason": "string",
+    "primaryLanguageCode": "en-US",
+    "hasSummary": false
+  }
+}

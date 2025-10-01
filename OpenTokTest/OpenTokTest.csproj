@@ -284,6 +284,10 @@
     <Content Include="Data\StreamTests\GetStreamAsync-response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Remove="Data\ArchiveTests\StartArchiveWithTranscription-response.json" />
+    <Content Include="Data\ArchiveTests\StartArchiveWithTranscription-response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />

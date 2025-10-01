@@ -906,6 +906,67 @@ public class ArchiveTests : TestBase
             Times.Once());
     }
     
+    
+    [Fact]
+    public void StartArchiveWithTranscription()
+    {
+        var responseJson = GetResponseJson();
+        var mockClient = new Mock<HttpClient>();
+        mockClient.Setup(httpClient => httpClient.Post(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+            .Returns(responseJson);
+        var opentok = BuildOpenTok(mockClient.Object);
+        var response = opentok.StartArchive(SessionId, hasTranscription:true, transcriptionProperties:new TranscriptionProperties(){ HasSummary = true, PrimaryLanguageCode = "en-US"});
+        mockClient.Verify(
+            httpClient => httpClient.Post(
+                It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is<Dictionary<string, object>>(dictionary =>
+                    dictionary.ContainsKey("hasTranscription") &&
+                    dictionary["hasTranscription"].ToString() == true.ToString() &&
+                    dictionary.ContainsKey("transcriptionProperties"))),
+            Times.Once());
+        Assert.True(response.HasTranscription);
+        Assert.Equal(new Transcription()
+        {
+            HasSummary = false,
+            Url = "string",
+            Reason = "string",
+            PrimaryLanguageCode = "en-US",
+            Status = "requested"
+        }, response.Transcription);
+    }
+    
+    [Fact]
+    public async Task StartArchiveWithTranscriptionAsync()
+    {
+        var responseJson = GetResponseJson(nameof(StartArchiveWithTranscription));
+        var mockClient = new Mock<HttpClient>();
+        mockClient.Setup(httpClient => httpClient.PostAsync(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, object>>()))
+            .ReturnsAsync(responseJson);
+        var opentok = BuildOpenTok(mockClient.Object);
+        var response = await opentok.StartArchiveAsync(SessionId, hasTranscription:true, transcriptionProperties:new TranscriptionProperties(){ HasSummary = true, PrimaryLanguageCode = "en-US"});
+        mockClient.Verify(
+            httpClient => httpClient.PostAsync(
+                It.Is<string>(url => url.Equals("v2/project/" + ApiKey + "/archive")),
+                It.IsAny<Dictionary<string, string>>(),
+                It.Is<Dictionary<string, object>>(dictionary =>
+                    dictionary.ContainsKey("hasTranscription") &&
+                    dictionary["hasTranscription"].ToString() == true.ToString() &&
+                    dictionary.ContainsKey("transcriptionProperties"))),
+            Times.Once());
+        Assert.True(response.HasTranscription);
+        Assert.Equal(new Transcription()
+        {
+            HasSummary = false,
+            Url = "string",
+            Reason = "string",
+            PrimaryLanguageCode = "en-US",
+            Status = "requested"
+        }, response.Transcription);
+    }
+    
     [Theory]
     [InlineData(14)]
     [InlineData(41)]
