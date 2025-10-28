@@ -2126,6 +2126,22 @@ namespace OpenTokSDK
         }
 
         /// <summary>
+        /// List the connections from a Vonage Video session associated with an application.
+        /// </summary>
+        /// <param name="sessionId">The session Id.</param>
+        /// <exception cref="OpenTokArgumentException">When sessionId is empty</exception>
+        public async Task<ConnectionList> ListConnections(string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                throw new OpenTokArgumentException("The sessionId cannot be empty.");
+            }
+            
+            var response = await Client.GetAsync($"v2/project/{this.GetOpenTokId()}/session/{sessionId}/connection");
+            return JsonConvert.DeserializeObject<ConnectionList>(response);
+        }
+
+        /// <summary>
         /// Force the publisher of a specific stream to mute its published audio.
         /// </summary>
         /// <para>

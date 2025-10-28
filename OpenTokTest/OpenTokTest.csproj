@@ -63,6 +63,9 @@
     <None Remove="Data\StreamTests\ListStreamsAsync-response.json" />
     <None Remove="Data\BroadcastTests\StopBroadcast-response.json" />
     <None Remove="Data\BroadcastTests\StopBroadcastAsync-response.json" />
+    <None Update="Data\ConnectionTests\ListConnections-response.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\ArchiveTests\ListArchivesAsync-response.json">
