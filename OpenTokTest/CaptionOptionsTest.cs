@@ -80,6 +80,16 @@ namespace OpenTokSDKTest
 		}
 		
 		[Fact]
+		public void WithMaxDuration_ShouldThrowException_GivenValueIsLowerThanMinimum()
+		{
+			void Act() => CaptionOptions.Build("sessionId", "token")
+				.WithMaxDuration(new TimeSpan(0, 4, 0));
+
+			var exception = Assert.Throws<OpenTokException>(Act);
+			Assert.Equal("Max duration cannot be lower than 5 minutes.", exception.Message);
+		}
+		
+		[Fact]
 		public void WithCallbackUrl_ShouldSetCallbackUrl() => Assert.Equal(new Uri("http://example.com"),
 			CaptionOptions.Build("sessionId", "token").WithCallbackUrl(new Uri("http://example.com"))
 				.StatusCallbackUrl);
@@ -92,7 +102,7 @@ namespace OpenTokSDKTest
 				{"sessionId", "sessionId"},
 				{"token", "token"},
 				{"languageCode", "en-AU"},
-				{"maxDuration", (double)60},
+				{"maxDuration", (double)3600},
 				{"partialCaptions", false},
 				{"statusCallbackUrl", "http://example.com/"},
 			};
@@ -113,12 +123,12 @@ namespace OpenTokSDKTest
 				{"sessionId", "sessionId"},
 				{"token", "token"},
 				{"languageCode", "en-AU"},
-				{"maxDuration", (double)60},
+				{"maxDuration", (double)300},
 				{"partialCaptions", false},
 			};
 			var data = CaptionOptions.Build("sessionId", "token")
 				.WithLanguageCode(CaptionOptions.LanguageCodeValue.EnAu)
-				.WithMaxDuration(new TimeSpan(1, 0, 0))
+				.WithMaxDuration(new TimeSpan(0, 5, 0))
 				.DisablePartialCaptions()
 				.ToDataDictionary();
 			Assert.Equal(data, expectedData);

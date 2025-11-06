@@ -126,6 +126,11 @@ namespace OpenTokSDK
 			{
 				throw new OpenTokException("Max duration cannot exceed 4 hours.");
 			}
+			
+			if (timeSpan < new TimeSpan(0, 5, 0))
+			{
+				throw new OpenTokException("Max duration cannot be lower than 5 minutes.");
+			}
 		}
 
 		private static void ValidateSessionId(string sessionId)
@@ -235,7 +240,7 @@ namespace OpenTokSDK
 				{"sessionId", this.SessionId},
 				{"token", this.Token},
 				{"languageCode", this.LanguageCode.AsString(EnumFormat.Description)},
-				{"maxDuration", this.MaxDuration.TotalMinutes},
+				{"maxDuration", this.MaxDuration.TotalSeconds},
 				{"partialCaptions", this.PartialCaptions},
 			};
 			if (this.StatusCallbackUrl != null)
