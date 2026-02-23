@@ -320,7 +320,6 @@ namespace OpenTokSDK.Util
             if (headers.ContainsKey("Content-Type"))
             {
                 request.ContentType = headers["Content-Type"];
-                request.Expect = headers["Content-Type"];
                 headers.Remove("Content-Type");
             }
 
