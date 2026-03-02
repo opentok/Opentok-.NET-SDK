@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
@@ -313,6 +314,13 @@ namespace OpenTokSDK.Util
             var request = (HttpWebRequest)WebRequest.Create(uri);
             if (RequestTimeout != null) request.Timeout = (int)RequestTimeout;
 
+            // On .NET Framework 4.8, using TLS 1.3 with Expect100Continue causes a bug.
+            // .NET Core is unaffected, so only disable it on .NET Framework when TLS 1.3 is in use.
+            if (IsNetFrameworkWithTls13(RuntimeInformation.FrameworkDescription, ServicePointManager.SecurityProtocol))
+            {
+                request.ServicePoint.Expect100Continue = false;
+            }
+
             request.ContentLength = data.Length;
             request.UserAgent = CustomUserAgent != null
                 ? $"{OpenTokVersion.GetVersion()}/{CustomUserAgent}"
@@ -320,7 +328,6 @@ namespace OpenTokSDK.Util
             if (headers.ContainsKey("Content-Type"))
             {
                 request.ContentType = headers["Content-Type"];
-                request.Expect = headers["Content-Type"];
                 headers.Remove("Content-Type");
             }
 
@@ -414,6 +421,15 @@ namespace OpenTokSDK.Util
                     var header = headers.GetKey(i);
                     foreach (var value in headers.GetValues(i)) DebugLog(label + " Header: " + header + " = " + value);
                 }
+        }
+
+        // TLS 1.3 is represented as 0x3000 (12288); not a named enum member in netstandard2.0
+        internal const SecurityProtocolType Tls13 = (SecurityProtocolType)12288;
+
+        internal static bool IsNetFrameworkWithTls13(string frameworkDescription, SecurityProtocolType securityProtocol)
+        {
+            return frameworkDescription.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase)
+                && (securityProtocol & Tls13) != 0;
         }
     }
 }
