@@ -166,6 +166,11 @@ namespace OpenTokSDK
                 ///     16000Hz
                 /// </summary>
                 AUDIO_RATE_16000Hz = 16000,
+                
+                /// <summary>
+                ///     16000Hz
+                /// </summary>
+                AUDIO_RATE_24000Hz = 24000,
             }
         }
         
