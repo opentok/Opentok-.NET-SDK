@@ -454,6 +454,14 @@ of API changes:
 Interested in contributing? We :heart: pull requests! See the [Development](DEVELOPING.md) and
 [Contribution](CONTRIBUTING.md) guidelines.
 
+## Known Issues
+
+
+### TLS 1.3
+
+If your product relies on legacy .NET Framework versions (4.6.2-4.8.1), ensure you are using OpenTok [v3.20.2](https://github.com/opentok/Opentok-.NET-SDK/releases/tag/v3.20.2) or later.
+Earlier versions experience issues related to Expect100Continue and TLS 1.3, which can cause API calls to take longer than expected.
+
 ## Getting Help
 
 We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
