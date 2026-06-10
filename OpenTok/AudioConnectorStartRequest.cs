@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using OpenTokSDK.Exception;
 
@@ -143,6 +144,13 @@ namespace OpenTokSDK
             /// </summary>
             [JsonProperty(PropertyName = "bidirectional")]
             public bool HasBidirectionalAudio { get; set; }
+            
+            /// <summary>
+            ///     Configures how audio is serialized on the WebSocket wire. By default, audio is sent as raw binary PCM 16-bit
+            ///     frames.
+            /// </summary>
+            [JsonProperty(PropertyName = "audioTransport", NullValueHandling = NullValueHandling.Ignore)]
+            public AudioTransport AudioTransport { get; set; }
 
             private static void ValidateUri(Uri url)
             {
@@ -187,5 +195,62 @@ namespace OpenTokSDK
                 {"token", this.Token},
                 {"websocket", this.Socket},
             };
+        
+        /// <summary>
+        ///     Represents the configuration for how audio is serialized on the WebSocket wire.
+        /// </summary>
+        public class AudioTransport
+        {
+            /// <summary>
+            ///     Serialization format: 'binary' (raw PCM16, the default) or 'json'.
+            /// </summary>
+            [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter), true)]
+            [JsonProperty(PropertyName = "transport")]
+            public AudioTransportType Transport { get; set; }
+
+            /// <summary>
+            ///     Encoding format. Required when <see cref="Transport"/> is <see cref="AudioTransportType.Json"/>. Set to
+            ///     'base64'.
+            /// </summary>
+            [JsonProperty(PropertyName = "encoding", NullValueHandling = NullValueHandling.Ignore)]
+            public string Encoding { get; set; }
+
+            /// <summary>
+            ///     The JSON key for the outbound audio data. Defaults to 'audio'.
+            /// </summary>
+            [JsonProperty(PropertyName = "audio_field", NullValueHandling = NullValueHandling.Ignore)]
+            public string AudioField { get; set; }
+
+            /// <summary>
+            ///     The JSON key for inbound audio data when bidirectional is enabled. Defaults to the same value as
+            ///     <see cref="AudioField"/>.
+            /// </summary>
+            [JsonProperty(PropertyName = "receive_audio_field", NullValueHandling = NullValueHandling.Ignore)]
+            public string ReceiveAudioField { get; set; }
+
+            /// <summary>
+            ///     Extra key-value pairs included in every outbound JSON audio message.
+            /// </summary>
+            [JsonProperty(PropertyName = "static_fields", NullValueHandling = NullValueHandling.Ignore)]
+            public Dictionary<string, string> StaticFields { get; set; }
+        }
+        
+        /// <summary>
+        ///     Defines the serialization format for audio on the WebSocket wire.
+        /// </summary>
+        public enum AudioTransportType
+        {
+            /// <summary>
+            ///     Raw PCM16 binary frames (the default).
+            /// </summary>
+            [Description("binary")]
+            Binary,
+
+            /// <summary>
+            ///     JSON-wrapped audio frames. Requires <see cref="AudioTransport.Encoding"/> to be set to 'base64'.
+            /// </summary>
+            [Description("json")]
+            Json,
+        }
     }
 }

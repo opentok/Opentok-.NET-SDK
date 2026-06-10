@@ -14,6 +14,7 @@ namespace OpenTokSDKTest
         private Uri uri;
         private AudioConnectorStartRequest.WebSocket.SupportedAudioRates rate;
         private bool bidirectionalAudio;
+        private AudioConnectorStartRequest.AudioTransport audioTransport;
 
         private AudioConnectorStartRequestDataBuilder()
         {
@@ -77,7 +78,19 @@ namespace OpenTokSDKTest
             return this;
         }
 
-        public AudioConnectorStartRequest Create() => 
-            new(sessionId, token, new AudioConnectorStartRequest.WebSocket(uri, streams?.ToArray(), headers, rate, bidirectionalAudio));
+        public AudioConnectorStartRequestDataBuilder WithAudioTransport(AudioConnectorStartRequest.AudioTransport transport)
+        {
+            audioTransport = transport;
+            return this;
+        }
+
+        public AudioConnectorStartRequest Create()
+        {
+            var socket = new AudioConnectorStartRequest.WebSocket(uri, streams?.ToArray(), headers, rate, bidirectionalAudio)
+                {
+                    AudioTransport = audioTransport
+                };
+            return new AudioConnectorStartRequest(sessionId, token, socket);
+        }
     }
 }

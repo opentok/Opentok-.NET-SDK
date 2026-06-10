@@ -197,6 +197,96 @@ public class AudioConnectorStartRequestTests
     }
 
     [Fact]
+    public void AudioConnectorStartRequest_ShouldHaveNullAudioTransport_GivenDefault()
+    {
+        Assert.Null(AudioConnectorStartRequestDataBuilder.Build().Create().Socket.AudioTransport);
+    }
+
+    [Fact]
+    public void AudioConnectorStartRequest_ShouldSetAudioTransport()
+    {
+        var transport = new AudioConnectorStartRequest.AudioTransport { Transport = AudioConnectorStartRequest.AudioTransportType.Binary };
+        var request = AudioConnectorStartRequestDataBuilder.Build().WithAudioTransport(transport).Create();
+        Assert.Same(transport, request.Socket.AudioTransport);
+    }
+
+    [Fact]
+    public void DataDictionarySerialization_WithBinaryAudioTransport()
+    {
+        var expected =
+            "{\"sessionId\":\"sessionId\",\"token\":\"token\",\"websocket\":{\"uri\":\"https://www.example.com/\",\"streams\":[],\"headers\":{},\"audioRate\":0,\"bidirectional\":false,\"audioTransport\":{\"transport\":\"binary\"}}}";
+        var dataDictionary = AudioConnectorStartRequestDataBuilder
+            .Build()
+            .WithSessionId("sessionId")
+            .WithToken("token")
+            .WithUri(new Uri("https://www.example.com/"))
+            .WithAudioTransport(new AudioConnectorStartRequest.AudioTransport
+            {
+                Transport = AudioConnectorStartRequest.AudioTransportType.Binary,
+            })
+            .Create()
+            .ToDataDictionary();
+        Assert.Equal(expected, JsonConvert.SerializeObject(dataDictionary));
+    }
+
+    [Fact]
+    public void DataDictionarySerialization_WithJsonAudioTransport()
+    {
+        var expected =
+            "{\"sessionId\":\"sessionId\",\"token\":\"token\",\"websocket\":{\"uri\":\"https://www.example.com/\",\"streams\":[],\"headers\":{},\"audioRate\":0,\"bidirectional\":false,\"audioTransport\":{\"transport\":\"json\",\"encoding\":\"base64\"}}}";
+        var dataDictionary = AudioConnectorStartRequestDataBuilder
+            .Build()
+            .WithSessionId("sessionId")
+            .WithToken("token")
+            .WithUri(new Uri("https://www.example.com/"))
+            .WithAudioTransport(new AudioConnectorStartRequest.AudioTransport
+            {
+                Transport = AudioConnectorStartRequest.AudioTransportType.Json,
+                Encoding = "base64",
+            })
+            .Create()
+            .ToDataDictionary();
+        Assert.Equal(expected, JsonConvert.SerializeObject(dataDictionary));
+    }
+
+    [Fact]
+    public void DataDictionarySerialization_WithAudioTransport_AllOptionalFields()
+    {
+        var expected =
+            "{\"sessionId\":\"sessionId\",\"token\":\"token\",\"websocket\":{\"uri\":\"https://www.example.com/\",\"streams\":[],\"headers\":{},\"audioRate\":0,\"bidirectional\":false,\"audioTransport\":{\"transport\":\"json\",\"encoding\":\"base64\",\"audio_field\":\"audio\",\"receive_audio_field\":\"receive_audio\",\"static_fields\":{\"key\":\"value\"}}}}";
+        var dataDictionary = AudioConnectorStartRequestDataBuilder
+            .Build()
+            .WithSessionId("sessionId")
+            .WithToken("token")
+            .WithUri(new Uri("https://www.example.com/"))
+            .WithAudioTransport(new AudioConnectorStartRequest.AudioTransport
+            {
+                Transport = AudioConnectorStartRequest.AudioTransportType.Json,
+                Encoding = "base64",
+                AudioField = "audio",
+                ReceiveAudioField = "receive_audio",
+                StaticFields = new Dictionary<string, string> { { "key", "value" } },
+            })
+            .Create()
+            .ToDataDictionary();
+        Assert.Equal(expected, JsonConvert.SerializeObject(dataDictionary));
+    }
+
+    [Fact]
+    public void DataDictionarySerialization_ShouldOmitAudioTransport_WhenNull()
+    {
+        var json = JsonConvert.SerializeObject(
+            AudioConnectorStartRequestDataBuilder
+                .Build()
+                .WithSessionId("sessionId")
+                .WithToken("token")
+                .WithUri(new Uri("https://www.example.com/"))
+                .Create()
+                .ToDataDictionary());
+        Assert.DoesNotContain("audioTransport", json);
+    }
+
+    [Fact]
     public void DataDictionarySerialization()
     {
         var expected =
